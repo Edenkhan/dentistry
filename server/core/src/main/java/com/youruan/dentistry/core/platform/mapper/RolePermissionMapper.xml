@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.youruan.dentistry.core.platform.mapper.RolePermissionMapper">
+  <resultMap id="BASE_RESULT" type="com.youruan.dentistry.core.platform.domain.RolePermission">
+    <id property="id" column="id"/>
+    <result property="createdDate" column="createdDate"/>
+    <result property="lastModifiedDate" column="lastModifiedDate"/>
+    <result property="version" column="version"/>
+    <result property="roleId" column="roleId"/>
+    <result property="permissionId" column="permissionId"/>
+  </resultMap>
+  <sql id="BASE_COLUMNS">rp.id, rp.createdDate, rp.lastModifiedDate, rp.version,rp.roleId,rp.permissionId</sql>
+  <sql id="QUERY_COLUMNS">rp.id, rp.createdDate, rp.lastModifiedDate, rp.version,rp.roleId,rp.permissionId</sql>
+  <resultMap id="VO_RESULT" type="com.youruan.dentistry.core.platform.vo.ExtendedRolePermission" extends="BASE_RESULT"/>
+  <sql id="JOIN_COLUMNS"/>
+  <select id="get" resultMap="BASE_RESULT" parameterType="java.lang.Long">SELECT 
+    <include refid="BASE_COLUMNS"/> FROM RolePermission rp WHERE id = #{id }
+  </select>
+  <delete id="delete" parameterType="java.lang.Long">DELETE FROM RolePermission WHERE id = #{id}</delete>
+  <insert id="add" parameterType="com.youruan.dentistry.core.platform.domain.RolePermission" useGeneratedKeys="true" keyProperty="id" keyColumn="id">INSERT INTO RolePermission(id, createdDate, version,roleId,permissionId) VALUES(#{id }, #{createdDate}, 0, #{roleId}, #{permissionId})</insert>
+  <insert id="batchAdd" parameterType="java.util.List">INSERT INTO RolePermission(id, createdDate, version,roleId,permissionId) VALUES 
+    <foreach collection="values" item="value" separator=",">(#{value.id}, #{value.createdDate}, 0, #{value.roleId}, #{value.permissionId})</foreach>
+  </insert>
+  <update id="update" parameterType="com.youruan.dentistry.core.platform.domain.RolePermission">UPDATE RolePermission
+    <set>lastModifiedDate = now(), version = version + 1</set>
+    <where>id = #{id} AND version = #{version}</where>
+  </update>
+  <sql id="QUERY_JOIN"/>
+  <sql id="QUERY_WHERE_SQL">
+    <if test="ids != null">AND rp.id IN
+      <foreach collection="ids" item="id" open="(" close=")" separator=", ">#{id }</foreach>
+    </if>
+    <if test="startCreatedDate != null">AND rp.createdDate &gt;= #{startCreatedDate }</if>
+    <if test="endCreatedDate != null">AND rp.createdDate &lt;= #{endCreatedDate }</if>
+    <if test="roleId != null">AND rp.roleId = #{roleId}</if>
+    <if test="permissionId != null">AND rp.permissionId = #{permissionId}</if>
+  </sql>
+  <sql id="QUERY_WHERE">
+    <where>
+      <include refid="QUERY_WHERE_SQL"/>
+    </where>
+  </sql>
+  <sql id="QUERY_ORDER_BY">
+    <if test="orderBys.size() &gt; 0">ORDER BY
+      <foreach collection="orderBys" item="value" index="key" separator=", ">rp.${key} ${value}</foreach>
+    </if>
+  </sql>
+  <sql id="QUERY_LIMIT">
+    <if test="pageSize &gt; 0">LIMIT ${start}, ${pageSize}</if>
+  </sql>
+  <select id="count" parameterType="com.youruan.dentistry.core.platform.query.RolePermissionQuery" resultType="java.lang.Integer">SELECT COUNT(*) FROM RolePermission AS rp
+    <include refid="QUERY_JOIN"/>
+    <include refid="QUERY_WHERE"/>
+  </select>
+  <select id="query" parameterType="com.youruan.dentistry.core.platform.query.RolePermissionQuery" resultMap="VO_RESULT">SELECT
+    <include refid="QUERY_COLUMNS"/>
+    <include refid="JOIN_COLUMNS"/> FROM RolePermission AS rp
+    <include refid="QUERY_JOIN"/>
+    <include refid="QUERY_WHERE"/>
+    <include refid="QUERY_ORDER_BY"/>
+    <include refid="QUERY_LIMIT"/>
+  </select>
+</mapper>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.youruan.dentistry.core.backstage.mapper.ProductDetailPathMapper">
+  <resultMap id="BASE_RESULT" type="com.youruan.dentistry.core.backstage.domain.ProductDetailPath">
+    <id property="id" column="id"/>
+    <result property="createdDate" column="createdDate"/>
+    <result property="lastModifiedDate" column="lastModifiedDate"/>
+    <result property="version" column="version"/>
+    <result property="detailPath" column="detailPath"/>
+    <result property="productId" column="productId"/>
+  </resultMap>
+  <sql id="BASE_COLUMNS">pdp.id, pdp.createdDate, pdp.lastModifiedDate, pdp.version, pdp.detailPath, pdp.productId</sql>
+  <sql id="QUERY_COLUMNS">pdp.id, pdp.createdDate, pdp.lastModifiedDate, pdp.version, pdp.detailPath, pdp.productId</sql>
+  <resultMap id="VO_RESULT" type="com.youruan.dentistry.core.backstage.vo.ExtendedProductDetailPath" extends="BASE_RESULT"/>
+  <sql id="JOIN_COLUMNS">
+
+  </sql>
+  <select id="get" resultMap="BASE_RESULT" parameterType="java.lang.Long">SELECT
+    <include refid="BASE_COLUMNS"/> FROM ProductDetailPath pdp WHERE id = #{id }
+  </select>
+  <delete id="delete" parameterType="java.lang.Long">DELETE FROM ProductDetailPath WHERE id = #{id}</delete>
+  <insert id="add" parameterType="com.youruan.dentistry.core.backstage.domain.ProductDetailPath" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+    INSERT INTO ProductDetailPath(createdDate, version, detailPath, productId) VALUES
+    <foreach collection="productDetailPaths" separator="," item="item">
+      (#{item.createdDate}, 0, #{item.detailPath}, #{item.productId})
+    </foreach>
+  </insert>
+  <update id="update" parameterType="com.youruan.dentistry.core.backstage.domain.ProductDetailPath">UPDATE ProductDetailPath
+    <set>lastModifiedDate = now(), version = version + 1, detailPath = #{detailPath}, productId = #{productId}</set>
+    <where>id = #{id} AND version = #{version}</where>
+  </update>
+  <sql id="QUERY_JOIN">
+
+  </sql>
+  <sql id="QUERY_WHERE_SQL">
+    <if test="ids != null">AND pdp.id IN
+      <foreach collection="ids" item="id" open="(" close=")" separator=", ">#{id }</foreach>
+    </if>
+    <if test="startCreatedDate != null">AND pdp.createdDate &gt;= #{startCreatedDate }</if>
+    <if test="endCreatedDate != null">AND pdp.createdDate &lt;= #{endCreatedDate }</if>
+    <if test="productId != null">AND pdp.productId = #{productId}</if>
+  </sql>
+  <sql id="QUERY_WHERE">
+    <where>
+      <include refid="QUERY_WHERE_SQL"/>
+    </where>
+  </sql>
+  <sql id="QUERY_ORDER_BY">
+    <if test="orderBys.size() &gt; 0">ORDER BY
+      <foreach collection="orderBys" item="value" index="key" separator=", ">pdp.${key} ${value}</foreach>
+    </if>
+  </sql>
+  <sql id="QUERY_LIMIT">
+    <if test="pageSize &gt; 0">LIMIT ${start}, ${pageSize}</if>
+  </sql>
+  <select id="count" parameterType="com.youruan.dentistry.core.backstage.query.ProductDetailPathQuery" resultType="java.lang.Integer">SELECT COUNT(*) FROM ProductDetailPath AS pdp
+    <include refid="QUERY_JOIN"/>
+    <include refid="QUERY_WHERE"/>
+  </select>
+  <select id="query" parameterType="com.youruan.dentistry.core.backstage.query.ProductDetailPathQuery" resultMap="VO_RESULT">SELECT
+    <include refid="QUERY_COLUMNS"/>
+    <include refid="JOIN_COLUMNS"/> FROM ProductDetailPath AS pdp
+    <include refid="QUERY_JOIN"/>
+    <include refid="QUERY_WHERE"/>
+    <include refid="QUERY_ORDER_BY"/>
+    <include refid="QUERY_LIMIT"/>
+  </select>
+  <delete id="deleteByProductId" parameterType="java.lang.Long">
+    DELETE FROM ProductDetailPath WHERE productId = #{id}
+  </delete>
+</mapper>

@@ -1,0 +1,11 @@
+server:
+  servlet:
+    session:
+      cookie:
+        name: sid
+  port: 8080
+
+spring:
+  profiles:
+    include: core
+    active: @spring.profiles.active@

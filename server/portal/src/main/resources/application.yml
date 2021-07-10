@@ -1,0 +1,16 @@
+server:
+  servlet:
+    session:
+      cookie:
+        name: sid
+      tracking-modes: cookie
+  port: 8083
+
+spring:
+  profiles:
+    include: core
+    active: @spring.profiles.active@
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 20MB

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script type="text/javascript" src="mustache.js"></script>
+<script type="text/javascript" src="ZeroClipboard.min.js"></script>
+</head>
+<body>
+	<label>模块名</label>
+	<input type="text" value="" id="moduleName" />
+	<label>事件名</label>
+	<input type="text" value="" id="eventName" />
+	<label>关联service名</label>
+	<input type="text" value="" id="serviceName" />
+	<label>事件源名</label>
+	<input type="text" value="" id="sourceName" />
+	<input type="button" value="生成" id="btn" />
+
+	<script id="template-xml" type="x-tmpl-mustache"><bean class="com.lanyotech.p2p.core.base.event.EventMapping">
+	<property name="eventClass" value="com.lanyotech.p2p.core.{{moduleName}}.event.{{eventName}}Event" />
+	<property name="target" ref="{{serviceName}}Service" />
+	<property name="targetMethod" value="on{{eventName}}" />
+</bean></script>
+
+	<script id="template-java" type="x-tmpl-mustache">package com.lanyotech.p2p.core.user.event;
+
+import org.springframework.context.ApplicationEvent;
+import com.lanyotech.p2p.core.{{moduleName}}.domain.{{sourceName}};
+
+public class {{eventName}}Event extends ApplicationEvent{
+
+	private static final long serialVersionUID = 1L;
+
+	@Override
+	public {{sourceName}} getSource() {
+		return ({{sourceName}}) super.getSource();
+	}
+
+	public {{eventName}}Event({{sourceName}} source) {
+		super(source);
+	}
+
+}</script>
+	<pre id="target-xml" style="border:green solid thin;" onmouseover="selectText(this)"></pre>
+	<pre id="target-java" style="border:blue solid thin;" onmouseover="selectText(this)"></pre>
+	<script type="text/javascript">
+		var _btn = document.getElementById('btn')
+		_btn.onclick = function() {
+			var moduleName = document.getElementById('moduleName').value;
+			var eventName = document.getElementById('eventName').value;
+			var serviceName = document.getElementById('serviceName').value;
+			var sourceName = document.getElementById('sourceName').value;
+
+			var view = {
+				"moduleName": uncapitaliseFirstLetter(moduleName),
+				"eventName": capitaliseFirstLetter(eventName),
+				"serviceName": uncapitaliseFirstLetter(serviceName),
+				"sourceName": capitaliseFirstLetter(sourceName)
+			};
+
+			renderContent("template-xml",view,"target-xml");
+			renderContent("template-java",view,"target-java");
+		};
+
+
+	    function renderContent(templId,view,targetId) {
+	        var template = document.getElementById(templId).innerHTML;
+	        var rendered = Mustache.render(Mustache.escape(template), view);
+	        document.getElementById(targetId).innerHTML = rendered;
+	    };
+
+	    function capitaliseFirstLetter(string){
+	        return string.charAt(0).toUpperCase() + string.slice(1);
+	    };
+	    function uncapitaliseFirstLetter(string){
+	        return string.charAt(0).toLowerCase() + string.slice(1);
+	    };
+
+	    function selectText(e) {
+		    var doc = document;
+		    var text = e;
+
+		    if (doc.body.createTextRange) { // ms
+		        var range = doc.body.createTextRange();
+		        range.moveToElementText(text);
+
+		        range.select();
+		    } else if (window.getSelection) { // moz, opera, webkit
+		        var selection = window.getSelection();
+		        var range = doc.createRange();
+		        range.selectNodeContents(text);
+
+		        selection.removeAllRanges();
+		        selection.addRange(range);
+		    }
+		}
+	</script>
+</body>
+</html>

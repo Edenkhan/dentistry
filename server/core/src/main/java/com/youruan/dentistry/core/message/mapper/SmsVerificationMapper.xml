@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.youruan.dentistry.core.message.mapper.SmsVerificationMapper">
+  <resultMap id="BASE_RESULT" type="com.youruan.dentistry.core.message.domain.SmsVerification">
+    <id property="id" column="id"/>
+    <result property="createdDate" column="createdDate"/>
+    <result property="lastModifiedDate" column="lastModifiedDate"/>
+    <result property="version" column="version"/>
+    <result property="smsMessageId" column="smsMessageId"/>
+    <result property="phoneNumber" column="phoneNumber"/>
+    <result property="code" column="code"/>
+    <result property="requestIp" column="requestIp"/>
+    <result property="retryCount" column="retryCount"/>
+    <result property="expirationDate" column="expirationDate"/>
+    <result property="state" column="state"/>
+    <result property="type" column="type"/>
+  </resultMap>
+  <sql id="BASE_COLUMNS">smsv.id, smsv.createdDate, smsv.lastModifiedDate, smsv.version,smsv.smsMessageId,smsv.phoneNumber,smsv.code,smsv.requestIp,smsv.retryCount,smsv.expirationDate,smsv.state,smsv.type</sql>
+  <sql id="QUERY_COLUMNS">smsv.id, smsv.createdDate, smsv.lastModifiedDate, smsv.version,smsv.smsMessageId,smsv.phoneNumber,smsv.code,smsv.requestIp,smsv.retryCount,smsv.expirationDate,smsv.state,smsv.type</sql>
+  <resultMap id="VO_RESULT" type="com.youruan.dentistry.core.message.vo.ExtendedSmsVerification" extends="BASE_RESULT">
+    <association property="smsMessage" column="smsMessageId" columnPrefix="smsMessage_" javaType="com.youruan.dentistry.core.message.domain.SmsMessage" resultMap="com.youruan.dentistry.core.message.mapper.SmsMessageMapper.BASE_RESULT"/>
+  </resultMap>
+  <sql id="JOIN_COLUMNS">
+    <if test="joinSmsMessage != null">, smsMessage.id AS smsMessage_id, smsMessage.content AS smsMessage_content</if>
+  </sql>
+  <select id="get" resultMap="BASE_RESULT" parameterType="java.lang.Long">SELECT 
+    <include refid="BASE_COLUMNS"/> FROM SmsVerification smsv WHERE id = #{id }
+  </select>
+  <delete id="delete" parameterType="java.lang.Long">DELETE FROM SmsVerification WHERE id = #{id}</delete>
+  <insert id="add" parameterType="com.youruan.dentistry.core.message.domain.SmsVerification" useGeneratedKeys="true" keyProperty="id" keyColumn="id">INSERT INTO SmsVerification(id, createdDate, version,smsMessageId,phoneNumber,code,requestIp,retryCount,expirationDate,state,type) VALUES(#{id }, #{createdDate}, 0, #{smsMessageId}, #{phoneNumber}, #{code}, #{requestIp}, #{retryCount}, #{expirationDate}, #{state}, #{type})</insert>
+  <update id="update" parameterType="com.youruan.dentistry.core.message.domain.SmsVerification">UPDATE SmsVerification
+    <set>lastModifiedDate = now(), version = version + 1, retryCount = #{retryCount}, state = #{state}</set>
+    <where>id = #{id} AND version = #{version}</where>
+  </update>
+  <sql id="QUERY_JOIN">
+    <if test="joinSmsMessage != null">${joinSmsMessage.name} SmsMessage smsMessage ON smsMessage.id = smsv.smsMessageId</if>
+  </sql>
+  <sql id="QUERY_WHERE_SQL">
+    <if test="ids != null">AND smsv.id IN
+      <foreach collection="ids" item="id" open="(" close=")" separator=", ">#{id }</foreach>
+    </if>
+    <if test="startCreatedDate != null">AND smsv.createdDate &gt;= #{startCreatedDate }</if>
+    <if test="endCreatedDate != null">AND smsv.createdDate &lt;= #{endCreatedDate }</if>
+    <if test="phoneNumber != null">AND smsv.phoneNumber = #{phoneNumber}</if>
+    <if test="requestIp != null">AND smsv.requestIp = #{requestIp}</if>
+    <if test="startExpirationDate != null">AND smsv.expirationDate &gt;= #{startExpirationDate}</if>
+    <if test="endExpirationDate != null">AND smsv.expirationDate &lt;= #{endExpirationDate}</if>
+    <if test="excludeStates != null">AND smsv.state NOT IN
+      <foreach collection="excludeStates" item="state" open="(" close=")" separator=", ">#{state}</foreach>
+    </if>
+    <if test="includeStates != null &amp;&amp; excludeStates == null">AND smsv.state IN
+      <foreach collection="includeStates" item="state" open="(" close=")" separator=", ">#{state}</foreach>
+    </if>
+    <if test="excludeTypes != null">AND smsv.type NOT IN
+      <foreach collection="excludeTypes" item="type" open="(" close=")" separator=", ">#{type}</foreach>
+    </if>
+    <if test="includeTypes != null &amp;&amp; excludeTypes == null">AND smsv.type IN
+      <foreach collection="includeTypes" item="type" open="(" close=")" separator=", ">#{type}</foreach>
+    </if>
+    <if test="smsMessageQuery != null &amp;&amp; joinSmsMessage">
+      <if test="smsMessageQuery.ids != null">AND smsMessage.id IN
+        <foreach collection="smsMessageQuery.ids" item="id" open="(" close=")" separator=", ">#{id }</foreach>
+      </if>
+      <if test="smsMessageQuery.startCreatedDate != null">AND smsMessage.createdDate &gt;= #{smsMessageQuery.startCreatedDate }</if>
+      <if test="smsMessageQuery.endCreatedDate != null">AND smsMessage.createdDate &lt;= #{smsMessageQuery.endCreatedDate }</if>
+      <if test="smsMessageQuery.phoneNumber != null">AND smsMessage.phoneNumber = #{smsMessageQuery.phoneNumber}</if>
+      <if test="smsMessageQuery.excludeStates != null">AND smsMessage.state NOT IN
+        <foreach collection="smsMessageQuery.excludeStates" item="state" open="(" close=")" separator=", ">#{state}</foreach>
+      </if>
+      <if test="smsMessageQuery.includeStates != null &amp;&amp; smsMessageQuery.excludeStates == null">AND smsMessage.state IN
+        <foreach collection="smsMessageQuery.includeStates" item="state" open="(" close=")" separator=", ">#{state}</foreach>
+      </if>
+    </if>
+  </sql>
+  <sql id="QUERY_WHERE">
+    <where>
+      <include refid="QUERY_WHERE_SQL"/>
+    </where>
+  </sql>
+  <sql id="QUERY_ORDER_BY">
+    <if test="orderBys.size() &gt; 0">ORDER BY
+      <foreach collection="orderBys" item="value" index="key" separator=", ">smsv.${key} ${value}</foreach>
+    </if>
+  </sql>
+  <sql id="QUERY_LIMIT">
+    <if test="pageSize &gt; 0">LIMIT ${start}, ${pageSize}</if>
+  </sql>
+  <select id="count" parameterType="com.youruan.dentistry.core.message.query.SmsVerificationQuery" resultType="java.lang.Integer">SELECT COUNT(*) FROM SmsVerification AS smsv
+    <include refid="QUERY_JOIN"/>
+    <include refid="QUERY_WHERE"/>
+  </select>
+  <select id="query" parameterType="com.youruan.dentistry.core.message.query.SmsVerificationQuery" resultMap="VO_RESULT">SELECT
+    <include refid="QUERY_COLUMNS"/>
+    <include refid="JOIN_COLUMNS"/> FROM SmsVerification AS smsv
+    <include refid="QUERY_JOIN"/>
+    <include refid="QUERY_WHERE"/>
+    <include refid="QUERY_ORDER_BY"/>
+    <include refid="QUERY_LIMIT"/>
+  </select>
+</mapper>

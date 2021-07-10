@@ -1,0 +1,91 @@
+
+body,
+div,
+dl,
+dt,
+dd,
+ul,
+ol,
+li,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+pre,
+code,
+form,
+fieldset,
+legend,
+input,
+textarea,
+p,
+blockquote,
+th,
+td,
+hr,
+button,
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+menu,
+nav,
+section {
+  margin: 0;
+  padding: 0;
+}
+ul,
+ol {
+  list-style: none;
+}
+
+.text-success {
+  color: #52c41a;
+}
+
+.text-muted {
+  color: #999;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-warning {
+  color: #c48c1a;
+}
+
+.pull-right {
+  float: right;
+}
+
+.actions {
+  margin: 12px 0;
+}
+
+body {
+  background: #f0f2f5;
+}
+
+.text-strong {
+  font-weight: bold;
+}
+
+.ant-form + .ant-table-wrapper {
+  margin-top: 12px;
+}
+
+.edit-container {
+  padding-top: 12px;
+}
+
+.form-group-title {
+  margin-bottom: 0;
+  font-weight: bold;
+}

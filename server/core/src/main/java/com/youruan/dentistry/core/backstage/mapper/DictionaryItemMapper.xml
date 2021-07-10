@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.youruan.dentistry.core.backstage.mapper.DictionaryItemMapper">
+  <resultMap id="BASE_RESULT" type="com.youruan.dentistry.core.backstage.domain.DictionaryItem">
+    <id property="id" column="id"/>
+    <result property="createdDate" column="createdDate"/>
+    <result property="lastModifiedDate" column="lastModifiedDate"/>
+    <result property="version" column="version"/>
+    <result property="name" column="name"/>
+    <result property="enabled" column="enabled"/>
+    <result property="dictionaryId" column="dictionaryId"/>
+  </resultMap>
+  <resultMap id="VO_LIST_RESULT" type="com.youruan.dentistry.core.backstage.vo.DictionaryItemListVo">
+    <id property="id" column="id"/>
+    <result property="createdDate" column="createdDate"/>
+    <result property="lastModifiedDate" column="lastModifiedDate"/>
+    <result property="version" column="version"/>
+    <result property="dictionaryName" column="dictionaryName"/>
+    <result property="name" column="name"/>
+    <result property="mark" column="mark"/>
+    <result property="enabled" column="enabled"/>
+  </resultMap>
+  <sql id="BASE_COLUMNS">dit.id, dit.createdDate, dit.lastModifiedDate, dit.version, dit.name, dit.enabled, dit.dictionaryId</sql>
+  <sql id="QUERY_COLUMNS">dit.id, dit.createdDate, dit.lastModifiedDate, dit.version, dit.name, dit.enabled, dit.dictionaryId</sql>
+  <resultMap id="VO_RESULT" type="com.youruan.dentistry.core.backstage.vo.ExtendedDictionaryItem" extends="BASE_RESULT"/>
+  <sql id="JOIN_COLUMNS">
+    ,dic.name AS dictionaryName,dic.mark
+  </sql>
+  <select id="get" resultMap="BASE_RESULT" parameterType="java.lang.Long">SELECT 
+    <include refid="BASE_COLUMNS"/> FROM DictionaryItem dit WHERE id = #{id }
+  </select>
+  <delete id="delete" parameterType="java.lang.Long">DELETE FROM DictionaryItem WHERE id = #{id}</delete>
+  <insert id="add" parameterType="com.youruan.dentistry.core.backstage.domain.DictionaryItem" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+    INSERT INTO DictionaryItem(id, createdDate, version, name, enabled, dictionaryId) VALUES(#{id }, #{createdDate}, 0, #{name}, #{enabled}, #{dictionaryId})
+    </insert>
+  <update id="update" parameterType="com.youruan.dentistry.core.backstage.domain.DictionaryItem">UPDATE DictionaryItem
+    <set>lastModifiedDate = now(), version = version + 1, name = #{name}, enabled = #{enabled}, dictionaryId = #{dictionaryId}</set>
+    <where>id = #{id} AND version = #{version}</where>
+  </update>
+  <sql id="QUERY_JOIN">
+    JOIN Dictionary dic ON dit.dictionaryId = dic.id
+  </sql>
+  <sql id="QUERY_WHERE_SQL">
+    <if test="ids != null">AND dit.id IN
+      <foreach collection="ids" item="id" open="(" close=")" separator=", ">#{id }</foreach>
+    </if>
+    <if test="startCreatedDate != null">AND dit.createdDate &gt;= #{startCreatedDate }</if>
+    <if test="endCreatedDate != null">AND dit.createdDate &lt;= #{endCreatedDate }</if>
+    <if test="name != null">AND dit.name = #{name }</if>
+    <if test="likeName != null">AND dit.name like CONCAT('%',#{likeName},'%')</if>
+    <if test="likeDictionaryName != null">AND dic.name like CONCAT('%',#{likeDictionaryName},'%')</if>
+    <if test="enabled != null">AND dit.enabled = #{enabled}</if>
+    <if test="dictionaryId != null">AND dit.dictionaryId = #{dictionaryId}</if>
+  </sql>
+  <sql id="QUERY_WHERE">
+    <where>
+      <include refid="QUERY_WHERE_SQL"/>
+    </where>
+  </sql>
+  <sql id="QUERY_ORDER_BY">
+    <if test="orderBys.size() &gt; 0">ORDER BY
+      <foreach collection="orderBys" item="value" index="key" separator=", ">dit.${key} ${value}</foreach>
+    </if>
+  </sql>
+  <sql id="QUERY_LIMIT">
+    <if test="pageSize &gt; 0">LIMIT ${start}, ${pageSize}</if>
+  </sql>
+  <select id="count" parameterType="com.youruan.dentistry.core.backstage.query.DictionaryItemQuery" resultType="java.lang.Integer">SELECT COUNT(*) FROM DictionaryItem AS dit
+    <include refid="QUERY_JOIN"/>
+    <include refid="QUERY_WHERE"/>
+  </select>
+  <select id="query" parameterType="com.youruan.dentistry.core.backstage.query.DictionaryItemQuery" resultMap="VO_LIST_RESULT">SELECT
+    <include refid="QUERY_COLUMNS"/>
+    <include refid="JOIN_COLUMNS"/> FROM DictionaryItem AS dit
+    <include refid="QUERY_JOIN"/>
+    <include refid="QUERY_WHERE"/>
+    <include refid="QUERY_ORDER_BY"/>
+    <include refid="QUERY_LIMIT"/>
+  </select>
+</mapper>

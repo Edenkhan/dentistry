@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.youruan.dentistry.core.backstage.mapper.AppointManageMapper">
+  <resultMap id="BASE_RESULT" type="com.youruan.dentistry.core.backstage.domain.AppointManage">
+    <id property="id" column="id"/>
+    <result property="createdDate" column="createdDate"/>
+    <result property="lastModifiedDate" column="lastModifiedDate"/>
+    <result property="version" column="version"/>
+    <result property="topLimit" column="topLimit"/>
+    <result property="appointNum" column="appointNum"/>
+    <result property="appointDate" column="appointDate"/>
+    <result property="timePeriod" column="timePeriod"/>
+    <result property="enabled" column="enabled"/>
+    <result property="shopId" column="shopId"/>
+  </resultMap>
+  <sql id="BASE_COLUMNS">am.id, am.createdDate, am.lastModifiedDate, am.version, am.topLimit, am.appointNum, am.appointDate, am.timePeriod, am.enabled, am.shopId</sql>
+  <sql id="QUERY_COLUMNS">am.id, am.createdDate, am.lastModifiedDate, am.version, am.topLimit, am.appointNum, am.appointDate, am.timePeriod, am.enabled, am.shopId</sql>
+  <resultMap id="VO_RESULT" type="com.youruan.dentistry.core.backstage.vo.ExtendedAppointManage" extends="BASE_RESULT"/>
+  <sql id="JOIN_COLUMNS">
+
+  </sql>
+  <select id="get" resultMap="BASE_RESULT" parameterType="java.lang.Long">SELECT 
+    <include refid="BASE_COLUMNS"/> FROM AppointManage am WHERE id = #{id }
+  </select>
+  <delete id="delete" parameterType="java.lang.Long">DELETE FROM AppointManage WHERE id = #{id}</delete>
+  <insert id="add" parameterType="com.youruan.dentistry.core.backstage.domain.AppointManage" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+    INSERT INTO AppointManage(createdDate, version, topLimit, appointNum, appointDate, timePeriod, enabled, shopId) VALUES(#{createdDate}, 0, #{topLimit}, #{appointNum}, #{appointDate}, #{timePeriod}, #{enabled}, #{shopId})
+    </insert>
+  <insert id="batch" parameterType="com.youruan.dentistry.core.backstage.domain.AppointManage" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+    INSERT INTO AppointManage(createdDate, version, topLimit, appointNum, appointDate, timePeriod, enabled, shopId)
+    VALUES
+    <foreach collection="appointList" separator="," item="item">
+      (#{item.createdDate}, 0, #{item.topLimit}, #{item.appointNum}, #{item.appointDate}, #{item.timePeriod}, #{item.enabled}, #{item.shopId})
+    </foreach>
+  </insert>
+  <update id="update" parameterType="com.youruan.dentistry.core.backstage.domain.AppointManage">UPDATE AppointManage
+    <set>
+      lastModifiedDate = now(),
+      version = version + 1,
+      <if test="topLimit != null">topLimit = #{topLimit},</if>
+      <if test="appointNum != null">appointNum = #{appointNum},</if>
+      <if test="appointDate != null">appointDate = #{appointDate},</if>
+      <if test="timePeriod != null">timePeriod = #{timePeriod},</if>
+      <if test="enabled != null">enabled = #{enabled},</if>
+      <if test="shopId != null">shopId = #{shopId}</if>
+    </set>
+    <where>id = #{id} AND version = #{version}</where>
+  </update>
+  <update id="updateTopLimit" parameterType="com.youruan.dentistry.core.backstage.domain.AppointManage">UPDATE AppointManage
+    <set>
+      lastModifiedDate = now(),
+      version = version + 1,
+      <if test="topLimit != null">topLimit = #{topLimit},</if>
+    </set>
+    <where>shopId = #{shopId}</where>
+  </update>
+  <sql id="QUERY_JOIN">
+
+  </sql>
+  <sql id="QUERY_WHERE_SQL">
+    <if test="ids != null">AND am.id IN
+      <foreach collection="ids" item="id" open="(" close=")" separator=", ">#{id }</foreach>
+    </if>
+    <if test="startCreatedDate != null">AND am.createdDate &gt;= #{startCreatedDate }</if>
+    <if test="endCreatedDate != null">AND am.createdDate &lt;= #{endCreatedDate }</if>
+    <if test="startAppointDate != null">AND am.appointDate &gt;= #{startAppointDate}</if>
+    <if test="endAppointDate != null">AND am.appointDate &lt;= #{endAppointDate}</if>
+    <if test="shopId != null">AND am.shopId = #{shopId}</if>
+  </sql>
+  <sql id="QUERY_WHERE">
+    <where>
+      <include refid="QUERY_WHERE_SQL"/>
+    </where>
+  </sql>
+  <sql id="QUERY_ORDER_BY">
+    <if test="orderBys.size() &gt; 0">ORDER BY
+      <foreach collection="orderBys" item="value" index="key" separator=", ">am.${key} ${value}</foreach>
+    </if>
+  </sql>
+  <sql id="QUERY_LIMIT">
+    <if test="pageSize &gt; 0">LIMIT ${start}, ${pageSize}</if>
+  </sql>
+  <select id="count" parameterType="com.youruan.dentistry.core.backstage.query.AppointManageQuery" resultType="java.lang.Integer">SELECT COUNT(*) FROM AppointManage AS am
+    <include refid="QUERY_JOIN"/>
+    <include refid="QUERY_WHERE"/>
+  </select>
+  <select id="query" parameterType="com.youruan.dentistry.core.backstage.query.AppointManageQuery" resultMap="VO_RESULT">
+    SELECT
+    <include refid="QUERY_COLUMNS"/>
+    <include refid="JOIN_COLUMNS"/>
+    FROM AppointManage AS am
+    <include refid="QUERY_JOIN"/>
+    <include refid="QUERY_WHERE"/>
+    order by am.appointDate asc
+    <include refid="QUERY_LIMIT"/>
+  </select>
+</mapper>

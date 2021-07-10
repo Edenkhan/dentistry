@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title th:text="${title}"></title>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/style/bootstrap-datetimepicker/bootstrap-datetimepicker.min.css">
+  <link rel="stylesheet" type="text/css" href="/js/daterangepicker/daterangepicker.css" />
+  <link rel="stylesheet" href="/style/manage.css">
+  <link rel="stylesheet" href="/buttons/css/font-awesome.min.css">
+  <link rel="stylesheet" href="/style/views/table-view.css">
+  <link rel="stylesheet" href="/js/vendor/awesomplete.css">
+  <script src="/js/jquery-1.8.2.min.js"></script>
+</head>
+<body>
+
+<div class="container-fluid">
+  #parse("/common/manage_header.html")
+  <div class="row-fluid">
+    <div class="span12">
+      <div class="row-fluid">
+        <div class="span2">#parse("/common/manage_left_menu.html")</div>
+        <div class="span10 content-wrapper">
+          <ul class="breadcrumb"><th:block th:each="breadcrumb : ${breadcrumbs}">
+            <li th:class="${breadcrumbStat.last} ? 'active'" th:text="${breadcrumb}"></li><th:block th:unless="${breadcrumbStat.last}">
+            <li><span class="divider">/</span></li></th:block></th:block>
+          </ul>
+          <div id="content" class="row-fluid">
+            <div class="span12">
+              <form class="filter-bar" th:action="${actionName}">
+                <input type="hidden" name="cmd" th:value="${actionCmdName}">
+                <input type="hidden" name="_sortProperty" value="$!_sortProperty">
+                <input type="hidden" name="_sortType" value="$!_sortType">
+                <input type="hidden" name="_pageSize" value="$!_pageSize">
+                <input type="hidden" name="_page" value="$!_page">
+                <div class="row-fluid">
+                  <div class="span12">
+                    <div class="filter-bar-header">
+                      <div class="dropdown shortcuts-nav">查询选项</div>
+                      <div class="pull-right">
+                        <div class="dropdown sort-dropdown">
+                          <a class="dropdown-toggle" data-toggle="dropdown" href="#"><th:block th:each="sort : ${sortItems}">
+                            #if($_sortProperty == '[[${sort.propertyName}]]' && $_sortType == 'ASC') [[${sort.propertyDesc}]] · 最早 <span class="icon icon-caret-up"></span>
+                            #elseif($_sortProperty == '[[${sort.propertyName}]]' && $_sortType == 'DESC') [[${sort.propertyDesc}]] · 最近 <span class="icon icon-caret-down"></span></th:block>
+                            #else 默认排序 <span class="icon icon-sort"></span>
+                            #end
+                          </a>
+                          <ul class="dropdown-menu" role="menu"><th:block th:each="sort : ${sortItems}" th:inline="text">
+                            <th:block th:utext='|<li #if($_sortProperty == "${sort.propertyName}" && $_sortType == "DESC")class="active"#end><a tabindex="-1" href="javascript:" data-sort-property="${sort.propertyName}" data-sort-type="DESC">${sort.propertyDesc} · 最近</a></li>|'></th:block>
+                            <th:block th:utext='|<li #if($_sortProperty == "${sort.propertyName}" && $_sortType == "ASC")class="active"#end><a tabindex="-1" href="javascript:" data-sort-property="${sort.propertyName}" data-sort-type="ASC">${sort.propertyDesc} · 最早</a></li>|'></th:block></th:block>
+                            <li class="divider"></li>
+                            <li #if($_sortProperty == "")class="active"#end><a tabindex="-1" href="javascript:">默认排序</a></li>
+                          </ul>
+                          <button class="js-filter btn btn-primary filter-btn" type="submit"><span class="icon icon-search"></span> 查询</button>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="filter-bar-body">
+                      <div class="row-fluid">
+                        <div class="span2" th:each="filterItem : ${filterItems}"><th:block th:if="${filterItem.type.name() ==  'CONST_GROUP'}">
+                          <label th:for="${filterItem.propertyName}"><span class="icon icon-flag"></span> [[${filterItem.propertyDesc}]]</label>
+                          <select class="filter-control input-block-level" th:name="${filterItem.propertyName}" th:id="${filterItem.propertyName}">
+                            <option value="">全部</option><th:block th:each="constant : ${filterItem.constants}" th:utext='|
+                            <option #if($${filterItem.propertyName} == "${constantStat.index}") selected #end value="${constantStat.index}">${constant.description}</option>|'></th:block>
+                          </select>
+                        </th:block><th:block th:if="${filterItem.type.name() ==  'DATE'}">
+                          <label th:for="${filterItem.propertyName}" th:title="${filterItem.propertyName}"><span class="icon icon-calendar"></span> [[${filterItem.propertyDesc}]]</label>
+                          <input class="input-block-level js-date-range-picker filter-control" th:id="${filterItem.propertyName}" type="text" th:name="${filterItem.propertyName}" th:value="|$!${filterItem.propertyName}|">
+                          <input type="hidden" th:name="|start_${filterItem.propertyName}|" th:value="|$!start_${filterItem.propertyName}|">
+                          <input type="hidden" th:name="|end_${filterItem.propertyName}|" th:value="|$!end_${filterItem.propertyName}|">
+                        </th:block><th:block th:if="${filterItem.type.name() ==  'TEXT'}">
+                          <label th:for="${filterItem.propertyName}" th:text="${filterItem.propertyDesc}"></label>
+                          <input class="input-block-level filter-control" th:id="${filterItem.propertyName}" type="text" th:name="${filterItem.propertyName}" th:value="|$!${filterItem.propertyName}|">
+                        </th:block></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </form>
+              #if(!$list || $list.isEmpty())
+              <div class="alert alert-info empty-tip">没有查询到相关记录。</div>
+              #else
+              <div class="table-view">
+                <table class="table table-hover table-bordered">
+                  <thead>
+                  <tr>
+                    <th th:each="tableRow : ${tableRows}" th:text="${tableRow.propertyDesc}"></th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  #foreach($e in $list)
+                    <tr><th:block th:each="tableRow : ${tableRows}">
+                      <td th:if="${tableRow.type.name() == 'DATE'}">$Utils.simpleDateFormat($e.[[${tableRow.propertyName}]], "yyyy-MM-dd HH:mm:ss")</td><td th:if="${tableRow.type.name() == 'USER'}"><a th:href="|/userinfo.htm?id=$!e.${tableRow.propertyName}|" target="_blank">$!e.[[${#strings.substringBefore(tableRow.propertyName, 'Id')}]].userName</a></td><td th:if="${tableRow.type.name() == 'BID_REQUEST'}"><a th:href="|/borrowinfo.htm?jid=$!e.${tableRow.propertyName}|" target="_blank">$!e.[[${#strings.substringBefore(tableRow.propertyName, 'Id')}]].title</a></td><td th:if="${tableRow.type.name() == 'TEXT'}">$!e.[[${tableRow.propertyName}]]</td><td th:if="${tableRow.type.name() == 'DECIMAL'}">$Utils.formatNumber($e.[[${tableRow.propertyName}]])</td><td th:if="${tableRow.type.name() == 'CONST_GROUP'}">
+                        <th:block th:each="const, constStat : ${tableRow.data}"><th:block th:if="${constStat.first}">#if($e.[[${tableRow.propertyName}]] == [[${constStat.index}]]) <span class="label label-info" th:text="${const.description}"></span></th:block><th:block th:unless="${constStat.first}">
+                        #elseif($e.[[${tableRow.propertyName}]] == [[${constStat.index}]]) <span class="label label-info" th:text="${const.description}"></span></th:block></th:block>
+                        #end
+                      </td></th:block>
+                    </tr>
+                  #end
+                  </tbody>
+                </table>
+              </div>
+              #end
+              #if($rows > 0)
+              <p class="text-right">总行数：<strong class="text-success">$rows</strong></p>
+              $!{gotoPageHTML}
+              #end
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="/js/daterangepicker/moment.min.js"></script>
+<script src="/js/daterangepicker/moment.zh-cn.js"></script>
+<script src="/js/daterangepicker/daterangepicker.js"></script>
+
+<script src="/bootstrap/js/bootstrap.min.js"></script>
+<script src="/js/views/menu-page.js"></script>
+<script src="/js/views/table-view.js"></script>
+</body>
+</html>

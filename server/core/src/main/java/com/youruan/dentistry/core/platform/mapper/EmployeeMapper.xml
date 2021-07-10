@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.youruan.dentistry.core.platform.mapper.EmployeeMapper">
+  <resultMap id="BASE_RESULT" type="com.youruan.dentistry.core.platform.domain.Employee">
+    <id property="id" column="id"/>
+    <result property="createdDate" column="createdDate"/>
+    <result property="lastModifiedDate" column="lastModifiedDate"/>
+    <result property="version" column="version"/>
+    <result property="username" column="username"/>
+    <result property="realName" column="realName"/>
+    <result property="password" column="password"/>
+    <result property="phoneNumber" column="phoneNumber"/>
+    <result property="locked" column="locked"/>
+  </resultMap>
+  <sql id="BASE_COLUMNS">e.id, e.createdDate, e.lastModifiedDate, e.version,e.username,e.realName,e.password,e.phoneNumber,e.locked</sql>
+  <sql id="QUERY_COLUMNS">e.id, e.createdDate, e.lastModifiedDate, e.version,e.username,e.realName,e.password,e.phoneNumber,e.locked</sql>
+  <resultMap id="VO_RESULT" type="com.youruan.dentistry.core.platform.vo.ExtendedEmployee" extends="BASE_RESULT"/>
+  <sql id="JOIN_COLUMNS"/>
+  <select id="get" resultMap="BASE_RESULT" parameterType="java.lang.Long">SELECT 
+    <include refid="BASE_COLUMNS"/> FROM Employee e WHERE id = #{id }
+  </select>
+  <delete id="delete" parameterType="java.lang.Long">DELETE FROM Employee WHERE id = #{id}</delete>
+  <insert id="add" parameterType="com.youruan.dentistry.core.platform.domain.Employee" useGeneratedKeys="true" keyProperty="id" keyColumn="id">INSERT INTO Employee(id, createdDate, version,username,realName,password,phoneNumber,locked) VALUES(#{id }, #{createdDate}, 0, #{username}, #{realName}, #{password}, #{phoneNumber}, #{locked})</insert>
+  <update id="update" parameterType="com.youruan.dentistry.core.platform.domain.Employee">UPDATE Employee
+    <set>
+    lastModifiedDate = now(),
+    version = version + 1,
+    <if test="username!=null">username = #{username},</if>
+    <if test="realName!=null">realName = #{realName},</if>
+    <if test="password!=null">password = #{password},</if>
+    <if test="phoneNumber!=null">phoneNumber = #{phoneNumber},</if>
+    <if test="locked!=null">locked = #{locked}</if>
+    </set>
+    <where>id = #{id} AND version = #{version}</where>
+  </update>
+  <sql id="QUERY_JOIN"/>
+  <sql id="QUERY_WHERE_SQL">
+    <if test="ids != null">AND e.id IN
+      <foreach collection="ids" item="id" open="(" close=")" separator=", ">#{id }</foreach>
+    </if>
+    <if test="startCreatedDate != null">AND e.createdDate &gt;= #{startCreatedDate }</if>
+    <if test="endCreatedDate != null">AND e.createdDate &lt;= #{endCreatedDate }</if>
+    <if test="username != null">AND e.username = #{username}</if>
+    <if test="likeUsername != null">AND e.username LIKE CONCAT('%', #{likeUsername} ,'%')</if>
+    <if test="likeRealName != null">AND e.realName LIKE CONCAT('%', #{likeRealName} ,'%')</if>
+    <if test="phoneNumber != null">AND e.phoneNumber = #{phoneNumber}</if>
+    <if test="likePhoneNumber != null">AND e.phoneNumber LIKE CONCAT('%', #{likePhoneNumber} ,'%')</if>
+    <if test="locked != null">AND e.locked = #{locked}</if>
+  </sql>
+  <sql id="QUERY_WHERE">
+    <where>
+      <include refid="QUERY_WHERE_SQL"/>
+    </where>
+  </sql>
+  <sql id="QUERY_ORDER_BY">
+    <if test="orderBys.size() &gt; 0">ORDER BY
+      <foreach collection="orderBys" item="value" index="key" separator=", ">e.${key} ${value}</foreach>
+    </if>
+  </sql>
+  <sql id="QUERY_LIMIT">
+    <if test="pageSize &gt; 0">LIMIT ${start}, ${pageSize}</if>
+  </sql>
+  <select id="count" parameterType="com.youruan.dentistry.core.platform.query.EmployeeQuery" resultType="java.lang.Integer">SELECT COUNT(*) FROM Employee AS e
+    <include refid="QUERY_JOIN"/>
+    <include refid="QUERY_WHERE"/>
+  </select>
+  <select id="query" parameterType="com.youruan.dentistry.core.platform.query.EmployeeQuery" resultMap="VO_RESULT">SELECT
+    <include refid="QUERY_COLUMNS"/>
+    <include refid="JOIN_COLUMNS"/> FROM Employee AS e
+    <include refid="QUERY_JOIN"/>
+    <include refid="QUERY_WHERE"/>
+    <include refid="QUERY_ORDER_BY"/>
+    <include refid="QUERY_LIMIT"/>
+  </select>
+</mapper>

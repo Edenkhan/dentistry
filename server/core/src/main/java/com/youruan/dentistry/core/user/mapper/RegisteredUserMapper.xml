@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.youruan.dentistry.core.user.mapper.RegisteredUserMapper">
+  <resultMap id="BASE_RESULT" type="com.youruan.dentistry.core.user.domain.RegisteredUser">
+    <id property="id" column="id"/>
+    <result property="createdDate" column="createdDate"/>
+    <result property="lastModifiedDate" column="lastModifiedDate"/>
+    <result property="version" column="version"/>
+    <result property="realName" column="realName"/>
+    <result property="age" column="age"/>
+    <result property="phoneNumber" column="phoneNumber"/>
+    <result property="locked" column="locked"/>
+    <result property="gender" column="gender"/>
+    <result property="openid" column="openid"/>
+    <result property="nickname" column="nickname"/>
+    <result property="avatar" column="avatar"/>
+  </resultMap>
+  <resultMap id="RECORD_RESULT" type="com.youruan.dentistry.core.user.vo.UserRecordVo">
+    <id property="id" column="id"/>
+    <result property="createdDate" column="createdDate"/>
+    <result property="lastModifiedDate" column="lastModifiedDate"/>
+    <result property="version" column="version"/>
+    <result property="realName" column="realName"/>
+    <result property="gender" column="gender"/>
+    <result property="phoneNumber" column="phoneNumber"/>
+    <result property="reportCounts" column="reportCounts"/>
+    <result property="productCounts" column="productCounts"/>
+    <result property="state" column="state"/>
+
+  </resultMap>
+  <sql id="BASE_COLUMNS">ru.id, ru.createdDate, ru.lastModifiedDate, ru.version,ru.realName,ru.age,ru.phoneNumber,ru.state,ru.gender,ru.openid,ru.nickname,ru.avatar</sql>
+  <sql id="QUERY_COLUMNS">ru.id, ru.createdDate, ru.lastModifiedDate, ru.version,ru.realName,ru.age,ru.phoneNumber,ru.state,ru.gender,ru.openid,ru.nickname,ru.avatar</sql>
+  <resultMap id="VO_RESULT" type="com.youruan.dentistry.core.user.vo.ExtendedRegisteredUser" extends="BASE_RESULT"/>
+  <sql id="JOIN_COLUMNS">
+
+  </sql>
+  <select id="get" resultMap="BASE_RESULT" parameterType="java.lang.Long">SELECT
+    <include refid="BASE_COLUMNS"/> FROM RegisteredUser ru WHERE id = #{id }
+  </select>
+  <select id="getByOpenid" resultMap="BASE_RESULT" parameterType="java.lang.String">SELECT
+    <include refid="BASE_COLUMNS"/> FROM RegisteredUser ru WHERE openid = #{openid}
+  </select>
+  <delete id="delete" parameterType="java.lang.Long">DELETE FROM RegisteredUser WHERE id = #{id}</delete>
+
+  <insert id="add" parameterType="com.youruan.dentistry.core.user.domain.RegisteredUser" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+    INSERT INTO RegisteredUser(id,createdDate,version,realName,age,phoneNumber,gender,openid,nickname,avatar)
+    VALUES (#{id },#{createdDate},0,#{realName},#{age},#{phoneNumber},#{gender},#{openid},#{nickname},#{avatar})
+  </insert>
+
+  <update id="update" parameterType="com.youruan.dentistry.core.user.domain.RegisteredUser">
+    UPDATE RegisteredUser
+    <set>
+      lastModifiedDate = now(),
+      version = version + 1,
+      <if test="realName != null">realName = #{realName},</if>
+      <if test="age != null">age = #{age},</if>
+      <if test="phoneNumber != null">phoneNumber = #{phoneNumber},</if>
+      <if test="locked != null">locked = #{locked},</if>
+      <if test="gender != null">gender = #{gender},</if>
+      <if test="avatar != null">avatar = #{avatar},</if>
+    </set>
+    <where>id = #{id} AND version = #{version}</where>
+  </update>
+
+  <sql id="QUERY_JOIN">
+
+  </sql>
+  <sql id="QUERY_WHERE_SQL">
+    <if test="ids != null">AND ru.id IN
+      <foreach collection="ids" item="id" open="(" close=")" separator=", ">#{id }</foreach>
+    </if>
+    <if test="startCreatedDate != null">AND ru.createdDate &gt;= #{startCreatedDate }</if>
+    <if test="endCreatedDate != null">AND ru.createdDate &lt;= #{endCreatedDate }</if>
+    <if test="realName != null">AND ru.realName = #{realName}</if>
+    <if test="likeRealName != null">AND ru.realName LIKE CONCAT('%', #{likeRealName} ,'%')</if>
+    <if test="phoneNumber != null">AND ru.phoneNumber = #{phoneNumber}</if>
+    <if test="likePhoneNumber != null">AND ru.phoneNumber LIKE CONCAT('%', #{likePhoneNumber} ,'%')</if>
+    <if test="state != null">AND ru.state = #{state}</if>
+
+  </sql>
+  <sql id="QUERY_WHERE">
+    <where>
+      <include refid="QUERY_WHERE_SQL"/>
+    </where>
+  </sql>
+  <sql id="QUERY_ORDER_BY">
+    <if test="orderBys.size() &gt; 0">ORDER BY
+      <foreach collection="orderBys" item="value" index="key" separator=", ">ru.${key} ${value}</foreach>
+    </if>
+  </sql>
+  <sql id="QUERY_LIMIT">
+    <if test="pageSize &gt; 0">LIMIT ${start}, ${pageSize}</if>
+  </sql>
+  <select id="count" parameterType="com.youruan.dentistry.core.user.query.RegisteredUserQuery" resultType="java.lang.Integer">
+    SELECT COUNT(*) FROM RegisteredUser AS ru
+    <include refid="QUERY_WHERE"/>
+  </select>
+  <select id="query" parameterType="com.youruan.dentistry.core.user.query.RegisteredUserQuery" resultMap="VO_RESULT">SELECT
+    <include refid="QUERY_COLUMNS"/> FROM RegisteredUser AS ru
+    <include refid="QUERY_WHERE"/>
+    <include refid="QUERY_ORDER_BY"/>
+    <include refid="QUERY_LIMIT"/>
+  </select>
+</mapper>

@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.youruan.dentistry.core.frontdesk.mapper.OrdersMapper">
+    <resultMap id="BASE_RESULT" type="com.youruan.dentistry.core.frontdesk.domain.Orders">
+        <id property="id" column="id"/>
+        <result property="createdDate" column="createdDate"/>
+        <result property="lastModifiedDate" column="lastModifiedDate"/>
+        <result property="version" column="version"/>
+        <result property="orderNo" column="orderNo"/>
+        <result property="price" column="price"/>
+        <result property="totalNum" column="totalNum"/>
+        <result property="appointNum" column="appointNum"/>
+        <result property="payStatus" column="payStatus"/>
+        <result property="appointStatus" column="appointStatus"/>
+        <result property="userId" column="userId"/>
+        <result property="productId" column="productId"/>
+        <result property="shopId" column="shopId"/>
+        <result property="dicItemId" column="dicItemId"/>
+    </resultMap>
+    <resultMap id="RECORD_RESULT" type="com.youruan.dentistry.core.backstage.vo.OrderRecordVo">
+        <id property="id" column="id"/>
+        <result property="createdDate" column="createdDate"/>
+        <result property="lastModifiedDate" column="lastModifiedDate"/>
+        <result property="version" column="version"/>
+        <result property="price" column="price"/>
+        <result property="orderNo" column="orderNo"/>
+        <result property="productName" column="productName"/>
+        <result property="productType" column="productType"/>
+        <result property="userType" column="userType"/>
+        <result property="shopName" column="shopName"/>
+        <result property="realName" column="realName"/>
+        <result property="phoneNumber" column="phoneNumber"/>
+    </resultMap>
+    <resultMap id="BOUGHT_RESULT" type="com.youruan.dentistry.core.user.vo.UserBoughtVo">
+        <id property="id" column="id"/>
+        <result property="createdDate" column="createdDate"/>
+        <result property="lastModifiedDate" column="lastModifiedDate"/>
+        <result property="version" column="version"/>
+        <result property="boughtTime" column="boughtTime"/>
+        <result property="productName" column="productName"/>
+        <result property="productType" column="productType"/>
+        <result property="userType" column="userType"/>
+        <result property="price" column="price"/>
+        <result property="totalNum" column="totalNum"/>
+        <result property="appointNum" column="appointNum"/>
+        <result property="peopleNum" column="peopleNum"/>
+        <result property="dicItemName" column="dicItemName"/>
+        <result property="productState" column="productState"/>
+    </resultMap>
+    <sql id="BASE_COLUMNS">o.id, o.createdDate, o.lastModifiedDate, o.version, o.orderNo, o.price, o.totalNum, o.appointNum, o.boughtTime, o.payStatus, o.appointStatus, o.userId, o.productId, o.shopId, o.dicItemId</sql>
+    <sql id="QUERY_COLUMNS">o.id, o.createdDate, o.lastModifiedDate, o.version, o.orderNo, o.price, o.totalNum, o.appointNum, o.boughtTime, o.payStatus, o.appointStatus, o.userId, o.productId, o.shopId, o.dicItemId</sql>
+    <resultMap id="VO_RESULT" type="com.youruan.dentistry.core.frontdesk.vo.ExtendedOrders" extends="BASE_RESULT"/>
+    <sql id="RECORD_JOIN_COLUMNS">
+        ,ru.realName,ru.phoneNumber
+        ,p.name AS productName,p.type AS productType,p.userType
+        ,s.name AS shopName
+    </sql>
+    <sql id="BOUGHT_JOIN_COLUMNS">
+        ,p.name AS productName,p.type AS productType,p.userType,p.state AS productState,p.peopleNum
+        ,dit.name AS dicItemName
+    </sql>
+    <select id="get" resultMap="BASE_RESULT" parameterType="java.lang.Long">SELECT
+        <include refid="BASE_COLUMNS"/> FROM Orders o WHERE id = #{id }
+    </select>
+    <delete id="delete" parameterType="java.lang.Long">DELETE FROM Orders WHERE id = #{id}</delete>
+    <delete id="deleteByCondition" parameterType="com.youruan.dentistry.core.frontdesk.domain.Orders">
+        DELETE FROM Orders
+        <where>
+            <if test="userId != null">userId = #{userId}</if>
+            <if test="productId != null">AND productId = #{productId}</if>
+            <if test="shopId != null">AND shopId = #{shopId}</if>
+            <if test="dicItemId != null">AND dicItemId = #{dicItemId}</if>
+        </where>
+    </delete>
+    <insert id="add" parameterType="com.youruan.dentistry.core.frontdesk.domain.Orders" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        INSERT INTO Orders(id, createdDate, version, orderNo, price, totalNum, appointNum, payStatus, appointStatus, userId, productId, shopId, dicItemId)
+        VALUES(#{id }, #{createdDate}, 0, #{orderNo}, #{price}, #{totalNum}, #{appointNum}, #{payStatus}, #{appointStatus}, #{userId}, #{productId}, #{shopId}, #{dicItemId})
+    </insert>
+    <update id="update" parameterType="com.youruan.dentistry.core.frontdesk.domain.Orders">UPDATE Orders
+        <set>
+            lastModifiedDate = now(),
+            version = version + 1,
+            <if test="orderNo != null">orderNo = #{orderNo},</if>
+            <if test="price != null">price = #{price},</if>
+            <if test="totalNum != null">totalNum = #{totalNum},</if>
+            <if test="appointNum != null">appointNum = #{appointNum},</if>
+            <if test="boughtTime != null">boughtTime = #{boughtTime},</if>
+            <if test="payStatus != null">payStatus = #{payStatus},</if>
+            <if test="appointStatus != null">appointStatus = #{appointStatus},</if>
+            <if test="userId != null">userId = #{userId},</if>
+            <if test="productId != null">productId = #{productId},</if>
+            <if test="shopId != null">shopId = #{shopId},</if>
+            <if test="dicItemId != null">dicItemId = #{dicItemId}</if>
+        </set>
+        <where>id = #{id} AND version = #{version}</where>
+    </update>
+    <sql id="RECORD_QUERY_JOIN">
+        LEFT JOIN registereduser ru ON o.userId = ru.id
+        LEFT JOIN product p ON o.productId = p.id
+        LEFT JOIN shop s ON o.shopId = s.id
+    </sql>
+    <sql id="BOUGHT_QUERY_JOIN">
+        LEFT JOIN product p ON o.productId = p.id
+        LEFT JOIN dictionaryitem dit ON o.dicItemId = dit.id
+    </sql>
+    <sql id="QUERY_WHERE_SQL">
+        <if test="ids != null">AND o.id IN
+            <foreach collection="ids" item="id" open="(" close=")" separator=", ">#{id }</foreach>
+        </if>
+        <if test="startCreatedDate != null">AND o.createdDate &gt;= #{startCreatedDate }</if>
+        <if test="endCreatedDate != null">AND o.createdDate &lt;= #{endCreatedDate }</if>
+        <if test="orderNo != null">AND o.orderNo = #{orderNo}</if>
+        <if test="likeOrderNo != null">AND o.orderNo LIKE CONCAT('%',#{likeOrderNo},'%')</if>
+        <if test="userId != null">AND o.userId = #{userId}</if>
+        <if test="payStatus != null">AND o.payStatus = #{payStatus}</if>
+        <if test="appointStatus != null">AND o.appointStatus = #{appointStatus}</if>
+        <if test="likeRealName != null">AND ru.realName LIKE CONCAT('%',#{likeRealName},'%')</if>
+        <if test="likePhoneNumber != null">AND ru.phoneNumber LIKE CONCAT('%',#{likePhoneNumber},'%')</if>
+        <if test="likeShopName != null">AND s.name LIKE CONCAT('%',#{likeShopName},'%')</if>
+        <if test="likeProductName != null">AND p.name LIKE CONCAT('%',#{likeProductName},'%')</if>
+        <if test="productType != null">AND p.type = #{productType}</if>
+        <if test="userType != null">AND p.userType = #{userType}</if>
+        <if test="productState != null">AND p.state = #{productState}</if>
+    </sql>
+    <sql id="QUERY_WHERE">
+        <where>
+            <include refid="QUERY_WHERE_SQL"/>
+        </where>
+    </sql>
+    <sql id="QUERY_ORDER_BY">
+        <if test="orderBys.size() &gt; 0">ORDER BY
+            <foreach collection="orderBys" item="value" index="key" separator=", ">o.${key} ${value}</foreach>
+        </if>
+    </sql>
+    <sql id="QUERY_LIMIT">
+        <if test="pageSize &gt; 0">LIMIT ${start}, ${pageSize}</if>
+    </sql>
+    <select id="count" parameterType="com.youruan.dentistry.core.frontdesk.query.OrdersQuery" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM Orders AS o
+        <include refid="QUERY_WHERE"/>
+    </select>
+    <select id="query" parameterType="com.youruan.dentistry.core.frontdesk.query.OrdersQuery" resultMap="VO_RESULT">SELECT
+        <include refid="QUERY_COLUMNS"/>
+        FROM Orders AS o
+        <include refid="QUERY_WHERE"/>
+        <include refid="QUERY_ORDER_BY"/>
+        <include refid="QUERY_LIMIT"/>
+    </select>
+    <select id="countRecord" parameterType="com.youruan.dentistry.core.frontdesk.query.OrdersQuery" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM Orders AS o
+        <include refid="RECORD_QUERY_JOIN"/>
+        <include refid="QUERY_WHERE"/>
+    </select>
+    <select id="record" parameterType="com.youruan.dentistry.core.frontdesk.query.OrdersQuery" resultMap="RECORD_RESULT">SELECT
+        <include refid="QUERY_COLUMNS"/>
+        <include refid="RECORD_JOIN_COLUMNS"/> FROM Orders AS o
+        <include refid="RECORD_QUERY_JOIN"/>
+        <include refid="QUERY_WHERE"/>
+        <include refid="QUERY_ORDER_BY"/>
+        <include refid="QUERY_LIMIT"/>
+    </select>
+    <select id="countBought" parameterType="com.youruan.dentistry.core.frontdesk.query.OrdersQuery" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM Orders AS o
+        <include refid="BOUGHT_QUERY_JOIN"/>
+        <include refid="QUERY_WHERE"/>
+    </select>
+    <select id="bought" parameterType="com.youruan.dentistry.core.frontdesk.query.OrdersQuery" resultMap="BOUGHT_RESULT">SELECT
+        <include refid="QUERY_COLUMNS"/>
+        <include refid="BOUGHT_JOIN_COLUMNS"/> FROM Orders AS o
+        <include refid="BOUGHT_QUERY_JOIN"/>
+        <include refid="QUERY_WHERE"/>
+        <include refid="QUERY_ORDER_BY"/>
+        <include refid="QUERY_LIMIT"/>
+    </select>
+</mapper>

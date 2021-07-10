@@ -1,0 +1,40 @@
+spring:
+  datasource:
+    url: jdbc:mysql:///dentistry?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    name: dentistry
+    username: root
+    password: 123456
+
+dentistry:
+  core:
+    message:
+      sms:
+        verification:
+          maxRetryCount: 5
+          dailyMaximumEachIp: 50
+          intervalInSeconds: 30
+          defaultValidityInMinutes: 5
+          defaultTemplate: message/sms/verification/default.mustache
+          types:
+            login:
+              template: message/sms/verification/login.mustache
+              templateId: SMS_60680199
+            borrowRequest:
+              template: message/sms/verification/borrowRequest.mustache
+    base:
+      storage:
+        disk:
+          base-directory: C:/image
+          base-url: /api/img
+
+wechat:
+  domain: http://portalx.ymys.usooft.com
+  token: GHOST
+  appId: wxfcffb0d00f2da17b
+  appSecret: 2fcf880c2503141e09bb0a55623f82f1
+  pay:
+    appId: wx6ae9aead2a926769
+    appSecret: efc112848c7333b5b75f26345cf2e713
+    mchid: 1598795591
+    privateKey: H8yNsA87UxM9a5jcTbPGJ0KPUuOaHByY
+    notifyUrl: ${wx.domain}/api/orders/notify

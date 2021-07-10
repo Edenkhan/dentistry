@@ -1,0 +1,44 @@
+-AutoBidSetting absng 自动投标设置
+userId	Long	用户
+minDay	Integer	最小天数
+maxDay	Integer	最大天数
+minMonth	Integer	最小月数
+maxMonth	Integer	最大月数
+minRate	BigDecimal	最小利率
+maxRate	BigDecimal	最大利率
+minReward	BigDecimal	最小奖励
+maxReward	BigDecimal	最大奖励
+amountLimitType	Integer	金额限制类型
+minAmount	BigDecimal	最小金额
+maxAmount	BigDecimal	最大金额
+startDate	Date	开始日期
+endDate	Date	结束日期
+payBackDateMods	Long	还款日期
+
+-TYPE state 状态
+STATE_ENABLE	启用自动投标
+STATE_DISABLED	禁用自动投标
+
+-TYPE amountLimitType 金额限制类型
+AMOUNT_LIMIT_TYPE_BALANCE	余额全投
+AMOUNT_LIMIT_TYPE_RANGE	按金额范围
+
+-MOD payBackDateMods 还款日期
+PAY_BACK_DATE_MODS_YEAR	年
+PAY_BACK_DATE_MODS_QUARTER 	季
+PAY_BACK_DATE_MODS_MONTH	月
+PAY_BACK_DATE_MODS_WEEK	周
+PAY_BACK_DATE_MODS_DAY	天
+
+-MOD payBackWayMods 还款方式
+PAY_BACK_WAY_MODS_AVERAGE_CAPITAL_PLUS_INTEREST	等额本息
+PAY_BACK_WAY_MODS_AVERAGE_CAPITAL	等额本金
+PAY_BACK_WAY_MODS_FIRST_INTEREST_LAST_CAPITAL	先息后本
+PAY_BACK_WAY_MODS_DUE_CAPITAL_PLUS_INTEREST	到期本息
+
+-MOD enableMods 启用状态
+ENABLE_MODS_DAY	按天
+ENABLE_MODS_MONTH	按月
+ENABLE_MODS_RATE	按利率
+ENABLE_MODS_REWARD	按奖励
+ENABLE_MODS_DATE	按日期

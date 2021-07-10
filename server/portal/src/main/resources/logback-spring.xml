@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration>
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %highlight(%-5level) %cyan(%logger{5}:%line) - %msg%n</pattern>
+    </encoder>
+  </appender>
+
+  <!-- 默认 -->
+  <appender name="DEFAULT_ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>/var/dentistry/portal/logs/default.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+      <fileNamePattern>/var/dentistry/portal/logs/default-%d{yyyy-MM-dd}.%i.txt</fileNamePattern>
+      <maxFileSize>20MB</maxFileSize>
+      <maxHistory>60</maxHistory>
+      <totalSizeCap>20GB</totalSizeCap>
+    </rollingPolicy>
+    <encoder>
+      <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{5} - %msg%n</pattern>
+    </encoder>
+  </appender>
+
+  <springProfile name="dev">
+    <logger name="com.youruan.dentistry" level="DEBUG" additivity="false">
+      <appender-ref ref="DEFAULT_ROLLING"/>
+      <appender-ref ref="STDOUT"/>
+    </logger>
+
+    <root level="INFO">
+      <appender-ref ref="DEFAULT_ROLLING"/>
+      <appender-ref ref="STDOUT"/>
+    </root>
+  </springProfile>
+
+  <springProfile name="prod">
+    <logger name="com.youruan.dentistry" level="INFO" additivity="false">
+      <appender-ref ref="DEFAULT_ROLLING"/>
+    </logger>
+
+    <root level="INFO">
+      <appender-ref ref="DEFAULT_ROLLING"/>
+    </root>
+  </springProfile>
+</configuration>

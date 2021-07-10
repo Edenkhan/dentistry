@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.youruan.dentistry.core.message.mapper.SmsMessageMapper">
+  <resultMap id="BASE_RESULT" type="com.youruan.dentistry.core.message.domain.SmsMessage">
+    <id property="id" column="id"/>
+    <result property="createdDate" column="createdDate"/>
+    <result property="lastModifiedDate" column="lastModifiedDate"/>
+    <result property="version" column="version"/>
+    <result property="phoneNumber" column="phoneNumber"/>
+    <result property="templateId" column="templateId"/>
+    <result property="content" column="content"/>
+    <result property="closeDate" column="closeDate"/>
+    <result property="note" column="note"/>
+    <result property="state" column="state"/>
+  </resultMap>
+  <sql id="BASE_COLUMNS">smsm.id, smsm.createdDate, smsm.lastModifiedDate, smsm.version,smsm.phoneNumber,smsm.templateId,smsm.content,smsm.closeDate,smsm.note,smsm.state</sql>
+  <sql id="QUERY_COLUMNS">smsm.id, smsm.createdDate, smsm.lastModifiedDate, smsm.version,smsm.phoneNumber,smsm.templateId,smsm.content,smsm.closeDate,smsm.note,smsm.state</sql>
+  <resultMap id="VO_RESULT" type="com.youruan.dentistry.core.message.vo.ExtendedSmsMessage" extends="BASE_RESULT"/>
+  <sql id="JOIN_COLUMNS"/>
+  <select id="get" resultMap="BASE_RESULT" parameterType="java.lang.Long">SELECT 
+    <include refid="BASE_COLUMNS"/> FROM SmsMessage smsm WHERE id = #{id }
+  </select>
+  <delete id="delete" parameterType="java.lang.Long">DELETE FROM SmsMessage WHERE id = #{id}</delete>
+  <insert id="add" parameterType="com.youruan.dentistry.core.message.domain.SmsMessage" useGeneratedKeys="true" keyProperty="id" keyColumn="id">INSERT INTO SmsMessage(id, createdDate, version,phoneNumber,templateId,content,closeDate,note,state) VALUES(#{id }, #{createdDate}, 0, #{phoneNumber}, #{templateId}, #{content}, #{closeDate}, #{note}, #{state})</insert>
+  <update id="update" parameterType="com.youruan.dentistry.core.message.domain.SmsMessage">UPDATE SmsMessage
+    <set>lastModifiedDate = now(), version = version + 1, closeDate = #{closeDate}, note = #{note}, state = #{state}</set>
+    <where>id = #{id} AND version = #{version}</where>
+  </update>
+  <sql id="QUERY_JOIN"/>
+  <sql id="QUERY_WHERE_SQL">
+    <if test="ids != null">AND smsm.id IN
+      <foreach collection="ids" item="id" open="(" close=")" separator=", ">#{id }</foreach>
+    </if>
+    <if test="startCreatedDate != null">AND smsm.createdDate &gt;= #{startCreatedDate }</if>
+    <if test="endCreatedDate != null">AND smsm.createdDate &lt;= #{endCreatedDate }</if>
+    <if test="phoneNumber != null">AND smsm.phoneNumber = #{phoneNumber}</if>
+    <if test="excludeStates != null">AND smsm.state NOT IN
+      <foreach collection="excludeStates" item="state" open="(" close=")" separator=", ">#{state}</foreach>
+    </if>
+    <if test="includeStates != null &amp;&amp; excludeStates == null">AND smsm.state IN
+      <foreach collection="includeStates" item="state" open="(" close=")" separator=", ">#{state}</foreach>
+    </if>
+  </sql>
+  <sql id="QUERY_WHERE">
+    <where>
+      <include refid="QUERY_WHERE_SQL"/>
+    </where>
+  </sql>
+  <sql id="QUERY_ORDER_BY">
+    <if test="orderBys.size() &gt; 0">ORDER BY
+      <foreach collection="orderBys" item="value" index="key" separator=", ">smsm.${key} ${value}</foreach>
+    </if>
+  </sql>
+  <sql id="QUERY_LIMIT">
+    <if test="pageSize &gt; 0">LIMIT ${start}, ${pageSize}</if>
+  </sql>
+  <select id="count" parameterType="com.youruan.dentistry.core.message.query.SmsMessageQuery" resultType="java.lang.Integer">SELECT COUNT(*) FROM SmsMessage AS smsm
+    <include refid="QUERY_JOIN"/>
+    <include refid="QUERY_WHERE"/>
+  </select>
+  <select id="query" parameterType="com.youruan.dentistry.core.message.query.SmsMessageQuery" resultMap="VO_RESULT">SELECT
+    <include refid="QUERY_COLUMNS"/>
+    <include refid="JOIN_COLUMNS"/> FROM SmsMessage AS smsm
+    <include refid="QUERY_JOIN"/>
+    <include refid="QUERY_WHERE"/>
+    <include refid="QUERY_ORDER_BY"/>
+    <include refid="QUERY_LIMIT"/>
+  </select>
+</mapper>
