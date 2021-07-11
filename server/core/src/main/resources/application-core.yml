@@ -4,6 +4,10 @@ spring:
     name: dentistry
     username: root
     password: 123456
+  servlet:
+    multipart:
+      max-file-size: 500MB
+      max-request-size: 500MB
 
 dentistry:
   core:
@@ -24,7 +28,7 @@ dentistry:
     base:
       storage:
         disk:
-          base-directory: C:/image
+          base-directory: E:/image
           base-url: /api/img
 
 wechat:

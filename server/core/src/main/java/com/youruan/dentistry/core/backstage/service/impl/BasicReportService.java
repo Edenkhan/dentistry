@@ -10,6 +10,7 @@ import com.youruan.dentistry.core.base.exception.OptimismLockingException;
 import com.youruan.dentistry.core.base.query.Pagination;
 import com.youruan.dentistry.core.base.storage.DiskFileStorage;
 import com.youruan.dentistry.core.base.storage.UploadFile;
+import com.youruan.dentistry.core.base.utils.SnowflakeIdWorker;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.web.multipart.MultipartFile;
@@ -75,10 +76,37 @@ public class BasicReportService
     }
 
     @Override
-    public Report create(Long userId, String path) {
-        Assert.notNull(userId,"必须提供用户id");
+    public Report create(Integer peopleNum, Long userId, Long appointId, List<String> pathList) {
+        this.checkAdd(peopleNum,userId,appointId,pathList);
         Report report = new Report();
-        return add(report);
+        this.assign(report,userId,appointId,pathList);
+        return this.add(report);
+    }
+
+    /**
+     * 封装数据
+     */
+    private void assign(Report report, Long userId, Long appointId, List<String> pathList) {
+        report.setUserId(userId);
+        report.setAppointId(appointId);
+        report.setPath(String.join(",", pathList));
+        report.setSync(false);
+        report.setReportNo(SnowflakeIdWorker.getIdWorker());
+    }
+
+    /**
+     * 添加报告校验
+     */
+    private void checkAdd(Integer peopleNum, Long userId, Long appointId, List<String> pathList) {
+        Assert.notNull(peopleNum,"必须提供团队人数");
+        Assert.notNull(userId,"必须提供用户id");
+        Assert.notNull(appointId,"必须提供预约id");
+        ReportQuery qo = new ReportQuery();
+        qo.setAppointId(appointId);
+        int count = this.count(qo);
+        Assert.isTrue(count == 0, "该预约已有报告，请勿重复添加");
+        Assert.notNull(pathList,"必须提供报告路径");
+        Assert.isTrue(pathList.size()>=peopleNum,"报告数量少于团队人数");
     }
 
     @Override
@@ -102,12 +130,12 @@ public class BasicReportService
     }
 
     @Override
-    public String upload(MultipartFile file) {
+    public String upload(MultipartFile file, String directory) {
         try {
             UploadFile uploadFile = new UploadFile();
             uploadFile.setInputStream(file.getInputStream());
             uploadFile.setOriginalFilename(file.getOriginalFilename());
-            return diskFileStorage.store(uploadFile,"report");
+            return diskFileStorage.store(uploadFile,directory);
         } catch (IOException e) {
             e.printStackTrace();
             return null;

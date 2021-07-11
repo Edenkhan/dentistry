@@ -16,6 +16,7 @@ public class ReportQuery
     protected Long[] ids;
     protected Date startCreatedDate;
     protected Date endCreatedDate;
+    protected Long appointId;
 
     public boolean hasIds() {
         return (this.ids.length!= 0);

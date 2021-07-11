@@ -1,17 +1,17 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : ghost
+ Source Server         : localhost
  Source Server Type    : MySQL
- Source Server Version : 50734
+ Source Server Version : 50731
  Source Host           : localhost:3306
  Source Schema         : dentistry
 
  Target Server Type    : MySQL
- Target Server Version : 50734
+ Target Server Version : 50731
  File Encoding         : 65001
 
- Date: 09/07/2021 20:02:33
+ Date: 11/07/2021 22:07:56
 */
 
 SET NAMES utf8mb4;
@@ -23,12 +23,12 @@ SET FOREIGN_KEY_CHECKS = 0;
 DROP TABLE IF EXISTS `appointmanage`;
 CREATE TABLE `appointmanage`  (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `createdDate` datetime NULL DEFAULT NULL,
-  `lastModifiedDate` datetime NULL DEFAULT NULL,
+  `createdDate` datetime(0) NULL DEFAULT NULL,
+  `lastModifiedDate` datetime(0) NULL DEFAULT NULL,
   `version` int(11) NULL DEFAULT NULL,
   `topLimit` int(11) NULL DEFAULT NULL COMMENT '预约上限',
   `appointNum` int(11) NULL DEFAULT NULL COMMENT '已预约次数',
-  `appointDate` datetime NULL DEFAULT NULL COMMENT '预约日期',
+  `appointDate` datetime(0) NULL DEFAULT NULL COMMENT '预约日期',
   `timePeriod` tinyint(4) NULL DEFAULT NULL COMMENT '预约时间段 0-am 1-pm',
   `enabled` bit(1) NULL DEFAULT NULL COMMENT '是否开启预约',
   `shopId` bigint(20) NULL DEFAULT NULL COMMENT '门店id',
@@ -77,10 +77,10 @@ INSERT INTO `appointmanage` VALUES (32, '2021-07-09 15:36:55', NULL, 0, 50, 0, '
 DROP TABLE IF EXISTS `appointment`;
 CREATE TABLE `appointment`  (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `createdDate` datetime NULL DEFAULT NULL,
-  `lastModifiedDate` datetime NULL DEFAULT NULL,
+  `createdDate` datetime(0) NULL DEFAULT NULL,
+  `lastModifiedDate` datetime(0) NULL DEFAULT NULL,
   `version` int(11) NULL DEFAULT NULL,
-  `appointDate` datetime NULL DEFAULT NULL COMMENT '预约日期',
+  `appointDate` datetime(0) NULL DEFAULT NULL COMMENT '预约日期',
   `timePeriod` tinyint(4) NULL DEFAULT NULL COMMENT '0-AM 1-PM',
   `state` tinyint(4) NULL DEFAULT NULL COMMENT '0-初始状态 1-报告上传完成',
   `orderId` bigint(20) NULL DEFAULT NULL COMMENT '订单id',
@@ -93,7 +93,7 @@ CREATE TABLE `appointment`  (
 -- ----------------------------
 -- Records of appointment
 -- ----------------------------
-INSERT INTO `appointment` VALUES (1, '2021-07-09 15:47:55', '2021-07-09 16:46:15', 2, '2021-07-09 00:00:00', 1, 0, 1, 1, 3, 1);
+INSERT INTO `appointment` VALUES (1, '2021-07-09 15:47:55', '2021-07-11 16:24:24', 3, '2021-07-09 00:00:00', 1, 1, 1, 1, 3, 1);
 
 -- ----------------------------
 -- Table structure for dictionary
@@ -101,8 +101,8 @@ INSERT INTO `appointment` VALUES (1, '2021-07-09 15:47:55', '2021-07-09 16:46:15
 DROP TABLE IF EXISTS `dictionary`;
 CREATE TABLE `dictionary`  (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `createdDate` datetime NULL DEFAULT NULL,
-  `lastModifiedDate` datetime NULL DEFAULT NULL,
+  `createdDate` datetime(0) NULL DEFAULT NULL,
+  `lastModifiedDate` datetime(0) NULL DEFAULT NULL,
   `version` int(11) NULL DEFAULT NULL,
   `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '字典名称',
   `mark` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '字典标识',
@@ -121,8 +121,8 @@ INSERT INTO `dictionary` VALUES (2, '2021-06-28 11:18:38', '2021-06-28 16:59:02'
 DROP TABLE IF EXISTS `dictionaryitem`;
 CREATE TABLE `dictionaryitem`  (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `createdDate` datetime NULL DEFAULT NULL,
-  `lastModifiedDate` datetime NULL DEFAULT NULL,
+  `createdDate` datetime(0) NULL DEFAULT NULL,
+  `lastModifiedDate` datetime(0) NULL DEFAULT NULL,
   `version` int(11) NULL DEFAULT NULL,
   `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '字典详情名称',
   `enabled` bit(1) NULL DEFAULT NULL COMMENT '是否启用',
@@ -143,8 +143,8 @@ INSERT INTO `dictionaryitem` VALUES (3, '2021-06-28 18:01:55', '2021-07-06 14:49
 DROP TABLE IF EXISTS `employee`;
 CREATE TABLE `employee`  (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `createdDate` datetime NULL DEFAULT NULL,
-  `lastModifiedDate` datetime NULL DEFAULT NULL,
+  `createdDate` datetime(0) NULL DEFAULT NULL,
+  `lastModifiedDate` datetime(0) NULL DEFAULT NULL,
   `version` int(11) NULL DEFAULT NULL,
   `username` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `realName` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
@@ -153,7 +153,7 @@ CREATE TABLE `employee`  (
   `locked` bit(1) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `username_uindex`(`username`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of employee
@@ -167,14 +167,14 @@ INSERT INTO `employee` VALUES (2, '2021-06-25 17:13:17', '2021-06-26 09:40:39', 
 DROP TABLE IF EXISTS `employeerole`;
 CREATE TABLE `employeerole`  (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `createdDate` datetime NULL DEFAULT NULL,
-  `lastModifiedDate` datetime NULL DEFAULT NULL,
+  `createdDate` datetime(0) NULL DEFAULT NULL,
+  `lastModifiedDate` datetime(0) NULL DEFAULT NULL,
   `version` int(11) NULL DEFAULT NULL,
   `employeeId` bigint(20) NULL DEFAULT NULL,
   `roleId` bigint(20) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `employeeId_roleId_uindex`(`employeeId`, `roleId`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of employeerole
@@ -187,13 +187,14 @@ INSERT INTO `employeerole` VALUES (1, NULL, NULL, 0, 1, 1);
 DROP TABLE IF EXISTS `orders`;
 CREATE TABLE `orders`  (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `createdDate` datetime NULL DEFAULT NULL,
-  `lastModifiedDate` datetime NULL DEFAULT NULL,
+  `createdDate` datetime(0) NULL DEFAULT NULL,
+  `lastModifiedDate` datetime(0) NULL DEFAULT NULL,
   `version` int(11) NULL DEFAULT NULL,
   `orderNo` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '订单编号',
   `price` decimal(10, 2) NULL DEFAULT NULL COMMENT '订单金额',
   `totalNum` int(11) NULL DEFAULT NULL COMMENT '总次数',
   `appointNum` int(11) NULL DEFAULT NULL COMMENT '已预约次数',
+  `boughtTime` datetime(0) NULL DEFAULT NULL COMMENT '购买时间',
   `payStatus` tinyint(4) NULL DEFAULT NULL COMMENT '支付状态 0-未支付 1-已支付',
   `appointStatus` tinyint(4) NULL DEFAULT NULL COMMENT '预约状态 0-待预约 1-已预约',
   `userId` bigint(20) NULL DEFAULT NULL COMMENT '用户id',
@@ -206,9 +207,9 @@ CREATE TABLE `orders`  (
 -- ----------------------------
 -- Records of orders
 -- ----------------------------
-INSERT INTO `orders` VALUES (1, '2021-07-08 14:37:50', '2021-07-09 15:47:55', 2, '862704034404892672', 12.00, 1, 1, 1, 1, 1, 3, 1, NULL);
-INSERT INTO `orders` VALUES (2, '2021-07-08 14:38:02', NULL, 0, '862704084321304576', 12.00, 2, 0, 1, 0, 1, 2, NULL, 1);
-INSERT INTO `orders` VALUES (3, '2021-07-08 15:38:40', NULL, 0, '862719343966814208', 12.00, 2, 0, 1, 0, 1, 2, NULL, 3);
+INSERT INTO `orders` VALUES (1, '2021-07-08 14:37:50', '2021-07-09 15:47:55', 2, '862704034404892672', 12.00, 1, 1, '2021-07-09 21:42:07', 1, 1, 1, 3, 1, NULL);
+INSERT INTO `orders` VALUES (2, '2021-07-08 14:38:02', NULL, 0, '862704084321304576', 12.00, 2, 0, '2021-07-08 21:42:10', 1, 0, 1, 2, NULL, 1);
+INSERT INTO `orders` VALUES (3, '2021-07-08 15:38:40', NULL, 0, '862719343966814208', 12.00, 2, 0, '2021-07-07 21:42:15', 1, 0, 1, 2, NULL, 3);
 
 -- ----------------------------
 -- Table structure for permission
@@ -216,14 +217,14 @@ INSERT INTO `orders` VALUES (3, '2021-07-08 15:38:40', NULL, 0, '862719343966814
 DROP TABLE IF EXISTS `permission`;
 CREATE TABLE `permission`  (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `createdDate` datetime NULL DEFAULT NULL,
-  `lastModifiedDate` datetime NULL DEFAULT NULL,
+  `createdDate` datetime(0) NULL DEFAULT NULL,
+  `lastModifiedDate` datetime(0) NULL DEFAULT NULL,
   `version` int(11) NULL DEFAULT NULL,
   `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `description` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `name_uindex`(`name`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 27 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 27 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of permission
@@ -261,8 +262,8 @@ INSERT INTO `permission` VALUES (26, '2021-06-28 10:14:53', '2021-06-28 10:15:36
 DROP TABLE IF EXISTS `product`;
 CREATE TABLE `product`  (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `createdDate` datetime NULL DEFAULT NULL,
-  `lastModifiedDate` datetime NULL DEFAULT NULL,
+  `createdDate` datetime(0) NULL DEFAULT NULL,
+  `lastModifiedDate` datetime(0) NULL DEFAULT NULL,
   `version` int(11) NULL DEFAULT NULL,
   `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '产品名称',
   `price` decimal(10, 2) NULL DEFAULT NULL COMMENT '产品价格',
@@ -281,9 +282,9 @@ CREATE TABLE `product`  (
 -- ----------------------------
 -- Records of product
 -- ----------------------------
-INSERT INTO `product` VALUES (1, '2021-06-29 17:49:49', '2021-07-06 14:40:11', 1, '测试', 12.00, '简介', '<p>描述</p>', 0, 0, 1, 2, '/api/img/producticon/a7edc9a0-e8c4-465d-b386-256432726f7c.jpg', 1, 2);
-INSERT INTO `product` VALUES (2, '2021-06-29 18:21:24', '2021-07-06 14:41:48', 2, '测试1', 12.00, '简介1', '<p>描述1</p>', 0, 0, 1, 2, '/api/img/producticon/d7894037-d64a-425b-b0dc-e228f0b60dcc.jpg', 1, 3);
-INSERT INTO `product` VALUES (3, '2021-06-29 18:26:39', '2021-07-09 18:13:34', 8, '产品2', 12.00, '简介2', '<p>a啊啊啊啊啊啊啊啊</p>', 1, 1, 10, 1, '/api/img/producticon/f6a431be-ad57-4275-b74f-9f773641449d.jpg', 1, 4);
+INSERT INTO `product` VALUES (1, '2021-06-29 17:49:49', '2021-07-06 14:40:11', 1, '产品', 12.00, '简介', '<p>描述</p>', 0, 0, 1, 2, '/api/img/producticon/a7edc9a0-e8c4-465d-b386-256432726f7c.jpg', 1, 2);
+INSERT INTO `product` VALUES (2, '2021-06-29 18:21:24', '2021-07-06 14:41:48', 2, '产品1', 12.00, '简介1', '<p>描述1</p>', 0, 0, 1, 2, '/api/img/producticon/d7894037-d64a-425b-b0dc-e228f0b60dcc.jpg', 1, 3);
+INSERT INTO `product` VALUES (3, '2021-06-29 18:26:39', '2021-07-09 18:13:34', 8, '产品2', 12.00, '简介2', '<p>a啊啊啊啊啊啊啊啊</p>', 1, 1, 3, 1, '/api/img/producticon/f6a431be-ad57-4275-b74f-9f773641449d.jpg', 1, 4);
 
 -- ----------------------------
 -- Table structure for productdetailpath
@@ -291,8 +292,8 @@ INSERT INTO `product` VALUES (3, '2021-06-29 18:26:39', '2021-07-09 18:13:34', 8
 DROP TABLE IF EXISTS `productdetailpath`;
 CREATE TABLE `productdetailpath`  (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `createdDate` datetime NULL DEFAULT NULL,
-  `lastModifiedDate` datetime NULL DEFAULT NULL,
+  `createdDate` datetime(0) NULL DEFAULT NULL,
+  `lastModifiedDate` datetime(0) NULL DEFAULT NULL,
   `version` int(11) NULL DEFAULT NULL,
   `detailPath` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '详情主图路径',
   `productId` bigint(20) NULL DEFAULT NULL COMMENT '产品id',
@@ -313,8 +314,8 @@ INSERT INTO `productdetailpath` VALUES (21, '2021-07-09 18:13:35', NULL, 0, '/ap
 DROP TABLE IF EXISTS `redeemcode`;
 CREATE TABLE `redeemcode`  (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `createdDate` datetime NULL DEFAULT NULL,
-  `lastModifiedDate` datetime NULL DEFAULT NULL,
+  `createdDate` datetime(0) NULL DEFAULT NULL,
+  `lastModifiedDate` datetime(0) NULL DEFAULT NULL,
   `version` int(11) NULL DEFAULT NULL,
   `code` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '兑换码',
   `used` bit(1) NULL DEFAULT NULL COMMENT '是否已使用',
@@ -334,8 +335,8 @@ CREATE TABLE `redeemcode`  (
 DROP TABLE IF EXISTS `registereduser`;
 CREATE TABLE `registereduser`  (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'id',
-  `createdDate` datetime NULL DEFAULT NULL COMMENT '创建时间',
-  `lastModifiedDate` datetime NULL DEFAULT NULL COMMENT '最后一次修改时间',
+  `createdDate` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
+  `lastModifiedDate` datetime(0) NULL DEFAULT NULL COMMENT '最后一次修改时间',
   `version` int(11) NULL DEFAULT NULL COMMENT '版本',
   `realName` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '姓名',
   `age` int(11) NULL DEFAULT NULL COMMENT '年龄',
@@ -345,13 +346,14 @@ CREATE TABLE `registereduser`  (
   `openid` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '微信用户唯一id',
   `nickname` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '微信用户昵称',
   `avatar` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '头像地址',
+  `state` tinyint(4) NULL DEFAULT NULL COMMENT '模板消息状态 0-拒绝 1-接收',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of registereduser
 -- ----------------------------
-INSERT INTO `registereduser` VALUES (1, '2021-07-05 10:11:47', '2021-07-09 09:40:49', 66, '汤汤', NULL, 1, '15228943505', b'0', 'o94oc5gI4p4hcPLDBNtflB_w1jKQ', '甘乐', '/api/img/avatar/bb4b1448-5a12-434b-be9e-f1231afdcacc.jpeg');
+INSERT INTO `registereduser` VALUES (1, '2021-07-05 10:11:47', '2021-07-11 17:23:50', 67, '汤汤', NULL, 1, '15228943505', b'0', 'o94oc5gI4p4hcPLDBNtflB_w1jKQ', '甘乐', '/api/img/avatar/bb4b1448-5a12-434b-be9e-f1231afdcacc.jpeg', 1);
 
 -- ----------------------------
 -- Table structure for report
@@ -359,20 +361,21 @@ INSERT INTO `registereduser` VALUES (1, '2021-07-05 10:11:47', '2021-07-09 09:40
 DROP TABLE IF EXISTS `report`;
 CREATE TABLE `report`  (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `createdDate` datetime NULL DEFAULT NULL,
-  `lastModifiedDate` datetime NULL DEFAULT NULL,
+  `createdDate` datetime(0) NULL DEFAULT NULL,
+  `lastModifiedDate` datetime(0) NULL DEFAULT NULL,
   `version` int(11) NULL DEFAULT NULL,
   `reportNo` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '报告编号',
   `path` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '报告路径',
-  `synced` bit(1) NULL DEFAULT NULL COMMENT '是否同步',
+  `sync` bit(1) NULL DEFAULT NULL COMMENT '是否同步',
   `userId` bigint(20) NULL DEFAULT NULL COMMENT '用户id',
-  `reserveId` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '预约id',
+  `appointId` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '预约id',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of report
 -- ----------------------------
+INSERT INTO `report` VALUES (1, '2021-07-11 21:57:02', NULL, 0, '863901726304894976', '/api/img/report/854fe4a1-9958-4533-9519-12e5e5da58dc.pdf,/api/img/report/a87b96b1-1303-4fb5-b86b-8ee1dcf67264.pdf,/api/img/report/a52da957-80d7-4c08-b5c0-bca084899ef1.pdf', b'0', 1, 1);
 
 -- ----------------------------
 -- Table structure for role
@@ -380,13 +383,13 @@ CREATE TABLE `report`  (
 DROP TABLE IF EXISTS `role`;
 CREATE TABLE `role`  (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `createdDate` datetime NULL DEFAULT NULL,
-  `lastModifiedDate` datetime NULL DEFAULT NULL,
+  `createdDate` datetime(0) NULL DEFAULT NULL,
+  `lastModifiedDate` datetime(0) NULL DEFAULT NULL,
   `version` int(11) NULL DEFAULT NULL,
   `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `description` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of role
@@ -399,14 +402,14 @@ INSERT INTO `role` VALUES (1, '2021-06-25 16:10:45', NULL, 0, '超级管理员',
 DROP TABLE IF EXISTS `rolepermission`;
 CREATE TABLE `rolepermission`  (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `createdDate` datetime NULL DEFAULT NULL,
-  `lastModifiedDate` datetime NULL DEFAULT NULL,
+  `createdDate` datetime(0) NULL DEFAULT NULL,
+  `lastModifiedDate` datetime(0) NULL DEFAULT NULL,
   `version` int(11) NULL DEFAULT NULL,
   `roleId` bigint(20) NULL DEFAULT NULL,
   `permissionId` bigint(20) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `roleId_permissionId_uindex`(`roleId`, `permissionId`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of rolepermission
@@ -419,8 +422,8 @@ INSERT INTO `rolepermission` VALUES (1, NULL, NULL, 0, 1, 1);
 DROP TABLE IF EXISTS `shop`;
 CREATE TABLE `shop`  (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `createdDate` datetime NULL DEFAULT NULL,
-  `lastModifiedDate` datetime NULL DEFAULT NULL,
+  `createdDate` datetime(0) NULL DEFAULT NULL,
+  `lastModifiedDate` datetime(0) NULL DEFAULT NULL,
   `version` int(11) NULL DEFAULT NULL,
   `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '门店名称',
   `address` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '门店地址',
@@ -443,19 +446,19 @@ INSERT INTO `shop` VALUES (2, '2021-07-02 11:57:35', '2021-07-02 12:16:09', 2, '
 DROP TABLE IF EXISTS `smsmessage`;
 CREATE TABLE `smsmessage`  (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `createdDate` datetime NULL DEFAULT NULL,
-  `lastModifiedDate` datetime NULL DEFAULT NULL,
+  `createdDate` datetime(0) NULL DEFAULT NULL,
+  `lastModifiedDate` datetime(0) NULL DEFAULT NULL,
   `version` int(11) NULL DEFAULT NULL,
   `phoneNumber` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `templateId` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `content` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-  `closeDate` datetime NULL DEFAULT NULL,
+  `closeDate` datetime(0) NULL DEFAULT NULL,
   `note` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `state` tinyint(4) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `phoneNumber_index`(`phoneNumber`) USING BTREE,
   INDEX `state_index`(`state`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 64 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 65 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of smsmessage
@@ -523,6 +526,7 @@ INSERT INTO `smsmessage` VALUES (60, '2021-07-08 18:29:09', NULL, 0, '1522894350
 INSERT INTO `smsmessage` VALUES (61, '2021-07-09 09:33:50', NULL, 0, '15228943505', 'SMS_60680199', '{\"code\":\"871754\"}', NULL, NULL, 0);
 INSERT INTO `smsmessage` VALUES (62, '2021-07-09 09:38:19', NULL, 0, '15228943505', 'SMS_60680199', '{\"code\":\"490539\"}', NULL, NULL, 0);
 INSERT INTO `smsmessage` VALUES (63, '2021-07-09 09:40:38', NULL, 0, '15228943505', 'SMS_60680199', '{\"code\":\"666743\"}', NULL, NULL, 0);
+INSERT INTO `smsmessage` VALUES (64, '2021-07-11 17:23:33', NULL, 0, '15228943505', 'SMS_60680199', '{\"code\":\"082082\"}', NULL, NULL, 0);
 
 -- ----------------------------
 -- Table structure for smsverification
@@ -530,15 +534,15 @@ INSERT INTO `smsmessage` VALUES (63, '2021-07-09 09:40:38', NULL, 0, '1522894350
 DROP TABLE IF EXISTS `smsverification`;
 CREATE TABLE `smsverification`  (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `createdDate` datetime NULL DEFAULT NULL,
-  `lastModifiedDate` datetime NULL DEFAULT NULL,
+  `createdDate` datetime(0) NULL DEFAULT NULL,
+  `lastModifiedDate` datetime(0) NULL DEFAULT NULL,
   `version` int(11) NULL DEFAULT NULL,
   `smsMessageId` bigint(20) NULL DEFAULT NULL,
   `phoneNumber` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `code` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `requestIp` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `retryCount` int(11) NULL DEFAULT NULL,
-  `expirationDate` datetime NULL DEFAULT NULL,
+  `expirationDate` datetime(0) NULL DEFAULT NULL,
   `state` tinyint(4) NULL DEFAULT NULL,
   `type` tinyint(4) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
@@ -547,7 +551,7 @@ CREATE TABLE `smsverification`  (
   INDEX `requestIp_index`(`requestIp`) USING BTREE,
   INDEX `state_index`(`state`) USING BTREE,
   INDEX `type_index`(`type`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 64 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 65 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of smsverification
@@ -614,7 +618,8 @@ INSERT INTO `smsverification` VALUES (59, '2021-07-08 18:07:35', '2021-07-08 18:
 INSERT INTO `smsverification` VALUES (60, '2021-07-08 18:29:09', '2021-07-09 09:33:49', 1, 60, '15228943505', '243818', '127.0.0.1', 0, '2021-07-08 18:34:09', 2, 0);
 INSERT INTO `smsverification` VALUES (61, '2021-07-09 09:33:50', '2021-07-09 09:38:18', 1, 61, '15228943505', '871754', '127.0.0.1', 0, '2021-07-09 09:38:49', 2, 0);
 INSERT INTO `smsverification` VALUES (62, '2021-07-09 09:38:19', '2021-07-09 09:40:37', 1, 62, '15228943505', '490539', '127.0.0.1', 0, '2021-07-09 09:43:19', 2, 0);
-INSERT INTO `smsverification` VALUES (63, '2021-07-09 09:40:38', NULL, 0, 63, '15228943505', '666743', '127.0.0.1', 0, '2021-07-09 09:45:38', 0, 0);
+INSERT INTO `smsverification` VALUES (63, '2021-07-09 09:40:38', '2021-07-11 17:23:33', 1, 63, '15228943505', '666743', '127.0.0.1', 0, '2021-07-09 09:45:38', 2, 0);
+INSERT INTO `smsverification` VALUES (64, '2021-07-11 17:23:33', NULL, 0, 64, '15228943505', '082082', '127.0.0.1', 0, '2021-07-11 17:28:33', 0, 0);
 
 -- ----------------------------
 -- Table structure for usersummary
@@ -622,8 +627,8 @@ INSERT INTO `smsverification` VALUES (63, '2021-07-09 09:40:38', NULL, 0, 63, '1
 DROP TABLE IF EXISTS `usersummary`;
 CREATE TABLE `usersummary`  (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `createdDate` datetime NULL DEFAULT NULL,
-  `lastModifiedDate` datetime NULL DEFAULT NULL,
+  `createdDate` datetime(0) NULL DEFAULT NULL,
+  `lastModifiedDate` datetime(0) NULL DEFAULT NULL,
   `version` int(11) NULL DEFAULT NULL,
   `reportNum` int(11) NULL DEFAULT NULL COMMENT '检验报告数量',
   `buyNum` int(11) NULL DEFAULT NULL COMMENT '产品购买数量',

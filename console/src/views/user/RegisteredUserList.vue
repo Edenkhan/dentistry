@@ -52,17 +52,37 @@
       <template slot="phoneNumber" slot-scope="phoneNumber">
         <PhoneNumber :value="phoneNumber"/>
       </template>
-      <template slot="productCounts" slot-scope="record">
-        <router-link :to="`/user/bought?id=${record.id}`" v-if="record.productCounts>0">
-          <a>{{record.productCounts}}</a>
+      <template slot="productNum" slot-scope="record">
+        <router-link :to="`/user/bought?id=${record.id}`" v-if="record.productNum>0">
+          <a>{{record.productNum}}</a>
         </router-link>
-        <span v-else>{{record.productCounts}}</span>
+        <span v-else>{{record.productNum}}</span>
       </template>
       <template slot="state" slot-scope="state">
         <span v-if="state===1">是</span>
         <span v-if="state===0">否</span>
       </template>
       <template slot="operation" slot-scope="record">
+        <a-button type="primary" @click="showModal(record.id)">
+          添加报告
+        </a-button>
+      </template>
+    </a-table>
+    <!--对话框-->
+    <a-modal v-model="visible" title="添加检查报告" @ok="handleOk">
+      <a-form-model :label-col="labelCol" :wrapper-col="wrapperCol">
+        <a-form-model-item label="选择预约">
+          <a-select style="width: 300px" v-model="reportForm.appointId" >
+            <a-select-option :value="item.id" v-for="(item, index) in appointList" :key="index">
+              {{item.appointDate.split('T')[0] }} {{item.timePeriod===0?'上午':'下午'}} /
+              {{item.productName}} /
+              {{item.shopName}} /
+              {{`${item.peopleNum}人`}}
+            </a-select-option>
+          </a-select>
+        </a-form-model-item>
+      </a-form-model>
+      <a-form-model-item>
         <a-upload
           name="file"
           :multiple="true"
@@ -70,15 +90,22 @@
           :headers="headers"
           @change="handleChange"
         >
-          <a-button type="primary"> <a-icon type="upload" /> 添加报告 </a-button>
+          <a-button type="primary">
+            <a-icon type="upload"/>
+            添加文件
+          </a-button>
         </a-upload>
-      </template>
-    </a-table>
+      </a-form-model-item>
+    </a-modal>
   </div>
 </template>
 
 <script>
-  import {listUsers} from "../../api/user";
+  import {
+    listUsers,
+    addReport,
+    listReportable,
+  } from "../../api/user";
   import moment from "moment";
   import Gender from "./Gender";
   import PhoneNumber from "./PhoneNumber";
@@ -108,11 +135,11 @@
     },
     {
       title: '检查报告数量',
-      dataIndex: 'reportCounts',
+      dataIndex: 'reportNum',
     },
     {
       title: '购买产品数量',
-      scopedSlots: {customRender: 'productCounts'}
+      scopedSlots: {customRender: 'productNum'}
     },
     {
       title: '是否接收模板消息',
@@ -151,9 +178,12 @@
         headers: {
           authorization: 'authorization-text',
         },
-        reportForm: {
-
-        },
+        reportForm: {},
+        visible: false,
+        labelCol: { span: 5 },
+        wrapperCol: { span: 10 },
+        appointList: [],
+        pathList: [],
       }
     },
 
@@ -162,11 +192,33 @@
     },
 
     methods: {
+      handleOk() {
+        this.reportForm = Object.assign({},this.reportForm,{
+          pathList: this.pathList
+        })
+        console.log(this.reportForm)
+        addReport(this.reportForm)
+          .then(() => {
+            this.$message.success('添加报告成功')
+            this.visible = false
+          }).catch(({message}) => {
+            this.$message.error(message)
+        })
+      },
+      showModal(id){
+        this.reportForm = {}
+        this.pathList = []
+        this.reportForm.userId = id
+        listReportable({id:id})
+          .then(({data}) => {
+            this.appointList = data
+            // console.log(this.appointList)
+          })
+        this.visible = true
+      },
       handleChange(info) {
-        if (info.file.status !== 'uploading') {
-          console.log(info.file, info.fileList);
-        }
         if (info.file.status === 'done') {
+          this.pathList.push(info.file.response)
           this.$message.success(`${info.file.name} file uploaded successfully`);
         } else if (info.file.status === 'error') {
           this.$message.error(`${info.file.name} file upload failed.`);

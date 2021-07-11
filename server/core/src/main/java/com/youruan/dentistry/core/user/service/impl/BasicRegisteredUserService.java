@@ -185,7 +185,7 @@ public class BasicRegisteredUserService
             BeanUtils.copyProperties(item,vo);
             qo.setUserId(item.getId());
             qo.setPayStatus(Orders.PAY_STATUS_PAID);
-            vo.setProductCounts(ordersService.count(qo));
+            vo.setProductNum(ordersService.count(qo));
             return vo;
         }).collect(Collectors.toList());
     }

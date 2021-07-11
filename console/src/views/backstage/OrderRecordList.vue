@@ -74,7 +74,7 @@
         {{createdDate | filterDate('YYYY-MM-DD HH:mm:ss')}}
       </template>
       <template slot="type" slot-scope="text,record">
-        <span v-if="record.product===0">线上远程</span>
+        <span v-if="record.productType===0">线上远程</span>
         <span v-else-if="record.userType===0">线下/个人</span>
         <span v-else-if="record.userType===1">线下/团队</span>
       </template>

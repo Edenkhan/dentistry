@@ -6,9 +6,13 @@ import com.youruan.dentistry.console.user.form.BoughtListForm;
 import com.youruan.dentistry.console.user.form.UserAddForm;
 import com.youruan.dentistry.console.user.form.UserEditForm;
 import com.youruan.dentistry.console.user.form.UserListForm;
+import com.youruan.dentistry.core.backstage.vo.AppointRecordVo;
 import com.youruan.dentistry.core.base.query.Pagination;
 import com.youruan.dentistry.core.base.utils.BeanMapUtils;
+import com.youruan.dentistry.core.frontdesk.domain.Appointment;
+import com.youruan.dentistry.core.frontdesk.query.AppointmentQuery;
 import com.youruan.dentistry.core.frontdesk.query.OrdersQuery;
+import com.youruan.dentistry.core.frontdesk.service.AppointmentService;
 import com.youruan.dentistry.core.frontdesk.service.OrdersService;
 import com.youruan.dentistry.core.user.domain.RegisteredUser;
 import com.youruan.dentistry.core.user.query.RegisteredUserQuery;
@@ -27,10 +31,12 @@ public class UserController {
 
     private final RegisteredUserService registeredUserService;
     private final OrdersService ordersService;
+    private final AppointmentService appointmentService;
 
-    public UserController(RegisteredUserService registeredUserService, OrdersService ordersService) {
+    public UserController(RegisteredUserService registeredUserService, OrdersService ordersService, AppointmentService appointmentService) {
         this.registeredUserService = registeredUserService;
         this.ordersService = ordersService;
+        this.appointmentService = appointmentService;
     }
 
     @PostMapping("/add")
@@ -88,6 +94,21 @@ public class UserController {
         return ResponseEntity.ok(ImmutableMap.builder()
                 .put("data",pagination.getData())
                 .put("rows",pagination.getRows())
+                .build());
+    }
+
+    /**
+     * 查询用户可生成报告的预约
+     */
+    @GetMapping("/reportable")
+    @RequiresPermission(value = "user.user.reportable", description = "用户-完成预约列表")
+    public ResponseEntity<?> reportable(Long id) {
+        AppointmentQuery qo = new AppointmentQuery();
+        qo.setUserId(id);
+        qo.setState(Appointment.STATE_FINISH);
+        Pagination<AppointRecordVo> pagination = appointmentService.record(qo);
+        return ResponseEntity.ok(ImmutableMap.builder()
+                .put("data", pagination.getData())
                 .build());
     }
 

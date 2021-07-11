@@ -7,11 +7,14 @@
     <result property="createdDate" column="createdDate"/>
     <result property="lastModifiedDate" column="lastModifiedDate"/>
     <result property="version" column="version"/>
-    <result property="name" column="name"/>
-    <result property="mark" column="mark"/>
+    <result property="reportNo" column="reportNo"/>
+    <result property="path" column="path"/>
+    <result property="sync" column="sync"/>
+    <result property="userId" column="userId"/>
+    <result property="appointId" column="appointId"/>
   </resultMap>
-  <sql id="BASE_COLUMNS">rp.id, rp.createdDate, rp.lastModifiedDate, rp.version, rp.name, rp.mark</sql>
-  <sql id="QUERY_COLUMNS">rp.id, rp.createdDate, rp.lastModifiedDate, rp.version, rp.name, rp.mark</sql>
+  <sql id="BASE_COLUMNS">rp.id, rp.createdDate, rp.lastModifiedDate, rp.version, rp.reportNo, rp.path, rp.sync, rp.userId, rp.appointId</sql>
+  <sql id="QUERY_COLUMNS">rp.id, rp.createdDate, rp.lastModifiedDate, rp.version, rp.reportNo, rp.path, rp.sync, rp.userId, rp.appointId</sql>
   <resultMap id="VO_RESULT" type="com.youruan.dentistry.core.backstage.vo.ExtendedReport" extends="BASE_RESULT"/>
   <sql id="JOIN_COLUMNS">
 
@@ -21,10 +24,19 @@
   </select>
   <delete id="delete" parameterType="java.lang.Long">DELETE FROM Report WHERE id = #{id}</delete>
   <insert id="add" parameterType="com.youruan.dentistry.core.backstage.domain.Report" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
-    INSERT INTO Report(id, createdDate, version, name, mark) VALUES(#{id }, #{createdDate}, 0, #{name}, #{mark})
+    INSERT INTO Report(id, createdDate, version, reportNo, `path`, sync, userId, appointId)
+    VALUES(#{id }, #{createdDate}, 0, #{reportNo}, #{path}, #{sync}, #{userId}, #{appointId})
     </insert>
   <update id="update" parameterType="com.youruan.dentistry.core.backstage.domain.Report">UPDATE Report
-    <set>lastModifiedDate = now(), version = version + 1, name = #{name}, mark = #{mark}</set>
+    <set>
+        lastModifiedDate = now(),
+        version = version + 1,
+        <if test="reportNo != null">reportNo = #{reportNo},</if>
+        <if test="path != null">`path` = #{path},</if>
+        <if test="sync != null">sync = #{sync},</if>
+        <if test="userId != null">userId = #{userId},</if>
+        <if test="appointId != null">appointId = #{appointId}</if>
+    </set>
     <where>id = #{id} AND version = #{version}</where>
   </update>
   <sql id="QUERY_JOIN">
@@ -36,8 +48,6 @@
     </if>
     <if test="startCreatedDate != null">AND rp.createdDate &gt;= #{startCreatedDate }</if>
     <if test="endCreatedDate != null">AND rp.createdDate &lt;= #{endCreatedDate }</if>
-    <if test="name != null">AND rp.name = #{name}</if>
-    <if test="mark != null">AND rp.mark = #{mark}</if>
   </sql>
   <sql id="QUERY_WHERE">
     <where>

@@ -16,19 +16,6 @@
     <result property="nickname" column="nickname"/>
     <result property="avatar" column="avatar"/>
   </resultMap>
-  <resultMap id="RECORD_RESULT" type="com.youruan.dentistry.core.user.vo.UserRecordVo">
-    <id property="id" column="id"/>
-    <result property="createdDate" column="createdDate"/>
-    <result property="lastModifiedDate" column="lastModifiedDate"/>
-    <result property="version" column="version"/>
-    <result property="realName" column="realName"/>
-    <result property="gender" column="gender"/>
-    <result property="phoneNumber" column="phoneNumber"/>
-    <result property="reportCounts" column="reportCounts"/>
-    <result property="productCounts" column="productCounts"/>
-    <result property="state" column="state"/>
-
-  </resultMap>
   <sql id="BASE_COLUMNS">ru.id, ru.createdDate, ru.lastModifiedDate, ru.version,ru.realName,ru.age,ru.phoneNumber,ru.state,ru.gender,ru.openid,ru.nickname,ru.avatar</sql>
   <sql id="QUERY_COLUMNS">ru.id, ru.createdDate, ru.lastModifiedDate, ru.version,ru.realName,ru.age,ru.phoneNumber,ru.state,ru.gender,ru.openid,ru.nickname,ru.avatar</sql>
   <resultMap id="VO_RESULT" type="com.youruan.dentistry.core.user.vo.ExtendedRegisteredUser" extends="BASE_RESULT"/>

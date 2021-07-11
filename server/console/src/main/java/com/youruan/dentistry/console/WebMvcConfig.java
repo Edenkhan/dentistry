@@ -2,6 +2,7 @@ package com.youruan.dentistry.console;
 
 import com.youruan.dentistry.console.base.interceptor.SessionInterceptor;
 import com.youruan.dentistry.console.base.resolver.HandlerSessionArgumentResolver;
+import com.youruan.dentistry.core.base.storage.DiskFileStorageProperties;
 import com.youruan.dentistry.core.platform.service.EmployeeService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,9 +17,11 @@ import java.util.List;
 public class WebMvcConfig implements WebMvcConfigurer {
 
     private final EmployeeService employeeService;
+    private final DiskFileStorageProperties diskFileStorageProperties;
 
-    public WebMvcConfig(EmployeeService employeeService) {
+    public WebMvcConfig(EmployeeService employeeService, DiskFileStorageProperties diskFileStorageProperties) {
         this.employeeService = employeeService;
+        this.diskFileStorageProperties = diskFileStorageProperties;
     }
 
     @Bean
@@ -38,6 +41,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/img/**").addResourceLocations("file:"+"c:/image/");
+        registry.addResourceHandler("/img/**").addResourceLocations("file:"+diskFileStorageProperties.getBaseDirectory()+"/");
     }
 }

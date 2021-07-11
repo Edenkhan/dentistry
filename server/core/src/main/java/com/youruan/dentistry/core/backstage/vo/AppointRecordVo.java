@@ -14,6 +14,7 @@ public class AppointRecordVo extends BasicDomain {
     private Date arrived;
     private Integer totalNum;
     private Integer appointNum;
+    private Integer peopleNum;
     private String productName;
     private String shopName;
     private String realName;

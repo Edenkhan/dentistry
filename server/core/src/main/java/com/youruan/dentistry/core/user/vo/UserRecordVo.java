@@ -10,7 +10,7 @@ public class UserRecordVo extends BasicDomain {
     private String realName;
     private Integer gender;
     private String phoneNumber;
-    private Integer reportCounts;
-    private Integer productCounts;
+    private Integer reportNum;
+    private Integer productNum;
     private Integer state;
 }

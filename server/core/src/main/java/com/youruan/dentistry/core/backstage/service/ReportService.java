@@ -34,7 +34,7 @@ public interface ReportService {
     /**
      * 添加
      */
-    Report create(Long userId, String path);
+    Report create(Integer peopleNum, Long userId, Long appointId, List<String> pathList);
     /**
      * 修改
      */
@@ -51,6 +51,6 @@ public interface ReportService {
     /**
      * 上传报告
      */
-    String upload(MultipartFile file);
+    String upload(MultipartFile file, String directory);
 
 }

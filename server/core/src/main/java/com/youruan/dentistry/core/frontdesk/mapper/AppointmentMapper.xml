@@ -25,6 +25,7 @@
         <result property="arrived" column="arrived"/>
         <result property="totalNum" column="totalNum"/>
         <result property="appointNum" column="appointNum"/>
+        <result property="peopleNum" column="peopleNum"/>
         <result property="productName" column="productName"/>
         <result property="shopName" column="shopName"/>
         <result property="realName" column="realName"/>
@@ -37,7 +38,7 @@
     <sql id="JOIN_COLUMNS">
         ,o.totalNum,o.appointNum
         ,ru.realName,ru.phoneNumber
-        ,p.name AS productName
+        ,p.name AS productName,p.peopleNum
         ,s.name AS shopName
     </sql>
     <select id="get" resultMap="BASE_RESULT" parameterType="java.lang.Long">SELECT

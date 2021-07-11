@@ -23,3 +23,13 @@ export function getUser(id) {
 export function listBought(params) {
   return get('/user/bought?' + stringify(params));
 }
+
+//查询用户 可生成报告的订单
+export function listReportable(params) {
+  return get('/user/reportable?' + stringify(params));
+}
+
+// 添加报告
+export function addReport(params) {
+  return post('/backstage/report/add?' + stringify(params));
+}
