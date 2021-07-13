@@ -114,6 +114,19 @@ const allMenus = [
       },
     ]
   },
+  // 兑换码管理
+  {
+    title: '兑换码管理',
+    key: 'dictionary',
+    icon: 'setting',
+    subMenus: [
+      {
+        key: '/backstage/redeemcode/list',
+        title: '兑换码',
+        permission: 'backstage.redeemcode.list'
+      },
+    ]
+  }
 ];
 
 export function getMenus() {

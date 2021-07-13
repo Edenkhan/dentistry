@@ -66,7 +66,6 @@ public class RegisteredUserController {
         if(SessionUtils.hasCode()) {
             passed = SessionUtils.getCode().equalsIgnoreCase(verifyCode);
         }
-        System.out.println("******"+SessionUtils.getCode());
         return ResponseEntity.ok(ImmutableMap.builder().put("passed",passed).build());
     }
 

@@ -6,6 +6,7 @@ const ShopList = () => import(/* webpackChunkName: "backstage" */ '../views/back
 const AppointManageList = () => import(/* webpackChunkName: "backstage" */ '../views/backstage/AppointManageList.vue');
 const OrderRecordList = () => import(/* webpackChunkName: "backstage" */ '../views/backstage/OrderRecordList.vue');
 const AppointRecordList = () => import(/* webpackChunkName: "backstage" */ '../views/backstage/AppointRecordList.vue');
+const RedeemCodeList = () => import(/* webpackChunkName: "backstage" */ '../views/backstage/RedeemCodeList.vue');
 
 export default [
   // 字典
@@ -107,6 +108,16 @@ export default [
     meta: {
       title: '订单记录',
       permission: 'backstage.appointRecord.list',
+    }
+  },
+
+  // 兑换码列表
+  {
+    path: '/backstage/redeemcode/list',
+    component: RedeemCodeList,
+    meta: {
+      title: '兑换码',
+      permission: 'backstage.redeemcode.list',
     }
   },
 

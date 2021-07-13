@@ -332,7 +332,7 @@ export default {
 			'logined'
 		]),
     checkInfo() {
-      return this.iSlogin && this.phoneNumber && this.avatar && this.gender && this.realName
+      return this.phoneNumber && this.avatar && this.gender && this.realName
     },
     declick(){
       this.$router.push('/');
@@ -355,11 +355,21 @@ export default {
     },
     // 立即购买
     buynow(){
-      // alert(this.phoneNumber)
+      alert(this.checkInfo)
       // alert(this.avatar)
       // alert(this.gender)
       // alert(this.realName)
-      if(this.checkInfo()){
+      if(this.iSlogin){
+        if(!this.checkInfo()){
+          this.$dialog.confirm({
+            title:'未完善信息',
+            message: '是否立即完善',
+            confirmButtonText:'是',
+            confirmButtonColor:"#05C58F"
+          }).then(() => {
+            this.$router.push('/zs');
+          }).catch(()=>{})
+        }
         this.dshow=true;
       }else{
         this.$dialog.confirm({
@@ -367,9 +377,8 @@ export default {
           message: '是否立即完善',
           confirmButtonText:'是',
           confirmButtonColor:"#05C58F"
-        })
-        .then(() => {
-          this.$router.push('/zs');
+        }).then(() => {
+          this.$router.push('/login');
         }).catch(()=>{})
       }
     },

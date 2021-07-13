@@ -28,7 +28,7 @@ dentistry:
     base:
       storage:
         disk:
-          base-directory: C:/files
+          base-directory: E:/files
           base-url: /api/file
 
 wechat:

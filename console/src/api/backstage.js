@@ -149,3 +149,8 @@ export function resetReport(params) {
   return post('/backstage/report/reset?' + stringify(params));
 }
 
+// 兑换码
+export function listRedeemCodes(params) {
+  return get('/backstage/redeemcode/list?' + stringify(params));
+}
+
