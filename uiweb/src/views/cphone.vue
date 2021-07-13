@@ -23,7 +23,11 @@
     <van-cell-group>
       <van-field v-model="qvalue2" placeholder="请输入图片验证码" maxlength="4"/>
     </van-cell-group>
-    <span class="yzz"><img src="api/registeredUser/getVerify"></span>
+    <span class="yzz">
+      <div class="imgc">
+        <img :src="verifySrc" @click="changeCode" alt="">
+      </div>
+    </span>
   </div>
 
 
@@ -110,7 +114,7 @@ import {mapState} from 'vuex';
 export default {
   computed:{
     ...mapState([
-        'iphone'
+        'phoneNumber'
     ])
   },
   data() {
@@ -119,54 +123,53 @@ export default {
       qvalue2: '',
       time:1*60* 1000,
       myphone:'',
-      stst:false
+      verifySrc: '',
     };
   },
   methods:{
+    // 换验证码图片
+    changeCode() {
+      this.verifySrc = 'api/registeredUser/getVerify?' + new Date().getTime()
+    },
     jswc(){
       this.$toast('请重新获取验证码');
     },
     judge(){
       if(this.qvalue.trim()==''){
         this.$toast('验证码为空');
-      }else if(this.qvalue2.trim()==''){
+      }
+      if(this.qvalue2.trim()==''){
         this.$toast('图形验证码为空');
-      }else{
-        // 图片验证码检验
-        this.axios.post('api/registeredUser/checkVerify',qs.stringify({verify:this.qvalue2})).then(res=>{
-          if(res.data){
-            this.stst=true;
-            console.log('zq');
-          }
-        })
+      }
 
-        if(this.stst){
-          this.stst=false;
-          this.$router.push({path:'/succ',query:{id:1}});
+      // 图片验证码检验
+      this.axios.post('api/registeredUser/checkVerify',qs.stringify({verifyCode:this.qvalue2})).then(({data})=>{
+        // alert(data.passed)
+        if(data.passed){
+          this.$router.push({path:'/phonesucc',query:{id:1}});
         }else{
           this.$toast('验证码错误');
         }
+      })
 
-      }
     },
     cpclick(){
       this.$router.push('/zs');
     },
     aggetyz(){
       this.time=1*60*1000;
-      this.getyzmm();
       this.pcheck();
     },
     pcheck(){
       // 发送验证码
-      this.axios.post('api/registeredUser/sendVerifyCode',qs.stringify({phoneNumber:13600000000})).then(res=>{
+      this.axios.post('api/registeredUser/sendVerifyCode',qs.stringify({phoneNumber:this.phoneNumber})).then(res=>{
           console.log(res.data);
       })
     }
   },
   mounted(){
-
     this.pcheck();
+    this.changeCode()
   }
 }
 </script>

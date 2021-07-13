@@ -69,7 +69,7 @@
             <p class="las">
               <span>剩余可预约：{{i.totalNum - i.appointNum}}次</span>
               <span @click='nowyy(i.id,i.productId)'>立即预约</span>
-            </p>         
+            </p>
         </li>
       </ul>
     </van-tab>
@@ -98,10 +98,10 @@
             <p class="cont">
               下单时间：{{i.createdDate | timeFormat}}
             </p>
-            <p class="las">
+            <p class="las" >
               <span>剩余可预约：{{i.totalNum - i.appointNum}}次</span>
               <span @click='nowyy(i.id,i.productId,1)'>修改预约</span>
-            </p>         
+            </p>
         </li>
       </ul>
     </van-tab>
@@ -234,7 +234,7 @@ export default {
     // 我要预约
     this.axios.get('api/frontdesk/orders/getByUser').then(({data})=>{
       // alert(JSON.stringify(data))
-      this.meprev=data.data;
+      this.meprev = data.data;
       for(let key of data.data){
         if(key.appointStatus==0){
           this.mest1.push(key)

@@ -316,8 +316,7 @@ export default {
           message: '是否立即登录',
           confirmButtonText:'是',
           confirmButtonColor:"#05C58F"
-        })
-        .then(() => {
+        }).then(() => {
           this.$router.push('/login');
         }).catch(()=>{})
       }

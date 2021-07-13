@@ -3,7 +3,9 @@ package com.youruan.dentistry.portal.frontdesk;
 import com.google.common.collect.ImmutableMap;
 import com.youruan.dentistry.core.backstage.query.AppointManageQuery;
 import com.youruan.dentistry.core.backstage.service.AppointManageService;
+import com.youruan.dentistry.core.backstage.vo.AppointRecordVo;
 import com.youruan.dentistry.core.backstage.vo.ExtendedAppointManage;
+import com.youruan.dentistry.core.base.query.Pagination;
 import com.youruan.dentistry.core.base.utils.DateUtil;
 import com.youruan.dentistry.core.frontdesk.domain.Appointment;
 import com.youruan.dentistry.core.frontdesk.domain.Orders;
@@ -54,7 +56,6 @@ public class AppointmentController {
     public ResponseEntity<?> edit(AppointmentEditForm form) {
         AppointmentQuery qo = new AppointmentQuery();
         qo.setOrderId(form.getOrderId());
-        qo.setState(Appointment.STATE_APPOINTED);
         ExtendedAppointment appointment = appointmentService.queryOne(qo);
         appointmentService.update(appointment,form.getTimePeriod(),form.getAppointDate());
         return ResponseEntity.ok(appointment);
@@ -63,9 +64,13 @@ public class AppointmentController {
     @GetMapping("/getByUser")
     @RequiresAuthentication
     public ResponseEntity<?> getByUser(RegisteredUser user, Long orderId) {
-        List<ExtendedAppointment> appointmentList = appointmentService.getByUser(user.getId(), orderId);
-        ImmutableMap<Object, Object> map = ImmutableMap.builder().put("data", appointmentList).build();
-        return ResponseEntity.ok(map);
+        AppointmentQuery qo = new AppointmentQuery();
+        qo.setUserId(user.getId());
+        qo.setOrderId(orderId);
+        Pagination<AppointRecordVo> pagination = appointmentService.record(qo);
+        return ResponseEntity.ok(ImmutableMap.builder()
+                .put("data", pagination.getData())
+                .build());
     }
 
     /**
@@ -80,7 +85,8 @@ public class AppointmentController {
         qo.setShopId(orders.getShopId());
         List<ExtendedAppointManage> appointManageList = appointManageService.listAll(qo);
         List<AppointDateVo> voList = appointmentService.handleData(appointManageList);
-        ImmutableMap<Object, Object> data = ImmutableMap.builder().put("data", voList).build();
-        return ResponseEntity.ok(data);
+        return ResponseEntity.ok(ImmutableMap.builder()
+                .put("data", voList)
+                .build());
     }
 }

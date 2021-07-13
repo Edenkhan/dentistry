@@ -9,7 +9,7 @@
     <ul class="home_list">
       <li>
         <div class="cc">
-          <div class="cc_img"></div>
+          <div ><img :src="orders.iconPath" width="150" height="150"></div>
           <div class="cc_c">
             <p class='an'>
               <span v-if="orders.productType===0">【线上远程】</span>
@@ -35,7 +35,7 @@
     <p class="xiangq" v-show="isTeam">套餐包含人数<span>{{orders.peopleNum}}</span></p>
     <p class="xiangq" v-show="isTeam">套餐包含次数<span>1{{orders.totalNum}}</span></p>
     <p class="xiangq">支付金额<span>￥{{orders.price}}.00</span></p>
-    <p class="xiangq">支付时间<span>{{orders.lastModifiedDate?(orders.lastModifiedDate | timeFormat):未支付}}</span></p>
+    <p class="xiangq">支付时间<span>{{orders.boughtTime | timeFormat}}</span></p>
     <p class="xiangq">订单编号<span>{{orders.orderNo}}</span></p>
   </div>
   <!-- 购买详情结束 -->

@@ -124,4 +124,28 @@ export function appointComplete(params) {
   return post('/backstage/appointRecord/appointComplete?' + stringify(params));
 }
 
+// 报告列表
+export function listReport(params) {
+  return get('/backstage/report/list?' + stringify(params));
+}
+
+// 同步报告
+export function editReport(params) {
+  return post('/backstage/report/edit?' + stringify(params));
+}
+
+// 查询报告对应的预约信息
+export function getAppoint(params) {
+  return get('/backstage/report/getAppoint?' + stringify(params));
+}
+
+// 添加报告
+export function addReport(params) {
+  return post('/backstage/report/add?' + stringify(params));
+}
+
+// 重新上传
+export function resetReport(params) {
+  return post('/backstage/report/reset?' + stringify(params));
+}
 

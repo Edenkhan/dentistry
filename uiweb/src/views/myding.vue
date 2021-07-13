@@ -18,7 +18,9 @@
             <span v-else-if="i.userType===0">【线下/个人】</span>
             <span v-else-if="i.userType===1">【线下/团体】</span> 
               <span>{{i.productName}}</span>
-              <span :class="i.payStatus==0?'bu':''">{{i.payStatus==0?'不可用':'可用'}}</span>
+              <span :class="i.payStatus==0||i.totalNum-i.appointNum==0?'bu':''">
+                {{i.payStatus==0||i.totalNum-i.appointNum==0?'不可用':'可用'}}
+              </span>
             </p>
             <p class="cont">
               下单时间：{{i.createdDate | timeFormat}}
@@ -55,13 +57,14 @@
             <span v-else-if="i.userType===0">【线下/个人】</span>
             <span v-else-if="i.userType===1">【线下/团体】</span>
             <span>{{i.productName}}</span>
-            <span :class="i.payStatus==0?'bu':''">{{i.payStatus==0?'不可用':'可用'}}</span>
+            <span>可用</span>
           </p>
           <p class="cont">
             下单时间：{{i.createdDate | timeFormat}}
           </p>
           <p class='login_line'></p>
-          <p class='yzf'>已支付：￥ {{i.price}} .00</p>
+          <p class='yzf' v-if="i.payStatus==1">已支付：￥ {{i.price}} .00</p>
+          <p class='yzf' v-if="i.payStatus==0">未支付：￥ {{i.price}} .00</p>
           <p class="las">
             <span>剩余可预约：{{i.totalNum - i.appointNum}}次</span>
             <span></span>
@@ -83,20 +86,21 @@
       </div>
 
       <ul class="home_list" v-else>
-        <li @click='/*kankanxq*/' v-for="(i,index) of nouse" :key='index' :data-num='i.id'>
+        <li @click='kankanxq(i.id,i.shopId,i.payStatus)' v-for="(i,index) of nouse" :key='index' :data-num='i.id'>
           <table></table>
           <p class="ti">
             <span v-if="i.productType===0">【线上远程】</span>
             <span v-else-if="i.userType===0">【线下/个人】</span>
             <span v-else-if="i.userType===1">【线下/团体】</span> 
             <span>{{i.productName}}</span>
-            <span :class="i.payStatus==0?'bu':''">{{i.payStatus==0?'不可用':'可用'}}</span>
+            <span class="bu">不可用</span>
           </p>
           <p class="cont">
             下单时间：{{i.createdDate | timeFormat}}
           </p>
           <p class='login_line'></p>
-          <p class='yzf'>未支付：￥ {{i.price}} .00</p>
+          <p class='yzf' v-if="i.payStatus==1">已支付：￥ {{i.price}} .00</p>
+          <p class='yzf' v-if="i.payStatus==0">未支付：￥ {{i.price}} .00</p>
           <p class="las">
             <span>剩余可预约：{{i.totalNum - i.appointNum}}次</span>
             <span></span>
@@ -270,9 +274,6 @@ export default {
       this.$router.push('/');
     },
     kankanxq(orderId,shopId,payStatus){
-      // alert(orderId)
-      // alert(shopId)
-      // alert(payStatus)
       if(payStatus === 0) {
         return
       }
@@ -290,7 +291,7 @@ export default {
       console.log(data)
       this.orderList=data.data;
       for(var key of this.orderList){
-        if(key.payStatus===1){
+        if(key.payStatus===1 && (key.totalNum-key.appointNum)>0){
           this.yesuse.push(key);
         }else{
           this.nouse.push(key);

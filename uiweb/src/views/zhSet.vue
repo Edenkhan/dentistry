@@ -25,7 +25,7 @@
 
   <van-overlay :show="zshow" @click="zshow = false">
     <div class="wai" @click.stop>
-      <van-radio-group v-model="zradio">
+      <van-radio-group v-model="gender">
         <van-cell-group>
           <van-cell title="男" clickable @click="biannan">
             <template #right-icon>
@@ -102,7 +102,6 @@ export default {
     return {
       checked:false,
       zshow:false,
-      zradio: 1,
       gender: 1,
       uploader:[],
     }
@@ -121,12 +120,10 @@ export default {
       this.zshow=true;
     },
     biannan(){
-      this.zradio= 1;
       this.gender= 1;
       this.zshow=false;
     },
     biannv(){
-      this.zradio= 0
       this.gender= 0;
       this.zshow=false;
     },
@@ -153,12 +150,11 @@ export default {
     },
   },
   watch:{
-    zradio(){
+    gender(){
       // 修改用户性别
       this.axios.post('api/registeredUser/changeGender',qs.stringify({id:this.id,gender:this.gender})).then(res=>{
         console.log(res.data);
         // 存储到sess里面
-        this.zradio = this.gender
         this.logined({gender:this.gender});
         sessionStorage.setItem('gender',this.gender);
       })

@@ -146,8 +146,8 @@ export default {
             let newpt=this.phone.slice(0,3)
             let newpw=this.phone.substring(this.phone.length-4)
             let newph=`${newpt}****${newpw}`
-            this.logined({iphone:newph})
-            sessionStorage.setItem('iphone',newph)
+            this.logined({phoneNumber:newph})
+            sessionStorage.setItem('phoneNumber',newph)
             // 在vuex里面改变登录状态
             this.$toast.success('登陆成功')
             this.$router.push('/')

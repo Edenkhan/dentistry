@@ -11,11 +11,11 @@
         <result property="address" column="address"/>
         <result property="phone" column="phone"/>
         <result property="validNum" column="validNum"/>
-        <result property="appointedNum" column="appointedNum"/>
+        <result property="appointNum" column="appointNum"/>
         <result property="enabled" column="enabled"/>
     </resultMap>
-    <sql id="BASE_COLUMNS">sp.id, sp.createdDate, sp.lastModifiedDate, sp.version, sp.name, sp.address, sp.phone, sp.validNum, sp.appointedNum, sp.enabled</sql>
-    <sql id="QUERY_COLUMNS">sp.id, sp.createdDate, sp.lastModifiedDate, sp.version, sp.name, sp.address, sp.phone, sp.validNum, sp.appointedNum, sp.enabled</sql>
+    <sql id="BASE_COLUMNS">sp.id, sp.createdDate, sp.lastModifiedDate, sp.version, sp.name, sp.address, sp.phone, sp.validNum, sp.appointNum, sp.enabled</sql>
+    <sql id="QUERY_COLUMNS">sp.id, sp.createdDate, sp.lastModifiedDate, sp.version, sp.name, sp.address, sp.phone, sp.validNum, sp.appointNum, sp.enabled</sql>
     <resultMap id="VO_RESULT" type="com.youruan.dentistry.core.backstage.vo.ExtendedShop" extends="BASE_RESULT"/>
     <sql id="JOIN_COLUMNS">
 
@@ -40,7 +40,7 @@
             <if test="address != null">address = #{address},</if>
             <if test="phone != null">phone = #{phone},</if>
             <if test="validNum != null">validNum = #{validNum},</if>
-            <if test="appointedNum != null">appointedNum = #{appointedNum},</if>
+            <if test="appointNum != null">appointNum = #{appointNum},</if>
             <if test="enabled != null">enabled = #{enabled}</if>
         </set>
         <where>id = #{id} AND version = #{version}</where>

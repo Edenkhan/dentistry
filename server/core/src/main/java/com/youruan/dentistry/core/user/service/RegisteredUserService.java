@@ -49,4 +49,9 @@ public interface RegisteredUserService {
      * 处理返回结果 追加
      */
     List<UserRecordVo> handleData(List<ExtendedRegisteredUser> userList);
+
+    /**
+     * 修改手机号
+     */
+    void changePhoneNumber(RegisteredUser user, String phoneNumber);
 }

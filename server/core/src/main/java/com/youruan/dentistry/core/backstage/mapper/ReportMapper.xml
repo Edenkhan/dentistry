@@ -12,20 +12,35 @@
     <result property="sync" column="sync"/>
     <result property="userId" column="userId"/>
     <result property="appointId" column="appointId"/>
+    <result property="productId" column="productId"/>
   </resultMap>
-  <sql id="BASE_COLUMNS">rp.id, rp.createdDate, rp.lastModifiedDate, rp.version, rp.reportNo, rp.path, rp.sync, rp.userId, rp.appointId</sql>
-  <sql id="QUERY_COLUMNS">rp.id, rp.createdDate, rp.lastModifiedDate, rp.version, rp.reportNo, rp.path, rp.sync, rp.userId, rp.appointId</sql>
+  <resultMap id="RECORD_RESULT" type="com.youruan.dentistry.core.backstage.vo.ReportRecordVo">
+    <id property="id" column="id"/>
+    <result property="createdDate" column="createdDate"/>
+    <result property="lastModifiedDate" column="lastModifiedDate"/>
+    <result property="version" column="version"/>
+    <result property="reportNo" column="reportNo"/>
+    <result property="productName" column="productName"/>
+    <result property="productType" column="productType"/>
+    <result property="userType" column="userType"/>
+    <result property="sync" column="sync"/>
+    <result property="path" column="path"/>
+    <result property="appointDate" column="appointDate"/>
+  </resultMap>
+  <sql id="BASE_COLUMNS">rp.id, rp.createdDate, rp.lastModifiedDate, rp.version, rp.reportNo, rp.path, rp.sync, rp.userId, rp.appointId, rp.productId</sql>
+  <sql id="QUERY_COLUMNS">rp.id, rp.createdDate, rp.lastModifiedDate, rp.version, rp.reportNo, rp.path, rp.sync, rp.userId, rp.appointId, rp.productId</sql>
   <resultMap id="VO_RESULT" type="com.youruan.dentistry.core.backstage.vo.ExtendedReport" extends="BASE_RESULT"/>
   <sql id="JOIN_COLUMNS">
-
+    ,p.name AS productName,p.type AS productType,p.userType
+    ,ap.appointDate
   </sql>
   <select id="get" resultMap="BASE_RESULT" parameterType="java.lang.Long">SELECT 
     <include refid="BASE_COLUMNS"/> FROM Report rp WHERE id = #{id }
   </select>
   <delete id="delete" parameterType="java.lang.Long">DELETE FROM Report WHERE id = #{id}</delete>
   <insert id="add" parameterType="com.youruan.dentistry.core.backstage.domain.Report" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
-    INSERT INTO Report(id, createdDate, version, reportNo, `path`, sync, userId, appointId)
-    VALUES(#{id }, #{createdDate}, 0, #{reportNo}, #{path}, #{sync}, #{userId}, #{appointId})
+    INSERT INTO Report(id, createdDate, version, reportNo, `path`, sync, userId, appointId, productId)
+    VALUES(#{id }, #{createdDate}, 0, #{reportNo}, #{path}, #{sync}, #{userId}, #{appointId}, #{productId})
     </insert>
   <update id="update" parameterType="com.youruan.dentistry.core.backstage.domain.Report">UPDATE Report
     <set>
@@ -40,7 +55,8 @@
     <where>id = #{id} AND version = #{version}</where>
   </update>
   <sql id="QUERY_JOIN">
-
+    LEFT JOIN product p ON rp.productId = p.id
+    LEFT JOIN appointment ap ON rp.appointId = ap.id
   </sql>
   <sql id="QUERY_WHERE_SQL">
     <if test="ids != null">AND rp.id IN
@@ -48,6 +64,12 @@
     </if>
     <if test="startCreatedDate != null">AND rp.createdDate &gt;= #{startCreatedDate }</if>
     <if test="endCreatedDate != null">AND rp.createdDate &lt;= #{endCreatedDate }</if>
+    <if test="userId != null">AND rp.userId = #{userId}</if>
+    <if test="appointId != null">AND rp.appointId = #{appointId}</if>
+    <if test="likeProductName != null">AND p.name LIKE CONCAT('%',#{likeProductName},'%')</if>
+    <if test="productType != null">AND p.type = #{productType}</if>
+    <if test="userType != null">AND p.userType = #{userType}</if>
+    <if test="sync != null">AND rp.sync = #{sync}</if>
   </sql>
   <sql id="QUERY_WHERE">
     <where>
@@ -62,11 +84,23 @@
   <sql id="QUERY_LIMIT">
     <if test="pageSize &gt; 0">LIMIT ${start}, ${pageSize}</if>
   </sql>
-  <select id="count" parameterType="com.youruan.dentistry.core.backstage.query.ReportQuery" resultType="java.lang.Integer">SELECT COUNT(*) FROM Report AS rp
-    <include refid="QUERY_JOIN"/>
+  <select id="count" parameterType="com.youruan.dentistry.core.backstage.query.ReportQuery" resultType="java.lang.Integer">
+    SELECT COUNT(*) FROM Report AS rp
     <include refid="QUERY_WHERE"/>
   </select>
   <select id="query" parameterType="com.youruan.dentistry.core.backstage.query.ReportQuery" resultMap="VO_RESULT">SELECT
+    <include refid="QUERY_COLUMNS"/>
+    FROM Report AS rp
+    <include refid="QUERY_WHERE"/>
+    <include refid="QUERY_ORDER_BY"/>
+    <include refid="QUERY_LIMIT"/>
+  </select>
+  <select id="countRecord" parameterType="com.youruan.dentistry.core.backstage.query.ReportQuery" resultType="java.lang.Integer">
+    SELECT COUNT(*) FROM Report AS rp
+    <include refid="QUERY_JOIN"/>
+    <include refid="QUERY_WHERE"/>
+  </select>
+  <select id="record" parameterType="com.youruan.dentistry.core.backstage.query.ReportQuery" resultMap="RECORD_RESULT">SELECT
     <include refid="QUERY_COLUMNS"/>
     <include refid="JOIN_COLUMNS"/> FROM Report AS rp
     <include refid="QUERY_JOIN"/>

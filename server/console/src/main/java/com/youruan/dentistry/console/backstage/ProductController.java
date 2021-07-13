@@ -57,7 +57,7 @@ public class ProductController {
                 form.getTotalAppointNum(),
                 form.getPeopleNum(),
                 form.getIconPath(),
-                form.getDetailPaths(),
+                form.getDetailPathList(),
                 form.getDescription(),
                 form.getState());
         return ResponseEntity.ok(ImmutableMap.builder()
@@ -79,7 +79,7 @@ public class ProductController {
                 form.getTotalAppointNum(),
                 form.getPeopleNum(),
                 form.getIconPath(),
-                form.getDetailPaths(),
+                form.getDetailPathList(),
                 form.getDescription(),
                 form.getState());
         return ResponseEntity.ok(ImmutableMap.builder()
@@ -97,8 +97,8 @@ public class ProductController {
     @PostMapping("/uploadDetail")
     @RequiresPermission(value = "backstage.activity.uploadDetail",description = "产品详情主图-上传")
     public ResponseEntity<?> uploadDetail(MultipartFile[] files) {
-        List<String> detailPaths = productService.upload("productdetail",files);
-        return ResponseEntity.ok(ImmutableMap.builder().put("detailPaths",detailPaths).build());
+        List<String> detailPathList = productService.upload("productdetail",files);
+        return ResponseEntity.ok(ImmutableMap.builder().put("detailPathList",detailPathList).build());
     }
 
 }

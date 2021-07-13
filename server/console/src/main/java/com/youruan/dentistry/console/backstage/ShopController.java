@@ -33,7 +33,7 @@ public class ShopController {
         Pagination<ExtendedShop> pagination = shopService.query(qo);
         return ResponseEntity.ok(ImmutableMap.builder()
                 .put("data", BeanMapUtils.pick(pagination.getData(),
-                        "id", "createdDate", "lastModifiedDate", "name","address","phone","validNum","appointedNum","enabled"))
+                        "id", "createdDate", "lastModifiedDate", "name","address","phone","validNum","appointNum","enabled"))
                 .put("rows", pagination.getRows())
                 .build());
     }
@@ -42,7 +42,7 @@ public class ShopController {
     @RequiresPermission(value = "backstage.shop.get", description = "门店-获取")
     public ResponseEntity<?> get(@RequestParam("id") Long id) {
         Shop shop = shopService.get(id);
-        return ResponseEntity.ok(BeanMapUtils.pick(shop, "id", "name", "address","phone","validNum","appointedNum","enabled"));
+        return ResponseEntity.ok(BeanMapUtils.pick(shop, "id", "name", "address","phone","validNum","appointNum","enabled"));
     }
 
     @PostMapping("/add")

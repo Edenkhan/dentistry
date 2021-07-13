@@ -5,8 +5,8 @@
     <van-nav-bar title="我的报告" left-text="返回" left-arrow @click-left="wdRe"/>
   </div>
 
-  <div class="buyde" v-for='index of 4' :key='index' v-show='isxs' @click='wmbg'>
-    <p class="wode">您2019年8月6日预约的【这是产品套餐名称】的报告 已生成，请查收。</p>
+  <div class="buyde" v-for='(item, index) in reportList' :key='index' v-show='isxs' @click='wmbg(item.id)'>
+    <p class="wode">您{{item.appointDate.split('T')[0]}}预约的【{{item.productName}}】的报告 已生成，请查收。</p>
     <p class="xiangq">2019-07-31 17:12:46</p>
     <span class='rjt'><van-icon name="arrow" /></span>
   </div>
@@ -94,7 +94,8 @@ export default {
   },
   data(){
     return {
-      isxs:true
+      isxs:true,
+      reportList: [],
     }
   },
   methods:{
@@ -104,14 +105,14 @@ export default {
       }
       this.isxs=true;
     },
-    wmbg(){
-      this.$router.push('/mr');
+    wmbg(id){
+      this.$router.push('/mr?id='+id);
     }
   },
   mounted(){
 
-    this.axios.get('api/work/report/getByUserId?'+`userId=${this.id}`).then(res=>{
-      console.log(res.data);
+    this.axios.get('api/frontdesk/report/list').then(({data})=>{
+      this.reportList = data.data
     })
   }
 }

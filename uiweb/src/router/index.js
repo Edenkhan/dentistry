@@ -12,6 +12,7 @@ import pw from '../views/prewszl'
 import detail from '../views/detail'
 import me from '../views/me'
 import succ from '../views/succ'
+import phonesucc from '../views/phonesucc'
 import yym from '../views/yuyueMessage'
 import dui from '../views/duiCode'
 import md from '../views/myding'
@@ -80,6 +81,10 @@ const routes = [
   {
     path: '/succ',
     component: succ
+  },
+  {
+    path: '/phonesucc',
+    component: phonesucc
   },
   {
     path: '/yym',

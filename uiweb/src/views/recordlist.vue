@@ -5,13 +5,9 @@
     <van-nav-bar title="报告列表"/>
   </div>
 
-  <p class='login_text'>共10份</p>
+  <p class='login_text'>共{{reportList.length}}份</p>
 
-  <van-cell title="王二麻子" is-link to='/mr'/>
-  <van-cell title="铁憨憨" is-link to='/mr'/>
-  <van-cell title="铁憨憨" is-link to='/mr'/>
-  <van-cell title="铁憨憨" is-link to='/mr'/>
-  <van-cell title="铁憨憨" is-link to='/mr'/>
+  <van-cell v-for="(item, index) in reportList" :key="index" :title="item.appointDate.split('T')[0]" is-link :to='`/mr?id=${item.id}`'/>
 
 </div>
 </template>
@@ -50,12 +46,19 @@ export default {
         'username','iphone','id','sex'
     ])
   },
+  data() {
+    return {
+      appointId: this.$route.query.id,
+      reportList: [],
+    }
+  },
   methods:{
     
   },
   mounted(){
-    this.axios.get('api/work/report/getByUserId?'+`userId=${this.id}`).then(res=>{
-      console.log(res.data);
+    this.axios.get('api/frontdesk/report/list?appointId='+this.appointId).then(({data})=>{
+      console.log(data);
+      this.reportList = data.data
     })
   }
 }

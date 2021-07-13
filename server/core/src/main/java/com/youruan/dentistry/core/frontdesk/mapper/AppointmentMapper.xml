@@ -44,6 +44,12 @@
     <select id="get" resultMap="BASE_RESULT" parameterType="java.lang.Long">SELECT
         <include refid="BASE_COLUMNS"/> FROM Appointment ap WHERE id = #{id }
     </select>
+    <select id="getInfo" resultMap="RECORD_RESULT" parameterType="java.lang.Long">SELECT
+        <include refid="QUERY_COLUMNS"/>
+        <include refid="JOIN_COLUMNS"/> FROM Appointment AS ap
+        <include refid="QUERY_JOIN"/>
+        WHERE ap.id = #{id }
+    </select>
     <delete id="delete" parameterType="java.lang.Long">DELETE FROM Appointment WHERE id = #{id}</delete>
     <insert id="add" parameterType="com.youruan.dentistry.core.frontdesk.domain.Appointment" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
         INSERT INTO Appointment(id, createdDate, version, appointDate, timePeriod, `state`, orderId, userId, productId, shopId)

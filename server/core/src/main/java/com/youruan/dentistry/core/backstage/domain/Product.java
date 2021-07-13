@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 /**
  * 产品
@@ -81,10 +80,6 @@ public class Product extends BasicDomain {
      * 列表图片
      */
     private String iconPath;
-    /**
-     * 详情图片
-     */
-    private List<String> detailPaths;
     /**
      * 销量
      */

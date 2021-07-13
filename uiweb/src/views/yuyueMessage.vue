@@ -320,14 +320,18 @@ export default {
           if(!this.flag) {
             // 创建
             this.axios.post('api/frontdesk/appointment/add',qs.stringify({timePeriod:timePeriod,orderId:this.orderId,appointDate:this.appointDate})).then(({data})=>{
-              console.log(data);
-              this.$router.push('/yy_succ');
+              console.log(data)
+              this.$router.push('/yy_succ')
+            }).catch(({data}) => {
+              this.$toast(data.message)
             })
           }else{
             // 修改
             this.axios.post('api/frontdesk/appointment/edit',qs.stringify({timePeriod:timePeriod,orderId:this.orderId,appointDate:this.appointDate})).then(({data})=>{
-              console.log(data);
-              this.$router.push('/yy_succ');
+              console.log(data)
+              this.$router.push('/yy_succ')
+            }).catch(({data}) => {
+              this.$toast(data.message)
             })
           }
         }else{
@@ -338,6 +342,8 @@ export default {
     },
   },
   mounted(){
+
+    console.log('***********',this.orderId)
 
     // 获取商品信息
     this.axios.get(`api/frontdesk/product/get?id=${this.productId}`).then(({data})=>{

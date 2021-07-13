@@ -19,5 +19,6 @@ public class ExtendedOrders
     private Integer userType;
     private Integer peopleNum;
     private String description;
+    private String iconPath;
 
 }

@@ -136,7 +136,7 @@ export default {
       labelCol: { span: 4 },
       wrapperCol: { span: 8 },
       productForm: {
-        detailPaths: [],
+        detailPathList: [],
       },
       loading: false,
       fetching: false,
@@ -229,8 +229,8 @@ export default {
       this.uploading = true;
 
       uploadDetails(formData)
-        .then(({detailPaths}) => {
-          this.productForm.detailPaths = detailPaths
+        .then(({detailPathList}) => {
+          this.productForm.detailPathList = detailPathList
           this.fileList = [];
           this.uploading = false;
           this.$message.success('upload successfully.');

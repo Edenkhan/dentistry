@@ -28,8 +28,3 @@ export function listBought(params) {
 export function listReportable(params) {
   return get('/user/reportable?' + stringify(params));
 }
-
-// 添加报告
-export function addReport(params) {
-  return post('/backstage/report/add?' + stringify(params));
-}

@@ -181,13 +181,12 @@ export default {
   },
   created() {
     this.check()
-    this.fetch()
   },
   methods: {
     check(){
       this.appointManageListForm.shopId = this.shopId
       checkDataSource(this.appointManageListForm).then(() => {
-        this.$message.success("检查完毕")
+        this.fetch()
       })
     },
     changeStatus(id,status) {

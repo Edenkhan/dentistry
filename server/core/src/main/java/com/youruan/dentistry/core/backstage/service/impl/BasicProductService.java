@@ -76,8 +76,8 @@ public class BasicProductService
     @Override
     public Pagination<ExtendedProduct> query(ProductQuery qo) {
         int rows = productMapper.count(qo);
-        List<ExtendedProduct> datas = ((rows == 0) ? new ArrayList<ExtendedProduct>() : productMapper.query(qo));
-        return new Pagination<ExtendedProduct>(rows, datas);
+        List<ExtendedProduct> datas = ((rows == 0) ? new ArrayList<>() : productMapper.query(qo));
+        return new Pagination<>(rows, datas);
     }
 
     @Override
@@ -86,35 +86,35 @@ public class BasicProductService
     }
 
     @Override
-    public Product create(String name, String intro, Integer type, Integer userType, BigDecimal price, Integer totalAppointNum, Integer peopleNum, String iconPath, List<String> detailPaths, String description, Integer state) {
+    public Product create(String name, String intro, Integer type, Integer userType, BigDecimal price, Integer totalAppointNum, Integer peopleNum, String iconPath, List<String> detailPathList, String description, Integer state) {
         // 远程产品
         if(Product.PRODUCT_TYPE_ONLINE.equals(type)) peopleNum = 1;
         // 团队
         if(Product.USER_TYPE_TEAM.equals(userType)) totalAppointNum = 1;
-        this.checkAdd(name, intro, type, userType, price, totalAppointNum, peopleNum, iconPath, detailPaths, description, state);
+        this.checkAdd(name, intro, type, userType, price, totalAppointNum, peopleNum, iconPath, detailPathList, description, state);
         Product product = new Product();
         this.assign(product, name, intro, type, userType, price, totalAppointNum, peopleNum, iconPath, description, state);
         product = add(product);
-        productDetailPathService.create(product.getId(),detailPaths);
+        productDetailPathService.create(product.getId(),detailPathList);
         return product;
     }
 
     @Override
     @Transactional
-    public void update(Product product, String name, String intro, Integer type, Integer userType, BigDecimal price, Integer totalAppointNum, Integer peopleNum, String iconPath, List<String> detailPaths, String description, Integer state) {
-        this.checkUpdate(product, name, intro, type, userType, price, totalAppointNum, peopleNum, iconPath, detailPaths, description, state);
+    public void update(Product product, String name, String intro, Integer type, Integer userType, BigDecimal price, Integer totalAppointNum, Integer peopleNum, String iconPath, List<String> detailPathList, String description, Integer state) {
+        this.checkUpdate(product, name, intro, type, userType, price, totalAppointNum, peopleNum, iconPath, detailPathList, description, state);
         this.assign(product, name, intro, type, userType, price, totalAppointNum, peopleNum, iconPath, description, state);
         update(product);
         productDetailPathService.deleteByProductId(product.getId());
-        productDetailPathService.create(product.getId(),detailPaths);
+        productDetailPathService.create(product.getId(),detailPathList);
     }
 
     /**
      * 修改产品校验
      */
-    private void checkUpdate(Product product, String name, String intro, Integer type, Integer userType, BigDecimal price, Integer totalAppointNum, Integer peopleNum, String iconPath, List<String> detailPaths, String description, Integer state) {
+    private void checkUpdate(Product product, String name, String intro, Integer type, Integer userType, BigDecimal price, Integer totalAppointNum, Integer peopleNum, String iconPath, List<String> detailPathList, String description, Integer state) {
         Assert.notNull(product, "必须提供产品");
-        this.checkParam(name, intro, type, userType, price, totalAppointNum, peopleNum, iconPath, detailPaths, description, state);
+        this.checkParam(name, intro, type, userType, price, totalAppointNum, peopleNum, iconPath, detailPathList, description, state);
         ProductQuery qo = new ProductQuery();
         qo.setName(name);
         int count = productMapper.count(qo);
@@ -135,20 +135,21 @@ public class BasicProductService
         product.setIconPath(iconPath);
         product.setDescription(description);
         product.setState(state);
+        product.setSales(0);
     }
 
     /**
      * 添加产品校验
      */
-    private void checkAdd(String name, String intro, Integer type, Integer userType, BigDecimal price, Integer totalAppointNum, Integer peopleNum, String iconPath, List<String> detailPaths, String description, Integer state) {
-        this.checkParam(name, intro, type, userType, price, totalAppointNum, peopleNum, iconPath, detailPaths, description, state);
+    private void checkAdd(String name, String intro, Integer type, Integer userType, BigDecimal price, Integer totalAppointNum, Integer peopleNum, String iconPath, List<String> detailPathList, String description, Integer state) {
+        this.checkParam(name, intro, type, userType, price, totalAppointNum, peopleNum, iconPath, detailPathList, description, state);
         ProductQuery qo = new ProductQuery();
         qo.setName(name);
         int count = productMapper.count(qo);
         Assert.isTrue(count == 0, "产品名称重复");
     }
 
-    private void checkParam(String name, String intro, Integer type, Integer userType, BigDecimal price, Integer totalAppointNum, Integer peopleNum, String iconPath, List<String> detailPaths, String description, Integer state) {
+    private void checkParam(String name, String intro, Integer type, Integer userType, BigDecimal price, Integer totalAppointNum, Integer peopleNum, String iconPath, List<String> detailPathList, String description, Integer state) {
         Assert.notNull(name, "必须提供产品名称");
         Assert.notNull(intro, "必须提供产品简介");
         Assert.notNull(type, "必须提供产品类型");
@@ -157,7 +158,7 @@ public class BasicProductService
         Assert.notNull(totalAppointNum, "必须提供包含次数");
         Assert.notNull(peopleNum, "必须提供包含人数");
         Assert.notNull(iconPath, "必须提供产品列表主图");
-        Assert.isTrue(!CollectionUtils.isEmpty(detailPaths), "必须提供产品详情主图");
+        Assert.isTrue(!CollectionUtils.isEmpty(detailPathList), "必须提供产品详情主图");
         Assert.notNull(description, "必须提供产品详情内容");
         Assert.notNull(state, "必须提供产品状态");
     }
@@ -178,27 +179,37 @@ public class BasicProductService
 
     @Override
     public List<String> upload(String directory, MultipartFile... files) {
-        List<String> paths = new ArrayList<>();
+        List<String> pathList = new ArrayList<>();
         Arrays.stream(files).forEach(file -> {
             try {
                 UploadFile uploadFile = new UploadFile();
                 BeanUtils.copyProperties(file, uploadFile);
                 String path = diskFileStorage.store(uploadFile, directory);
-                paths.add(path);
+                pathList.add(path);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         });
-        return paths;
+        return pathList;
     }
 
     @Override
-    public void handleData(Product product) {
+    public ExtendedProduct handleData(Product product) {
         ProductDetailPathQuery qo = new ProductDetailPathQuery();
         qo.setProductId(product.getId());
-        List<ExtendedProductDetailPath> detailPathList = productDetailPathService.listAll(qo);
-        List<String> detailPaths = detailPathList.stream().map(ProductDetailPath::getDetailPath).collect(Collectors.toList());
-        product.setDetailPaths(detailPaths);
+        List<ExtendedProductDetailPath> productDetailList = productDetailPathService.listAll(qo);
+        List<String> detailPathList = productDetailList.stream().map(ProductDetailPath::getDetailPath).collect(Collectors.toList());
+        ExtendedProduct vo = new ExtendedProduct();
+        BeanUtils.copyProperties(product,vo);
+        vo.setDetailPathList(detailPathList);
+        return vo;
+    }
+
+    @Override
+    public void updateSales(Product product) {
+        Assert.notNull(product,"必须提供产品");
+        product.setSales(product.getSales() + 1);
+        this.update(product);
     }
 
 }

@@ -1,6 +1,7 @@
 const RegisteredUserList = () => import(/* webpackChunkName: "user" */ '../views/user/RegisteredUserList.vue');
 const RegisteredUserEdit = () => import(/* webpackChunkName: "user" */ '../views/user/RegisteredUserEdit.vue');
 const RegisteredUserBought = () => import(/* webpackChunkName: "user" */ '../views/user/RegisteredUserBought.vue');
+const RegisteredUserReport = () => import(/* webpackChunkName: "user" */ '../views/user/RegisteredUserReport.vue');
 
 export default [
   {
@@ -45,6 +46,20 @@ export default [
     meta: {
       title: '已购产品列表',
       permission: 'user.user.bought',
+      parents: [
+        {
+          path: '/user/list',
+          title: '用户列表'
+        }
+      ]
+    }
+  },
+  {
+    path: '/user/report',
+    component: RegisteredUserReport,
+    meta: {
+      title: '检查报告',
+      permission: 'user.user.report',
       parents: [
         {
           path: '/user/list',

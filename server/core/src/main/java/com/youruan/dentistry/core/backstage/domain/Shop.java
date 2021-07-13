@@ -29,7 +29,7 @@ public class Shop extends BasicDomain {
     /**
      * 已预约次数
      */
-    private Integer appointedNum;
+    private Integer appointNum;
     /**
      * 门店状态
      */

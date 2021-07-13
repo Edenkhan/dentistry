@@ -2,6 +2,7 @@ package com.youruan.dentistry.portal.frontdesk;
 
 import com.google.common.collect.ImmutableMap;
 import com.youruan.dentistry.core.backstage.domain.Dictionary;
+import com.youruan.dentistry.core.backstage.domain.Product;
 import com.youruan.dentistry.core.backstage.query.DictionaryItemQuery;
 import com.youruan.dentistry.core.backstage.query.DictionaryQuery;
 import com.youruan.dentistry.core.backstage.service.DictionaryItemService;
@@ -10,6 +11,8 @@ import com.youruan.dentistry.core.backstage.service.ShopService;
 import com.youruan.dentistry.core.backstage.vo.DictionaryItemListVo;
 import com.youruan.dentistry.core.backstage.vo.ExtendedDictionary;
 import com.youruan.dentistry.core.backstage.vo.ExtendedShop;
+import com.youruan.dentistry.core.backstage.vo.OrderRecordVo;
+import com.youruan.dentistry.core.base.query.Pagination;
 import com.youruan.dentistry.core.base.utils.BeanMapUtils;
 import com.youruan.dentistry.core.base.utils.IPUtils;
 import com.youruan.dentistry.core.base.utils.StreamUtils;
@@ -19,6 +22,7 @@ import com.youruan.dentistry.core.frontdesk.query.OrdersQuery;
 import com.youruan.dentistry.core.frontdesk.service.OrdersService;
 import com.youruan.dentistry.core.frontdesk.vo.ExtendedOrders;
 import com.youruan.dentistry.core.user.domain.RegisteredUser;
+import com.youruan.dentistry.portal.base.ErrorResponseEntity;
 import com.youruan.dentistry.portal.base.interceptor.RequiresAuthentication;
 import com.youruan.dentistry.portal.frontdesk.form.OrdersAddForm;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +32,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -67,11 +70,12 @@ public class OrdersController {
         OrdersQuery qo = new OrdersQuery();
         qo.setUserId(user.getId());
         qo.setPayStatus(Orders.PAY_STATUS_PAID);
-        List<ExtendedOrders> ordersList = ordersService.listAll(qo);
-        ordersList = ordersService.filterOnline(ordersList);
-        ordersService.handleData(ordersList);
-        ImmutableMap<Object, Object> map = ImmutableMap.builder().put("data", ordersList).build();
-        return ResponseEntity.ok(map);
+        qo.setProductType(Product.PRODUCT_TYPE_OFFLINE);
+        qo.setMaxPageSize();
+        Pagination<OrderRecordVo> pagination = ordersService.record(qo);
+        return ResponseEntity.ok(ImmutableMap.builder()
+                .put("data", pagination.getData())
+                .build());
     }
 
     @GetMapping("/list")
@@ -79,9 +83,11 @@ public class OrdersController {
     public ResponseEntity<?> list(RegisteredUser user) {
         OrdersQuery qo = new OrdersQuery();
         qo.setUserId(user.getId());
-        List<ExtendedOrders> ordersList = ordersService.listAll(qo);
-        ordersService.handleData(ordersList);
-        return ResponseEntity.ok(ImmutableMap.builder().put("data",ordersList).build());
+        qo.setMaxPageSize();
+        Pagination<OrderRecordVo> pagination = ordersService.record(qo);
+        return ResponseEntity.ok(ImmutableMap.builder()
+                .put("data",pagination.getData())
+                .build());
     }
 
     @GetMapping("/getDoctor")
@@ -107,17 +113,14 @@ public class OrdersController {
     @PostMapping("/add")
     @RequiresAuthentication
     public ResponseEntity<?> add(OrdersAddForm form) {
-        ordersService.delete(form.getUserId(),
-                form.getProductId(),
-                form.getShopId(),
-                form.getDicItemId());
         Orders orders = ordersService.create(form.getPrice(),
                 form.getUserId(),
                 form.getProductId(),
                 form.getShopId(),
                 form.getDicItemId());
-        ImmutableMap<Object, Object> map = ImmutableMap.builder().put("id", orders.getId()).build();
-        return ResponseEntity.ok(map);
+        return ResponseEntity.ok(ImmutableMap.builder()
+                .put("id", orders.getId())
+                .build());
     }
 
     @PostMapping("/toPay")
@@ -143,15 +146,13 @@ public class OrdersController {
             String xml = StreamUtils.readStream(request.getInputStream());
             Map<String, String> resultMap = WXPayUtil.xmlToMap(xml);
             Orders orders = ordersService.getByOrderNo(resultMap.get("out_trade_no"));
-            if(Orders.PAY_STATUS_PAID.equals(orders.getPayStatus())) {
-                return ResponseEntity.ok("订单已支付");
-            }else{
-                ordersService.update(orders,new Date(),Orders.PAY_STATUS_PAID);
+            if(Orders.PAY_STATUS_UNPAID.equals(orders.getPayStatus())) {
+                ordersService.changePayStatusAndSales(orders);
             }
+            return ResponseEntity.ok("订单已支付");
         } catch (Exception e) {
             e.printStackTrace();
+            return ErrorResponseEntity.badRequest("回调错误");
         }
-
-        return ResponseEntity.ok().build();
     }
 }

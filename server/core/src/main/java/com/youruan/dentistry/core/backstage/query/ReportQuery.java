@@ -16,7 +16,14 @@ public class ReportQuery
     protected Long[] ids;
     protected Date startCreatedDate;
     protected Date endCreatedDate;
+    protected Long userId;
     protected Long appointId;
+
+    private String productName;
+    private String likeProductName;
+    private Integer productType;
+    private Integer userType;
+    private Boolean sync;
 
     public boolean hasIds() {
         return (this.ids.length!= 0);

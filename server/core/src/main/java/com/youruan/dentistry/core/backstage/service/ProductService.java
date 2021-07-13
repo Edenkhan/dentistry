@@ -35,11 +35,11 @@ public interface ProductService {
     /**
      * 添加
      */
-    Product create(String name, String intro, Integer type, Integer userType, BigDecimal price, Integer totalAppointNum, Integer peopleNum, String iconPath, List<String> detailPaths, String description, Integer state);
+    Product create(String name, String intro, Integer type, Integer userType, BigDecimal price, Integer totalAppointNum, Integer peopleNum, String iconPath, List<String> detailPathList, String description, Integer state);
     /**
      * 修改
      */
-    void update(Product product, String name, String intro, Integer type, Integer userType, BigDecimal price, Integer totalAppointNum, Integer peopleNum, String iconPath, List<String> detailPaths, String description, Integer state);
+    void update(Product product, String name, String intro, Integer type, Integer userType, BigDecimal price, Integer totalAppointNum, Integer peopleNum, String iconPath, List<String> detailPathList, String description, Integer state);
     /**
      * 根据id集合，查询对应列表
      */
@@ -57,5 +57,10 @@ public interface ProductService {
     /**
      * 给商品绑定详情图片
      */
-    void handleData(Product product);
+    ExtendedProduct handleData(Product product);
+
+    /**
+     * 增加销量
+     */
+    void updateSales(Product product);
 }

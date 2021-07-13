@@ -33,11 +33,11 @@ public interface ProductDetailPathService {
     /**
      * 添加
      */
-    void create(Long productId, List<String> detailPaths);
+    void create(Long productId, List<String> detailPathList);
     /**
      * 修改
      */
-    void update(ProductDetailPath productDetailPath, Long productId, List<String> detailPaths);
+    void update(ProductDetailPath productDetailPath, Long productId, List<String> detailPathList);
     /**
      * 根据id集合，查询对应列表
      */

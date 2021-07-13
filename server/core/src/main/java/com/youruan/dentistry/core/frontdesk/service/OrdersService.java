@@ -10,7 +10,6 @@ import com.youruan.dentistry.core.user.domain.RegisteredUser;
 import com.youruan.dentistry.core.user.vo.UserBoughtVo;
 
 import java.math.BigDecimal;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -40,9 +39,9 @@ public interface OrdersService {
      */
     Orders create(BigDecimal price, Long userId, Long productId, Long shopId, Long dicItemId);
     /**
-     * 支付成功后，修改状态，以及添加购买时间
+     * 支付成功后，修改状态，以及添加购买时间 增加销量
      */
-    void update(Orders orders, Date boughtTime, Integer payStatus);
+    void changePayStatusAndSales(Orders orders);
 
     /**
      * 删除
@@ -73,19 +72,9 @@ public interface OrdersService {
     Orders getByOrderNo(String orderNo);
 
     /**
-     * 查询每件商品的剩余次数
-     */
-    void handleData(List<ExtendedOrders> ordersList);
-
-    /**
      * 查询订单对应的商品信息
      */
     ExtendedOrders handleData(Orders orders);
-
-    /**
-     * 过滤掉线上订单
-     */
-    List<ExtendedOrders> filterOnline(List<ExtendedOrders> ordersList);
 
     /**
      * 更新订单已预约次数
@@ -101,4 +90,5 @@ public interface OrdersService {
      * 查询用户已购买
      */
     Pagination<UserBoughtVo> bought(OrdersQuery qo);
+
 }

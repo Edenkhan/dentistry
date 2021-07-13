@@ -17,9 +17,10 @@
         <result property="peopleNum" column="peopleNum"/>
         <result property="totalAppointNum" column="totalAppointNum"/>
         <result property="iconPath" column="iconPath"/>
+        <result property="sales" column="sales"/>
     </resultMap>
-    <sql id="BASE_COLUMNS">pro.id, pro.createdDate, pro.lastModifiedDate, pro.version, pro.name, pro.price, pro.intro, pro.description, pro.type, pro.userType, pro.state, pro.peopleNum, pro.totalAppointNum, pro.iconPath</sql>
-    <sql id="QUERY_COLUMNS">pro.id, pro.createdDate, pro.lastModifiedDate, pro.version, pro.name, pro.price, pro.intro, pro.description, pro.type, pro.userType, pro.state, pro.peopleNum, pro.totalAppointNum, pro.iconPath</sql>
+    <sql id="BASE_COLUMNS">pro.id, pro.createdDate, pro.lastModifiedDate, pro.version, pro.name, pro.price, pro.intro, pro.description, pro.type, pro.userType, pro.state, pro.peopleNum, pro.totalAppointNum, pro.iconPath, pro.sales</sql>
+    <sql id="QUERY_COLUMNS">pro.id, pro.createdDate, pro.lastModifiedDate, pro.version, pro.name, pro.price, pro.intro, pro.description, pro.type, pro.userType, pro.state, pro.peopleNum, pro.totalAppointNum, pro.iconPath, pro.sales</sql>
     <resultMap id="VO_RESULT" type="com.youruan.dentistry.core.backstage.vo.ExtendedProduct" extends="BASE_RESULT"/>
     <sql id="JOIN_COLUMNS">
 
@@ -29,10 +30,24 @@
     </select>
     <delete id="delete" parameterType="java.lang.Long">DELETE FROM Product WHERE id = #{id}</delete>
     <insert id="add" parameterType="com.youruan.dentistry.core.backstage.domain.Product" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
-        INSERT INTO Product(id, createdDate, version, `name`, `price`, `intro`, `description`, `type`, `userType`, `state`, `peopleNum`, `totalAppointNum`, `iconPath`) VALUES(#{id }, #{createdDate}, 0, #{name}, #{price}, #{intro}, #{description}, #{type}, #{userType}, #{state}, #{peopleNum}, #{totalAppointNum}, #{iconPath})
+        INSERT INTO Product(id, createdDate, version, `name`, `price`, `intro`, `description`, `type`, `userType`, `state`, `peopleNum`, `totalAppointNum`, `iconPath`, sales) VALUES(#{id }, #{createdDate}, 0, #{name}, #{price}, #{intro}, #{description}, #{type}, #{userType}, #{state}, #{peopleNum}, #{totalAppointNum}, #{iconPath}, #{sales})
     </insert>
     <update id="update" parameterType="com.youruan.dentistry.core.backstage.domain.Product">UPDATE Product
-        <set>lastModifiedDate = now(), version = version + 1, name = #{name}, price = #{price}, intro = #{intro}, description = #{description}, `type` = #{type}, userType = #{userType}, `state` = #{state}, peopleNum = #{peopleNum}, totalAppointNum = #{totalAppointNum}, iconPath = #{iconPath}</set>
+    <set>
+        lastModifiedDate = now(),
+        version = version + 1,
+        <if test="name != null">`name` = #{name},</if>
+        <if test="price != null">price = #{price},</if>
+        <if test="intro != null">intro = #{intro},</if>
+        <if test="description != null">description = #{description},</if>
+        <if test="type != null">`type` = #{type},</if>
+        <if test="userType != null">userType = #{userType},</if>
+        <if test="state != null">`state` = #{state},</if>
+        <if test="peopleNum != null">peopleNum = #{peopleNum},</if>
+        <if test="totalAppointNum != null">totalAppointNum = #{totalAppointNum},</if>
+        <if test="iconPath != null">iconPath = #{iconPath},</if>
+        <if test="sales != null">sales = #{sales},</if>
+    </set>
         <where>id = #{id} AND version = #{version}</where>
     </update>
     <sql id="QUERY_JOIN">

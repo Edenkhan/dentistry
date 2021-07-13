@@ -1,6 +1,8 @@
 
 package com.youruan.dentistry.core.user.service.impl;
 
+import com.youruan.dentistry.core.backstage.query.ReportQuery;
+import com.youruan.dentistry.core.backstage.service.ReportService;
 import com.youruan.dentistry.core.base.exception.OptimismLockingException;
 import com.youruan.dentistry.core.base.query.Pagination;
 import com.youruan.dentistry.core.base.storage.DiskFileStorage;
@@ -41,12 +43,14 @@ public class BasicRegisteredUserService
     private final HttpServletResponse response;
     private final DiskFileStorage diskFileStorage;
     private final OrdersService ordersService;
+    private final ReportService reportService;
 
-    public BasicRegisteredUserService(RegisteredUserMapper registeredUserMapper, HttpServletResponse response, DiskFileStorage diskFileStorage, OrdersService ordersService) {
+    public BasicRegisteredUserService(RegisteredUserMapper registeredUserMapper, HttpServletResponse response, DiskFileStorage diskFileStorage, OrdersService ordersService, ReportService reportService) {
         this.registeredUserMapper = registeredUserMapper;
         this.response = response;
         this.diskFileStorage = diskFileStorage;
         this.ordersService = ordersService;
+        this.reportService = reportService;
     }
 
     @Override
@@ -99,6 +103,7 @@ public class BasicRegisteredUserService
         user.setOpenid(wxUserInfo.getOpenid());
         user.setNickname(wxUserInfo.getNickname());
         user.setAvatar(wxUserInfo.getHeadimgurl());
+        user.setState(RegisteredUser.STATE_RECEIVE);
         return add(user);
     }
 
@@ -179,15 +184,26 @@ public class BasicRegisteredUserService
 
     @Override
     public List<UserRecordVo> handleData(List<ExtendedRegisteredUser> userList) {
-        OrdersQuery qo = new OrdersQuery();
+        OrdersQuery oq = new OrdersQuery();
+        ReportQuery rq = new ReportQuery();
         return userList.stream().map(item -> {
             UserRecordVo vo = new UserRecordVo();
             BeanUtils.copyProperties(item,vo);
-            qo.setUserId(item.getId());
-            qo.setPayStatus(Orders.PAY_STATUS_PAID);
-            vo.setProductNum(ordersService.count(qo));
+            oq.setUserId(item.getId());
+            oq.setPayStatus(Orders.PAY_STATUS_PAID);
+            vo.setProductNum(ordersService.count(oq));
+            rq.setUserId(item.getId());
+            vo.setReportNum(reportService.count(rq));
             return vo;
         }).collect(Collectors.toList());
+    }
+
+    @Override
+    public void changePhoneNumber(RegisteredUser user, String phoneNumber) {
+        Assert.notNull(user, "必须提供用户");
+        Assert.notNull(phoneNumber, "必须提供手机号");
+        user.setPhoneNumber(phoneNumber);
+        this.update(user);
     }
 
 

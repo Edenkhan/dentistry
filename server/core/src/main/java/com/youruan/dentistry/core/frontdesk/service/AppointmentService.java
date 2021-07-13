@@ -75,4 +75,9 @@ public interface AppointmentService {
      * 预约完成
      */
     void update(Appointment appointment, Integer state);
+
+    /**
+     * 获取预约记录
+     */
+    AppointRecordVo getInfo(Long id);
 }

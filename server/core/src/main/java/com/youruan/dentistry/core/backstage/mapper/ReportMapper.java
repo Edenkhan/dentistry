@@ -4,6 +4,7 @@ package com.youruan.dentistry.core.backstage.mapper;
 import com.youruan.dentistry.core.backstage.domain.Report;
 import com.youruan.dentistry.core.backstage.query.ReportQuery;
 import com.youruan.dentistry.core.backstage.vo.ExtendedReport;
+import com.youruan.dentistry.core.backstage.vo.ReportRecordVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
@@ -37,4 +38,14 @@ public interface ReportMapper {
      * 根据查询条件，返回记录列表
      */
     public List<ExtendedReport> query(ReportQuery qo);
+
+    /**
+     * 查询用户报告记录数
+     */
+    int countRecord(ReportQuery qo);
+
+    /**
+     * 返回用户报告数据
+     */
+    List<ReportRecordVo> record(ReportQuery qo);
 }

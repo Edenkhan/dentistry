@@ -8,16 +8,16 @@
   
   <!-- 购买详情开始 -->
   <div class="buyde" v-for="(i,index) of appointmentList" :key='index'>
-    <p class='login_text'>{{i.appointDate | timeFormat}}</p>
+    <p class='login_text'>{{i.appointDate.split('T')[0]}}</p>
     <p class='login_line'></p>
     <p class="xiangq" v-show='iswen'>问诊人<span>王二麻子</span></p>
 
     <p class="xiangq" v-show='iswen'>问诊医生<span>问诊医生1</span></p>
-    <p class="xiangq" v-show='!iswen'>预约时间<span>{{i.appointDate | timeFormat}}</span></p>
+    <p class="xiangq" v-show='!iswen'>预约时间<span>{{i.appointDate.split('T')[0]}}</span></p>
     <p class="xiangq" v-show='!iswen'>预约时段<span>{{i.timePeriod==0?'上午':'下午'}}</span></p>
 
-    <p class="xiangq">次数<span>第{{index}}/3次</span></p>
-    <p class="xiangq">报告<span class='ck'><router-link to='/rl'>查看</router-link></span></p>
+    <p class="xiangq">次数<span>第{{i.appointNum}}/{{i.totalNum}}次</span></p>
+    <p class="xiangq">报告<span class='ck'><router-link :to='`/rl?id=${i.id}`'>查看</router-link></span></p>
   </div>
   <!-- 购买详情结束 -->
 

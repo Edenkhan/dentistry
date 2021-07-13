@@ -25,7 +25,7 @@ public interface ProductDetailPathMapper {
     /**
      * 添加
      */
-    public int add(@Param("productDetailPaths") List<ProductDetailPath> productDetailPaths);
+    public int add(@Param("productDetailPathList") List<ProductDetailPath> productDetailPathList);
     /**
      * 删除
      */

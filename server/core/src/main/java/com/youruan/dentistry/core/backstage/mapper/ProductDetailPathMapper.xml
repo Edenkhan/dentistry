@@ -22,7 +22,7 @@
   <delete id="delete" parameterType="java.lang.Long">DELETE FROM ProductDetailPath WHERE id = #{id}</delete>
   <insert id="add" parameterType="com.youruan.dentistry.core.backstage.domain.ProductDetailPath" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
     INSERT INTO ProductDetailPath(createdDate, version, detailPath, productId) VALUES
-    <foreach collection="productDetailPaths" separator="," item="item">
+    <foreach collection="productDetailPathList" separator="," item="item">
       (#{item.createdDate}, 0, #{item.detailPath}, #{item.productId})
     </foreach>
   </insert>

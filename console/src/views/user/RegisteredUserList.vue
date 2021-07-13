@@ -52,6 +52,12 @@
       <template slot="phoneNumber" slot-scope="phoneNumber">
         <PhoneNumber :value="phoneNumber"/>
       </template>
+      <template slot="reportNum" slot-scope="record">
+        <router-link :to="`/user/report?id=${record.id}`" v-if="record.reportNum>0">
+          <a>{{record.reportNum}}</a>
+        </router-link>
+        <span v-else>{{record.reportNum}}</span>
+      </template>
       <template slot="productNum" slot-scope="record">
         <router-link :to="`/user/bought?id=${record.id}`" v-if="record.productNum>0">
           <a>{{record.productNum}}</a>
@@ -89,6 +95,7 @@
           action="/api/backstage/report/upload"
           :headers="headers"
           @change="handleChange"
+          :before-upload="beforeUpload"
         >
           <a-button type="primary">
             <a-icon type="upload"/>
@@ -101,11 +108,8 @@
 </template>
 
 <script>
-  import {
-    listUsers,
-    addReport,
-    listReportable,
-  } from "../../api/user";
+  import {listUsers, listReportable,} from "../../api/user";
+  import {addReport} from '../../api/backstage'
   import moment from "moment";
   import Gender from "./Gender";
   import PhoneNumber from "./PhoneNumber";
@@ -135,7 +139,7 @@
     },
     {
       title: '检查报告数量',
-      dataIndex: 'reportNum',
+      scopedSlots: {customRender: 'reportNum'}
     },
     {
       title: '购买产品数量',
@@ -192,6 +196,13 @@
     },
 
     methods: {
+      beforeUpload(file) {
+        const isPdf = file.type === 'application/pdf'
+        if(!isPdf) {
+          this.$message.error('只能上传pdf格式文件')
+        }
+        return isPdf
+      },
       handleOk() {
         this.reportForm = Object.assign({},this.reportForm,{
           pathList: this.pathList
@@ -201,6 +212,7 @@
           .then(() => {
             this.$message.success('添加报告成功')
             this.visible = false
+            this.fetch()
           }).catch(({message}) => {
             this.$message.error(message)
         })

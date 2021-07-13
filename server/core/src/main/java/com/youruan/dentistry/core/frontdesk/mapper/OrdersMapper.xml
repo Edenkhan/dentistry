@@ -25,12 +25,18 @@
         <result property="version" column="version"/>
         <result property="price" column="price"/>
         <result property="orderNo" column="orderNo"/>
+        <result property="shopId" column="shopId"/>
+        <result property="productId" column="productId"/>
         <result property="productName" column="productName"/>
         <result property="productType" column="productType"/>
         <result property="userType" column="userType"/>
         <result property="shopName" column="shopName"/>
         <result property="realName" column="realName"/>
         <result property="phoneNumber" column="phoneNumber"/>
+        <result property="appointStatus" column="appointStatus"/>
+        <result property="payStatus" column="payStatus"/>
+        <result property="totalNum" column="totalNum"/>
+        <result property="appointNum" column="appointNum"/>
     </resultMap>
     <resultMap id="BOUGHT_RESULT" type="com.youruan.dentistry.core.user.vo.UserBoughtVo">
         <id property="id" column="id"/>
@@ -53,8 +59,8 @@
     <resultMap id="VO_RESULT" type="com.youruan.dentistry.core.frontdesk.vo.ExtendedOrders" extends="BASE_RESULT"/>
     <sql id="RECORD_JOIN_COLUMNS">
         ,ru.realName,ru.phoneNumber
-        ,p.name AS productName,p.type AS productType,p.userType
-        ,s.name AS shopName
+        ,p.name AS productName,p.type AS productType,p.userType,p.id AS productId
+        ,s.name AS shopName,s.id AS shopId
     </sql>
     <sql id="BOUGHT_JOIN_COLUMNS">
         ,p.name AS productName,p.type AS productType,p.userType,p.state AS productState,p.peopleNum
@@ -71,6 +77,7 @@
             <if test="productId != null">AND productId = #{productId}</if>
             <if test="shopId != null">AND shopId = #{shopId}</if>
             <if test="dicItemId != null">AND dicItemId = #{dicItemId}</if>
+            <if test="payStatus != null">AND payStatus = #{payStatus}</if>
         </where>
     </delete>
     <insert id="add" parameterType="com.youruan.dentistry.core.frontdesk.domain.Orders" useGeneratedKeys="true" keyProperty="id" keyColumn="id">

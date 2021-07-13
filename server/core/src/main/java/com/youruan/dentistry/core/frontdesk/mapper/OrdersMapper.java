@@ -6,10 +6,11 @@ import com.youruan.dentistry.core.frontdesk.domain.Orders;
 import com.youruan.dentistry.core.frontdesk.query.OrdersQuery;
 import com.youruan.dentistry.core.frontdesk.vo.ExtendedOrders;
 import com.youruan.dentistry.core.user.vo.UserBoughtVo;
+import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
 
-
+@Mapper
 public interface OrdersMapper {
     /**
      * 获取单条记录

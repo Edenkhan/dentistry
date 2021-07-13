@@ -296,7 +296,7 @@ import {mapMutations} from 'vuex';
 export default {
   computed:{
     ...mapState([
-        'iSlogin','id'
+        'iSlogin','id','phoneNumber','avatar','gender','realName'
     ])
   },
   data(){
@@ -331,6 +331,9 @@ export default {
     ...mapMutations([
 			'logined'
 		]),
+    checkInfo() {
+      return this.iSlogin && this.phoneNumber && this.avatar && this.gender && this.realName
+    },
     declick(){
       this.$router.push('/');
     },
@@ -352,17 +355,21 @@ export default {
     },
     // 立即购买
     buynow(){
-      if(this.iSlogin){
+      // alert(this.phoneNumber)
+      // alert(this.avatar)
+      // alert(this.gender)
+      // alert(this.realName)
+      if(this.checkInfo()){
         this.dshow=true;
       }else{
         this.$dialog.confirm({
-          title:'您还未登陆',
-          message: '是否立即登录',
+          title:'未完善信息',
+          message: '是否立即完善',
           confirmButtonText:'是',
           confirmButtonColor:"#05C58F"
         })
         .then(() => {
-          this.$router.push('/login');
+          this.$router.push('/zs');
         }).catch(()=>{})
       }
     },
@@ -443,7 +450,7 @@ export default {
     this.axios.get('api/frontdesk/product/get?'+`id=${this.productId}`).then(({data})=>{
       // alert(JSON.stringify(data))
       // 保存顶部图片路径
-      this.tibanner = data.detailPaths
+      this.tibanner = data.detailPathList
 
       var ti='';
       if(data.type==0){
@@ -458,7 +465,6 @@ export default {
       this.tclist.push({
         ti:ti,
         title:data.intro,
-        co:'包含拍片、洁牙、美白、售后服务包含拍片、洁牙、美白、售 后服务售后服务售后服务售后服务售后',
         content:data.description,
         num:data.sales,
         icon:data.iconPath,

@@ -94,4 +94,10 @@ public class RegisteredUserController {
         return ResponseEntity.ok(avatar);
     }
 
+    @PostMapping("/changePhoneNumber")
+    @RequiresAuthentication
+    public ResponseEntity<?> changePhoneNumber(RegisteredUser user, String phoneNumber) {
+        userService.changePhoneNumber(user,phoneNumber);
+        return ResponseEntity.ok(phoneNumber);
+    }
 }

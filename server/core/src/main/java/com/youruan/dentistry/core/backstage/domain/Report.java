@@ -30,4 +30,8 @@ public class Report extends BasicDomain {
      * 预约id
      */
     private Long appointId;
+    /**
+     * 产品id
+     */
+    private Long productId;
 }

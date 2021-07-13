@@ -28,11 +28,11 @@ dentistry:
     base:
       storage:
         disk:
-          base-directory: E:/image
-          base-url: /api/img
+          base-directory: C:/files
+          base-url: /api/file
 
 wechat:
-  domain: http://portalx.ymys.usooft.com
+  domain: http://tanghuaxiong.ymys.usooft.com
   token: GHOST
   appId: wxfcffb0d00f2da17b
   appSecret: 2fcf880c2503141e09bb0a55623f82f1
@@ -41,4 +41,4 @@ wechat:
     appSecret: efc112848c7333b5b75f26345cf2e713
     mchid: 1598795591
     privateKey: H8yNsA87UxM9a5jcTbPGJ0KPUuOaHByY
-    notifyUrl: ${wx.domain}/api/orders/notify
+    notifyUrl: ${wechat.domain}/api/frontdesk/orders/notify

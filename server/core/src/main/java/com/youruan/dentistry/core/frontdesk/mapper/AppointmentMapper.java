@@ -5,10 +5,13 @@ import com.youruan.dentistry.core.backstage.vo.AppointRecordVo;
 import com.youruan.dentistry.core.frontdesk.domain.Appointment;
 import com.youruan.dentistry.core.frontdesk.query.AppointmentQuery;
 import com.youruan.dentistry.core.frontdesk.vo.ExtendedAppointment;
+import org.apache.ibatis.annotations.Mapper;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-
+@Mapper
+@Repository
 public interface AppointmentMapper {
     /**
      * 获取单条记录
@@ -44,4 +47,9 @@ public interface AppointmentMapper {
      * 条件查询 预约记录
      */
     List<AppointRecordVo> record(AppointmentQuery qo);
+
+    /**
+     * 获取预约记录
+     */
+    AppointRecordVo getInfo(Long id);
 }

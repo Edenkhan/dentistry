@@ -2,9 +2,7 @@ package com.youruan.dentistry.core.frontdesk.service.impl;
 
 
 import com.youruan.dentistry.core.backstage.domain.Product;
-import com.youruan.dentistry.core.backstage.query.ProductQuery;
 import com.youruan.dentistry.core.backstage.service.ProductService;
-import com.youruan.dentistry.core.backstage.vo.ExtendedProduct;
 import com.youruan.dentistry.core.backstage.vo.OrderRecordVo;
 import com.youruan.dentistry.core.base.constant.WechatConstant;
 import com.youruan.dentistry.core.base.exception.OptimismLockingException;
@@ -22,12 +20,11 @@ import com.youruan.dentistry.core.user.domain.RegisteredUser;
 import com.youruan.dentistry.core.user.vo.UserBoughtVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
-import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class BasicOrdersService implements OrdersService {
@@ -85,8 +82,10 @@ public class BasicOrdersService implements OrdersService {
     }
 
     @Override
+    @Transactional
     public Orders create(BigDecimal price, Long userId, Long productId, Long shopId, Long dicItemId) {
         this.checkAdd(price,userId,productId);
+        this.delete(userId,productId,shopId,dicItemId);
         Product product = productService.get(productId);
         Orders orders = new Orders();
         this.assign(orders, price,product.getTotalAppointNum(),0,userId,productId,shopId,dicItemId);
@@ -94,13 +93,15 @@ public class BasicOrdersService implements OrdersService {
     }
 
     @Override
-    public void update(Orders orders, Date boughtTime, Integer payStatus) {
+    @Transactional
+    public void changePayStatusAndSales(Orders orders) {
         Assert.notNull(orders,"必须提供订单");
-        Assert.notNull(boughtTime,"必须提供购买时间");
-        Assert.notNull(orders,"必须提供订单状态");
-        orders.setBoughtTime(boughtTime);
-        orders.setPayStatus(payStatus);
+        orders.setBoughtTime(new Date());
+        orders.setPayStatus(Orders.PAY_STATUS_PAID);
         this.update(orders);
+        // 增加产品销量
+        Product product = productService.get(orders.getProductId());
+        productService.updateSales(product);
     }
 
     @Override
@@ -110,6 +111,7 @@ public class BasicOrdersService implements OrdersService {
         orders.setProductId(productId);
         orders.setShopId(shopId);
         orders.setDicItemId(dicItemId);
+        orders.setPayStatus(Orders.PAY_STATUS_UNPAID);
         ordersMapper.deleteByCondition(orders);
     }
 
@@ -185,9 +187,10 @@ public class BasicOrdersService implements OrdersService {
             paramMap.put("sign", WXPayUtil.generateSignature(paramMap,wechatPayProperties.getPrivateKey()));
             paramMap.put("body","大苏打");
             paramMap.put("out_trade_no",orders.getOrderNo());
-            paramMap.put("total_fee",String.valueOf(orders.getPrice().intValue()));
+            paramMap.put("total_fee","1");
             paramMap.put("spbill_create_ip",ip);
             paramMap.put("notify_url",wechatPayProperties.getNotifyUrl());
+            System.out.println("notify_url:::"+wechatPayProperties.getNotifyUrl());
             paramMap.put("trade_type","JSAPI");
             paramMap.put("openid",user.getOpenid());
             String xml = HttpClientUtils.doPostXml(WechatConstant.UNIFIED_ORDER_URL,
@@ -227,18 +230,6 @@ public class BasicOrdersService implements OrdersService {
     }
 
     @Override
-    public void handleData(List<ExtendedOrders> ordersList) {
-        ordersList.forEach(item -> {
-            Product product = productService.get(item.getProductId());
-            item.setProductName(product.getName());
-            item.setUserType(product.getUserType());
-            item.setProductType(product.getType());
-            item.setPeopleNum(product.getPeopleNum());
-            item.setDescription(product.getDescription());
-        });
-    }
-
-    @Override
     public ExtendedOrders handleData(Orders orders) {
         ExtendedOrders extendedOrders = new ExtendedOrders();
         Product product = productService.get(orders.getProductId());
@@ -248,26 +239,8 @@ public class BasicOrdersService implements OrdersService {
         extendedOrders.setUserType(product.getUserType());
         extendedOrders.setProductType(product.getType());
         extendedOrders.setDescription(product.getDescription());
+        extendedOrders.setIconPath(product.getIconPath());
         return extendedOrders;
-    }
-
-    @Override
-    public List<ExtendedOrders> filterOnline(List<ExtendedOrders> ordersList) {
-        ProductQuery productQuery = new ProductQuery();
-        // 从订单列表获取产品id集合
-        Long[] ids = ordersList.stream().map(Orders::getProductId).distinct().toArray(Long[]::new);
-        Assert.isTrue(ids.length>0,"该订单没有产品");
-        productQuery.setIds(ids);
-        // 查询对应产品
-        List<ExtendedProduct> productList = productService.listAll(productQuery);
-        Assert.isTrue(!CollectionUtils.isEmpty(productList),"没有产品");
-        // 筛选出线下产品
-        List<Long> productIdList = productList.stream().filter(item -> item.getType().equals(Product.PRODUCT_TYPE_OFFLINE)).map(Product::getId).collect(Collectors.toList());
-        Assert.isTrue(!CollectionUtils.isEmpty(productIdList),"没有线下产品");
-        // 筛选出线下订单
-        ordersList = ordersList.stream().filter(item -> productIdList.contains(item.getProductId())).collect(Collectors.toList());
-        Assert.isTrue(!CollectionUtils.isEmpty(ordersList),"没有线下订单");
-        return ordersList;
     }
 
     @Override

@@ -39,8 +39,8 @@ public class BasicProductDetailPathService
         productDetailPath.setVersion((productDetailPath.getVersion() + 1));
     }
 
-    protected int add(List<ProductDetailPath> productDetailPaths) {
-        return productDetailPathMapper.add(productDetailPaths);
+    protected int add(List<ProductDetailPath> productDetailPathList) {
+        return productDetailPathMapper.add(productDetailPathList);
     }
 
     @Override
@@ -68,10 +68,10 @@ public class BasicProductDetailPathService
     }
 
     @Override
-    public void create(Long productId, List<String> detailPaths) {
-        this.checkAdd(productId,detailPaths);
+    public void create(Long productId, List<String> detailPathList) {
+        this.checkAdd(productId,detailPathList);
         List<ProductDetailPath> list = new ArrayList<>();
-        detailPaths.forEach(item -> {
+        detailPathList.forEach(item -> {
             ProductDetailPath productDetailPath = new ProductDetailPath();
             productDetailPath.setCreatedDate(new Date());
             productDetailPath.setProductId(productId);
@@ -85,8 +85,8 @@ public class BasicProductDetailPathService
     /**
      * 添加产品详情图片校验
      */
-    private void checkAdd(Long productId, List<String> detailPaths) {
-        this.checkParam(productId, detailPaths);
+    private void checkAdd(Long productId, List<String> detailPathList) {
+        this.checkParam(productId, detailPathList);
 //        ProductDetailPathQuery qo = new ProductDetailPathQuery();
 //        qo.setName(name);
 //        int count = productDetailPathMapper.count(qo);
@@ -97,16 +97,16 @@ public class BasicProductDetailPathService
 //        Assert.isTrue(count == 0,"产品详情图片标识重复");
     }
 
-    private void checkParam(Long productId, List<String> detailPaths) {
+    private void checkParam(Long productId, List<String> detailPathList) {
         Assert.notNull(productId, "必须提供产品id");
-        Assert.notNull(detailPaths, "必须提供产品详情图片");
+        Assert.notNull(detailPathList, "必须提供产品详情图片");
     }
 
     @Override
     @Transactional
-    public void update(ProductDetailPath productDetailPath, Long productId, List<String> detailPaths) {
-//        this.checkUpdate(productDetailPath, productId, detailPaths);
-//        this.assign(productDetailPath, productId, detailPaths);
+    public void update(ProductDetailPath productDetailPath, Long productId, List<String> detailPathList) {
+//        this.checkUpdate(productDetailPath, productId, detailPathList);
+//        this.assign(productDetailPath, productId, detailPathList);
 //        update(productDetailPath);
     }
 
@@ -114,9 +114,9 @@ public class BasicProductDetailPathService
     /**
      * 修改产品详情图片校验
      */
-    private void checkUpdate(ProductDetailPath productDetailPath, Long productId, List<String> detailPaths) {
+    private void checkUpdate(ProductDetailPath productDetailPath, Long productId, List<String> detailPathList) {
         Assert.notNull(productDetailPath,"必须提供产品详情图片");
-        this.checkParam(productId, detailPaths);
+        this.checkParam(productId, detailPathList);
 //        ProductDetailPathQuery qo = new ProductDetailPathQuery();
 //        qo.setName(name);
 //        int count = productDetailPathMapper.count(qo);
