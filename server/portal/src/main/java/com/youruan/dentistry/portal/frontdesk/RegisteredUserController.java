@@ -79,7 +79,7 @@ public class RegisteredUserController {
     @PostMapping("/register")
     public ResponseEntity<?> register(RegisteredUser user, String phoneNumber, String verifyCode) {
         String sessionCode = (String) request.getSession().getAttribute(phoneNumber);
-        Assert.isTrue(sessionCode!=null && sessionCode.equals(verifyCode),"验证码错误");
+        Assert.isTrue(sessionCode!=null && sessionCode.equals(verifyCode),"手机验证码错误");
         userService.update(user,phoneNumber,false);
         ImmutableMap<Object, Object> map = ImmutableMap.builder().put("id", user.getId()).build();
         return ResponseEntity.ok(map);
@@ -98,5 +98,13 @@ public class RegisteredUserController {
     public ResponseEntity<?> changePhoneNumber(RegisteredUser user, String phoneNumber) {
         userService.changePhoneNumber(user,phoneNumber);
         return ResponseEntity.ok(phoneNumber);
+    }
+
+    @PostMapping("/checkOldPhone")
+    @RequiresAuthentication
+    public ResponseEntity<?> checkOldPhone(RegisteredUser user, String verifyCode) {
+        String phoneCode = (String) request.getSession().getAttribute(user.getPhoneNumber());
+        Assert.isTrue(phoneCode!=null && phoneCode.equals(verifyCode),"手机验证码错误");
+        return ResponseEntity.ok().build();
     }
 }

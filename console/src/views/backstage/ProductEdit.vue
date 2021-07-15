@@ -148,6 +148,24 @@ export default {
       id:this.$route.query.id,
     }
   },
+  watch: {
+    'productForm.type'(val) {
+      // console.log(val)
+      if(val === 0){
+        this.productForm.peopleNum = 1
+      }else{
+        this.productForm.totalAppointNum = 1
+      }
+    },
+    'productForm.userType'(val) {
+      // console.log(val)
+      if(val === 0){
+        this.productForm.peopleNum = 1
+      }else{
+        this.productForm.totalAppointNum = 1
+      }
+    }
+  },
   created() {
     if(this.id) {
       this.fetchProduct()

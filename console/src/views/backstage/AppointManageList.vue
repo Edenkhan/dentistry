@@ -180,15 +180,16 @@ export default {
     }
   },
   created() {
-    this.check()
+    // this.check()
+    this.fetch()
   },
   methods: {
-    check(){
-      this.appointManageListForm.shopId = this.shopId
-      checkDataSource(this.appointManageListForm).then(() => {
-        this.fetch()
-      })
-    },
+    // check(){
+    //   this.appointManageListForm.shopId = this.shopId
+    //   checkDataSource(this.appointManageListForm).then(() => {
+    //     this.fetch()
+    //   })
+    // },
     changeStatus(id,status) {
       editAppointManage({id:id,enabled:status,shopId:this.shopId})
         .then(() => {

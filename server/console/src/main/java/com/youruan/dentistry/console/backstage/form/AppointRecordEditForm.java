@@ -7,5 +7,5 @@ import lombok.Setter;
 @Setter
 public class AppointRecordEditForm {
     private Long id;
-    private Integer state;
+    private Integer appointState;
 }

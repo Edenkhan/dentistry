@@ -56,6 +56,7 @@ public class AppointmentController {
     public ResponseEntity<?> edit(AppointmentEditForm form) {
         AppointmentQuery qo = new AppointmentQuery();
         qo.setOrderId(form.getOrderId());
+        qo.setAppointState(Appointment.APPOINT_STATE_APPOINTED);
         ExtendedAppointment appointment = appointmentService.queryOne(qo);
         appointmentService.update(appointment,form.getTimePeriod(),form.getAppointDate());
         return ResponseEntity.ok(appointment);

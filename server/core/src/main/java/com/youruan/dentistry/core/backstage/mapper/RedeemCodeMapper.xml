@@ -1,34 +1,66 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-
 <mapper namespace="com.youruan.dentistry.core.backstage.mapper.RedeemCodeMapper">
     <resultMap id="BASE_RESULT" type="com.youruan.dentistry.core.backstage.domain.RedeemCode">
         <id property="id" column="id"/>
         <result property="createdDate" column="createdDate"/>
         <result property="lastModifiedDate" column="lastModifiedDate"/>
         <result property="version" column="version"/>
-        <result property="name" column="name"/>
-        <result property="logo" column="logo"/>
+        <result property="code" column="code"/>
+        <result property="bound" column="bound"/>
+        <result property="used" column="used"/>
+        <result property="userId" column="userId"/>
+        <result property="productId" column="productId"/>
+        <result property="shopId" column="shopId"/>
     </resultMap>
-    <sql id="BASE_COLUMNS">rc.id, rc.createdDate, rc.lastModifiedDate, rc.version, rc.name, rc.logo</sql>
-    <sql id="QUERY_COLUMNS">rc.id, rc.createdDate, rc.lastModifiedDate, rc.version, rc.name, rc.logo</sql>
-    <resultMap id="VO_RESULT" type="com.youruan.dentistry.core.backstage.vo.ExtendedRedeemCode" extends="BASE_RESULT"/>
+    <sql id="BASE_COLUMNS">rc.id, rc.createdDate, rc.lastModifiedDate, rc.version, rc.code, rc.bound, rc.used, rc.userId, rc.productId, rc.shopId</sql>
+    <sql id="QUERY_COLUMNS">rc.id, rc.createdDate, rc.lastModifiedDate, rc.version, rc.code, rc.bound, rc.used, rc.userId, rc.productId, rc.shopId</sql>
+    <resultMap id="VO_RESULT" type="com.youruan.dentistry.core.backstage.vo.ExtendedRedeemCode" extends="BASE_RESULT">
+        <association
+                property="product"
+                resultMap="com.youruan.dentistry.core.backstage.mapper.ProductMapper.BASE_RESULT"
+                columnPrefix="pr_"
+        />
+        <association
+                property="shop"
+                resultMap="com.youruan.dentistry.core.backstage.mapper.ShopMapper.BASE_RESULT"
+                columnPrefix="sh_"
+        />
+    </resultMap>
     <sql id="JOIN_COLUMNS">
-
+        ,p.name AS pr_name
+        ,s.name AS sh_name
     </sql>
     <select id="get" resultMap="BASE_RESULT" parameterType="java.lang.Long">SELECT
         <include refid="BASE_COLUMNS"/> FROM RedeemCode rc WHERE id = #{id }
     </select>
     <delete id="delete" parameterType="java.lang.Long">DELETE FROM RedeemCode WHERE id = #{id}</delete>
     <insert id="add" parameterType="com.youruan.dentistry.core.backstage.domain.RedeemCode" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
-        INSERT INTO RedeemCode(id, createdDate, version, name, logo) VALUES(#{id }, #{createdDate}, 0, #{name}, #{logo})
+        INSERT INTO RedeemCode(id, createdDate, version, code, bound, used, userId, productId, shopId) VALUES(#{id }, #{createdDate}, 0, #{code}, #{bound}, #{used}, #{userId}, #{productId}, #{shopId})
+    </insert>
+    <insert id="batchAdd" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        INSERT INTO RedeemCode(id, createdDate, version, code, bound, used, userId, productId, shopId)
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (#{item.id}, #{item.createdDate}, 0, #{item.code}, #{item.bound}, #{item.used}, #{item.userId}, #{item.productId}, #{item.shopId})
+        </foreach>
     </insert>
     <update id="update" parameterType="com.youruan.dentistry.core.backstage.domain.RedeemCode">UPDATE RedeemCode
-        <set>lastModifiedDate = now(), version = version + 1, name = #{name}, logo = #{logo}</set>
+    <set>
+        lastModifiedDate = now(),
+        version = version + 1,
+        <if test="code != null">code = #{code}</if>
+        <if test="bound != null">bound = #{bound}</if>
+        <if test="used != null">used = #{used}</if>
+        <if test="userId != null">userId = #{userId}</if>
+        <if test="productId != null">productId = #{productId}</if>
+        <if test="shopId != null">shopId = #{shopId}</if>
+    </set>
         <where>id = #{id} AND version = #{version}</where>
     </update>
     <sql id="QUERY_JOIN">
-
+        LEFT JOIN product p ON rc.productId = p.id
+        LEFT JOIN shop s ON rc.shopId = s.id
     </sql>
     <sql id="QUERY_WHERE_SQL">
         <if test="ids != null">AND rc.id IN
@@ -36,8 +68,8 @@
         </if>
         <if test="startCreatedDate != null">AND rc.createdDate &gt;= #{startCreatedDate }</if>
         <if test="endCreatedDate != null">AND rc.createdDate &lt;= #{endCreatedDate }</if>
-        <if test="name != null">AND rc.name = #{name}</if>
-        <if test="logo != null">AND rc.logo = #{logo}</if>
+        <if test="bound != null">AND rc.bound = #{bound}</if>
+        <if test="used != null">AND rc.used = #{used}</if>
     </sql>
     <sql id="QUERY_WHERE">
         <where>
@@ -65,3 +97,4 @@
         <include refid="QUERY_LIMIT"/>
     </select>
 </mapper>
+

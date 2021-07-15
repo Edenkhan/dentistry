@@ -43,6 +43,7 @@ export default {
     return {
       reportId: this.$route.query.id,
       pathList: [],
+      reportList: [],
       currentPage: 0, // pdf文件页码
       pageCount: 0, // pdf文件总页数
       scale: 100,
@@ -85,10 +86,19 @@ export default {
     }
   },
   mounted(){
-    this.axios.get('api/frontdesk/report/get?id='+this.reportId).then(({data})=>{
-      console.log(data);
-      this.pathList = data.path.split(',')
-    })
+    if(this.reportId) {
+      this.axios.get('api/frontdesk/report/get?id='+this.reportId).then(({data})=>{
+        // console.log(data);
+        this.pathList = data.path.split(',')
+      })
+    }else{
+      this.axios.get('api/frontdesk/report/getByUser?').then(({data})=>{
+        console.log(data);
+        this.reportList = data.data
+        this.pathList = this.reportList[0].path.split(',')
+      })
+    }
+
   }
 }
 </script>

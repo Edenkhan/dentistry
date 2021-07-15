@@ -6,7 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class RedeemCodeAddForm {
-    private String productId;
-    private String shopId;
-    private Integer quantify;
+    private Long productId;
+    private Long shopId;
+    private Integer codeNum;
 }

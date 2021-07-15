@@ -34,8 +34,9 @@
             </p>
             <p class="las">
               <span>剩余可预约：{{i.totalNum - i.appointNum}}次</span>
-              <span v-if="i.appointStatus === 0" @click='nowyy(i.id,i.productId)'>立即预约</span>
               <span v-if="i.appointStatus === 1" @click='nowyy(i.id,i.productId,1)'>修改预约</span>
+              <span v-else-if="i.totalNum-i.appointNum===0">次数用完</span>
+              <span v-else @click='nowyy(i.id,i.productId)'>立即预约</span>
             </p>
           </li>
         </ul>
@@ -68,7 +69,8 @@
             </p>
             <p class="las">
               <span>剩余可预约：{{i.totalNum - i.appointNum}}次</span>
-              <span @click='nowyy(i.id,i.productId)'>立即预约</span>
+              <span @click='nowyy(i.id,i.productId)' v-if="i.totalNum-i.appointNum>0">立即预约</span>
+              <span v-if="i.totalNum-i.appointNum===0">次数用完</span>
             </p>
         </li>
       </ul>
@@ -222,6 +224,9 @@ export default {
   },
   methods:{
     nowyy(orderId,productId,flag){
+      if(!orderId) {
+        return
+      }
       // alert(JSON.stringify(orderId))
       // alert(JSON.stringify(productId))
       this.$router.push({path:'/yym',query:{orderId:orderId,productId:productId,flag:flag}});

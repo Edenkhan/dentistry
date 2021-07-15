@@ -15,6 +15,7 @@ public class RedeemCodeListForm extends ListForm<RedeemCodeQuery> {
     private Date startCreatedDate;
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date endCreatedDate;
+    private Boolean bound;
     private Boolean used;
 
     public RedeemCodeQuery buildQuery() {
@@ -22,6 +23,8 @@ public class RedeemCodeListForm extends ListForm<RedeemCodeQuery> {
         qo.setPage(getPage());
         qo.setStartCreatedDate(startCreatedDate);
         qo.setEndCreatedDate(endCreatedDate);
+        qo.setBound(bound);
+        qo.setUsed(used);
         if ("createdDate".equals(getSortField())) {
             qo.setOrderByCreatedDate(getSortOrder().equalsIgnoreCase("descend")
                     ? QueryCondition.ORDER_BY_KEYWORD_DESC

@@ -1,13 +1,16 @@
 
 package com.youruan.dentistry.core.backstage.service.impl;
 
-import com.youruan.dentistry.core.base.exception.OptimismLockingException;
-import com.youruan.dentistry.core.base.query.Pagination;
+import com.youruan.dentistry.core.backstage.domain.Product;
 import com.youruan.dentistry.core.backstage.domain.RedeemCode;
 import com.youruan.dentistry.core.backstage.mapper.RedeemCodeMapper;
 import com.youruan.dentistry.core.backstage.query.RedeemCodeQuery;
+import com.youruan.dentistry.core.backstage.service.ProductService;
 import com.youruan.dentistry.core.backstage.service.RedeemCodeService;
 import com.youruan.dentistry.core.backstage.vo.ExtendedRedeemCode;
+import com.youruan.dentistry.core.base.exception.OptimismLockingException;
+import com.youruan.dentistry.core.base.query.Pagination;
+import com.youruan.dentistry.core.base.utils.RandomStringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -21,9 +24,11 @@ public class BasicRedeemCodeService
         implements RedeemCodeService {
 
     private final RedeemCodeMapper redeemCodeMapper;
+    private final ProductService productService;
 
-    public BasicRedeemCodeService(RedeemCodeMapper redeemCodeMapper) {
+    public BasicRedeemCodeService(RedeemCodeMapper redeemCodeMapper, ProductService productService) {
         this.redeemCodeMapper = redeemCodeMapper;
+        this.productService = productService;
     }
 
     @Override
@@ -60,8 +65,8 @@ public class BasicRedeemCodeService
     @Override
     public Pagination<ExtendedRedeemCode> query(RedeemCodeQuery qo) {
         int rows = redeemCodeMapper.count(qo);
-        List<ExtendedRedeemCode> datas = ((rows == 0) ? new ArrayList<ExtendedRedeemCode>() : redeemCodeMapper.query(qo));
-        return new Pagination<ExtendedRedeemCode>(rows, datas);
+        List<ExtendedRedeemCode> datas = ((rows == 0) ? new ArrayList<>() : redeemCodeMapper.query(qo));
+        return new Pagination<>(rows, datas);
     }
 
     @Override
@@ -70,57 +75,66 @@ public class BasicRedeemCodeService
     }
 
     @Override
-    public RedeemCode create(String name, String logo) {
-        this.checkAdd(name,logo);
-        RedeemCode redeemCode = new RedeemCode();
-//        redeemCode.setName(name);
-//        redeemCode.setLogo(logo);
-        return add(redeemCode);
+    public void create(Long productId, Long shopId, Integer codeNum) {
+        this.checkAdd(productId, shopId, codeNum);
+        List<RedeemCode> redeemCodeList = this.createData(productId, shopId, codeNum);
+        this.batchAdd(redeemCodeList);
     }
 
     /**
-     * 添加字典校验
+     * 批量生成兑换码
      */
-    private void checkAdd(String name, String logo) {
-        this.checkParam(name, logo);
-        RedeemCodeQuery qo = new RedeemCodeQuery();
-//        qo.setName(name);
-        int count = redeemCodeMapper.count(qo);
-        Assert.isTrue(count == 0,"字典名称重复");
-        qo = new RedeemCodeQuery();
-//        qo.setLogo(logo);
-        count = redeemCodeMapper.count(qo);
-        Assert.isTrue(count == 0,"字典标识重复");
+    private List<RedeemCode> createData(Long productId, Long shopId, Integer codeNum) {
+        List<RedeemCode> redeemCodeList = new ArrayList<>();
+        RedeemCode redeemCode;
+        for (int i = 0; i < codeNum; i++) {
+            redeemCode = new RedeemCode();
+            this.assign(redeemCode, productId, shopId);
+            redeemCodeList.add(redeemCode);
+        }
+        return redeemCodeList;
     }
 
-    private void checkParam(String name, String logo) {
-        Assert.notNull(name, "必须提供字典名称");
-        Assert.notNull(logo, "必须提供字典标识");
+    /**
+     * 批量添加兑换码
+     */
+    private void batchAdd(List<RedeemCode> redeemCodeList) {
+        redeemCodeMapper.batchAdd(redeemCodeList);
+    }
+
+    private void assign(RedeemCode redeemCode, Long productId, Long shopId) {
+        redeemCode.setCreatedDate(new Date());
+        System.out.println("随机字符串："+ RandomStringUtils.random(6));
+        redeemCode.setCode(RandomStringUtils.random(6));
+        redeemCode.setBound(false);
+        redeemCode.setUsed(false);
+        redeemCode.setProductId(productId);
+        redeemCode.setShopId(shopId);
+    }
+
+    /**
+     * 添加兑换码校验
+     */
+    private void checkAdd(Long productId, Long shopId, Integer codeNum) {
+        Assert.notNull(productId, "必须提供产品id");
+        Assert.notNull(codeNum, "必须提供生成数量");
+        Product product = productService.get(productId);
+        if (Product.PRODUCT_TYPE_OFFLINE.equals(product.getType())) {
+            Assert.notNull(shopId, "必须提供门店id");
+        }
     }
 
     @Override
     @Transactional
     public void update(RedeemCode redeemCode, String name, String logo) {
-        this.checkUpdate(redeemCode, name, logo);
-//        redeemCode.setName(name);
-//        redeemCode.setLogo(logo);
-        update(redeemCode);
+
     }
 
     /**
-     * 修改字典校验
+     * 修改兑换码校验
      */
     private void checkUpdate(RedeemCode redeemCode, String name, String logo) {
-        Assert.notNull(redeemCode,"必须提供字典");
-        this.checkParam(name, logo);
-        RedeemCodeQuery qo = new RedeemCodeQuery();
-//        qo.setName(name);
-        int count = redeemCodeMapper.count(qo);
-//        Assert.isTrue(redeemCode.getName().equals(name)||count == 0,"字典名称重复");
-        qo = new RedeemCodeQuery();
-//        qo.setLogo(logo);
-        count = redeemCodeMapper.count(qo);
-//        Assert.isTrue(redeemCode.getLogo().equals(logo)||count == 0,"字典标识重复");
+
     }
 
     @Override
@@ -136,5 +150,6 @@ public class BasicRedeemCodeService
         qo.setMaxPageSize();
         return listAll(qo);
     }
+
 
 }

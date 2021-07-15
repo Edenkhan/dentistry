@@ -22,7 +22,7 @@
             <p v-html="orders.description"></p>
           </div>
         </div>
-        <span class='rospan' :class='!isPay?"bu":""'>{{!isPay?'不可用':'可用'}}</span>
+        <span class='rospan' :class='!isPay||validNum===0?"bu":""'>{{!isPay||validNum===0?'不可用':'可用'}}</span>
       </li>
     </ul>
   <!-- 预约套餐结束 -->
@@ -195,7 +195,8 @@ export default {
       shopId: this.$route.query.shopId,
       isTeam:false,
       isPay:false,
-      orders:[]
+      orders:[],
+      validNum: null,
     }
   },
   methods:{
@@ -209,9 +210,10 @@ export default {
   mounted(){
     // 订单详情
     this.axios.get('api/frontdesk/orders/get?orderId='+this.orderId).then(({data})=>{
-      this.orders=data;
       // console.log(this.orders)
-      if(this.orders.status==1){
+      this.orders=data;
+      this.validNum = data.totalNum - data.appointNum
+      if(this.orders.payStatus==1){
         this.isPay=true;
       }else{
         this.isPay=false;

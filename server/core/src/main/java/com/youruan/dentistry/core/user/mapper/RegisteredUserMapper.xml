@@ -64,6 +64,7 @@
     <if test="phoneNumber != null">AND ru.phoneNumber = #{phoneNumber}</if>
     <if test="likePhoneNumber != null">AND ru.phoneNumber LIKE CONCAT('%', #{likePhoneNumber} ,'%')</if>
     <if test="state != null">AND ru.state = #{state}</if>
+    <if test="openid != null">AND ru.openid = #{openid}</if>
 
   </sql>
   <sql id="QUERY_WHERE">

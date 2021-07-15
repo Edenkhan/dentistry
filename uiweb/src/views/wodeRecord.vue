@@ -7,7 +7,7 @@
 
   <div class="buyde" v-for='(item, index) in reportList' :key='index' v-show='isxs' @click='wmbg(item.id)'>
     <p class="wode">您{{item.appointDate.split('T')[0]}}预约的【{{item.productName}}】的报告 已生成，请查收。</p>
-    <p class="xiangq">2019-07-31 17:12:46</p>
+    <p class="xiangq">{{item.lastModifiedDate | timeFormat}}</p>
     <span class='rjt'><van-icon name="arrow" /></span>
   </div>
 

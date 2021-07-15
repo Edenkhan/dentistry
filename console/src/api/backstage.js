@@ -149,8 +149,23 @@ export function resetReport(params) {
   return post('/backstage/report/reset?' + stringify(params));
 }
 
-// 兑换码
+// 兑换码列表
 export function listRedeemCodes(params) {
-  return get('/backstage/redeemcode/list?' + stringify(params));
+  return get('/backstage/redeemCode/list?' + stringify(params));
+}
+
+// 查询所有产品
+export function listRedeemProduct() {
+  return get('/backstage/redeemCode/product');
+}
+
+// 查询所有门店
+export function listRedeemShop() {
+  return get('/backstage/redeemCode/shop');
+}
+
+// 添加兑换码
+export function addRedeemCode(params) {
+  return post('/backstage/redeemCode/add?' + stringify(params));
 }
 

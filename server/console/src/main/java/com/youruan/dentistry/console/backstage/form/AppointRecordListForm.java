@@ -11,23 +11,23 @@ import java.util.Date;
 @Setter
 public class AppointRecordListForm extends ListForm<AppointmentQuery> {
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date startCreatedDate;
+    private Date startArrivedDate;
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date endCreatedDate;
+    private Date endArrivedDate;
     private String realName;
     private String phoneNumber;
     private String shopName;
-    private Integer state;
+    private Integer appointState;
 
     public AppointmentQuery buildQuery() {
         AppointmentQuery qo = new AppointmentQuery();
         qo.setPage(getPage());
-        qo.setStartCreatedDate(startCreatedDate);
-        qo.setEndCreatedDate(endCreatedDate);
+        qo.setStartArrivedDate(startArrivedDate);
+        qo.setEndArrivedDate(endArrivedDate);
         qo.setLikeRealName(realName);
         qo.setLikePhoneNumber(phoneNumber);
         qo.setLikeShopName(shopName);
-        qo.setState(state);
+        qo.setAppointState(appointState);
         if ("createdDate".equals(getSortField())) {
             qo.setOrderByCreatedDate(getSortOrder().equalsIgnoreCase("descend")
                     ? QueryCondition.ORDER_BY_KEYWORD_DESC

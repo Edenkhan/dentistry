@@ -9,9 +9,7 @@
     <ul class="home_list">
       <li>
         <div class="cc">
-          <div class="cc_img">
-            <img :src="product.iconPath">
-          </div>
+          <img :src="product.iconPath" height="125px">
           <div class="cc_c">
             <p class='an'>
               <span v-if="product.userType===0">【线下/个人】</span>
@@ -32,7 +30,7 @@
       <table></table>
       <div class="yyper">
         <p><span>姓名</span>{{realName}}</p>
-        <p><span>性别</span>{{gender==1?'男':'女'}}</p>
+        <p><span>性别</span>{{currGender==1?'男':'女'}}</p>
         <p><span>电话</span>{{phoneNumber}}</p>
       </div>
     </li>
@@ -269,6 +267,7 @@ export default {
         },
       ],
       product: {},
+      currGender: null,
     }
   },
   methods:{
@@ -322,8 +321,8 @@ export default {
             this.axios.post('api/frontdesk/appointment/add',qs.stringify({timePeriod:timePeriod,orderId:this.orderId,appointDate:this.appointDate})).then(({data})=>{
               console.log(data)
               this.$router.push('/yy_succ')
-            }).catch(({data}) => {
-              this.$toast(data.message)
+            }).catch(({message}) => {
+              this.$toast(message)
             })
           }else{
             // 修改
@@ -343,7 +342,7 @@ export default {
   },
   mounted(){
 
-    console.log('***********',this.orderId)
+    console.log('***********',this.gender)
 
     // 获取商品信息
     this.axios.get(`api/frontdesk/product/get?id=${this.productId}`).then(({data})=>{
@@ -353,7 +352,7 @@ export default {
 
     // 获取预约时间
     this.axios.get(`api/frontdesk/appointment/getAppointDate?orderId=${this.orderId}`).then(({data})=>{
-      // console.log(data.data.length)
+      console.log(data)
       data.data.forEach(el => {
         const item=el.appointDate.split('T')[0];
         // console.log(item)
@@ -369,6 +368,8 @@ export default {
       }
       // alert(JSON.stringify(this.yyList))
     })
+
+    this.currGender = this.gender
 
   }
 }

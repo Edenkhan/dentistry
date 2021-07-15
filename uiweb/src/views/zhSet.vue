@@ -1,71 +1,73 @@
 <template>
-<div class="zs">
-  <!-- 顶部标题 -->
-  <div class="tit">
-    <van-nav-bar title="账户设置" left-text="返回" left-arrow @click-left="zSclick"/>
-  </div>
-
-  <div class="deset">
-    <!-- 头像选择 -->
-    <van-field name="uploader" label="头像" size='large' center is-link   input-align='right'>
-      <template #input>
-        <van-uploader v-model="uploader" preview-size='40px' max-count='1'/>
-      </template>
-    </van-field>
-    
-    <van-cell title="姓名" is-link :value="realName==''?'请填写':realName" size='large' to='/sm'/>
-    <van-cell title="性别" is-link :value="gender==1?'男':'女'" size='large' @click='chooseGender'/>
-    <van-cell title="手机号" is-link :value="phoneNumber" size='large' to='/cp'/>
-    <van-cell-group>
-      <van-switch-cell v-model="checked" title="微信消息推送" cell-size="large"/>
-    </van-cell-group>
-
-    
-  </div>
-
-  <van-overlay :show="zshow" @click="zshow = false">
-    <div class="wai" @click.stop>
-      <van-radio-group v-model="gender">
-        <van-cell-group>
-          <van-cell title="男" clickable @click="biannan">
-            <template #right-icon>
-              <van-radio :name="1" checked-color='#05C58F'/>
-            </template>
-          </van-cell>
-          <van-cell title="女" clickable @click="biannv">
-            <template #right-icon>
-              <van-radio :name="0" checked-color='#05C58F'/>
-            </template>
-          </van-cell>
-        </van-cell-group>
-      </van-radio-group>
+  <div class="zs">
+    <!-- 顶部标题 -->
+    <div class="tit">
+      <van-nav-bar title="账户设置" left-text="返回" left-arrow @click-left="zSclick"/>
     </div>
-  </van-overlay>
+
+    <div class="deset">
+      <!-- 头像选择 -->
+      <van-field name="uploader" label="头像" size='large' center is-link input-align='right'>
+        <template #input>
+          <van-uploader v-model="uploader" preview-size='40px' max-count='1'/>
+        </template>
+      </van-field>
+
+      <van-cell title="姓名" is-link :value="currRealName==''?'请填写':currRealName" size='large' to='/sm'/>
+      <van-cell title="性别" is-link :value="currGender==1?'男':'女'" size='large' @click='chooseGender'/>
+      <van-cell title="手机号" is-link :value="currPhoneNumber" size='large' @click="bindPhone"/>
+      <van-cell-group>
+        <van-switch-cell v-model="checked" title="微信消息推送" cell-size="large"/>
+      </van-cell-group>
 
 
-  <div class="login_btn">
-    <button @click='tuilogin'>退出登录</button>
+    </div>
+
+    <van-overlay :show="zshow" @click="zshow = false">
+      <div class="wai" @click.stop>
+        <van-radio-group v-model="currGender">
+          <van-cell-group>
+            <van-cell title="男" clickable @click="biannan">
+              <template #right-icon>
+                <van-radio :name="1" checked-color='#05C58F'/>
+              </template>
+            </van-cell>
+            <van-cell title="女" clickable @click="biannv">
+              <template #right-icon>
+                <van-radio :name="0" checked-color='#05C58F'/>
+              </template>
+            </van-cell>
+          </van-cell-group>
+        </van-radio-group>
+      </div>
+    </van-overlay>
+
+
+    <div class="login_btn">
+      <button @click='tuilogin'>退出登录</button>
+    </div>
+
   </div>
-
-</div>
 </template>
 
 <style scoped>
-.zs{
+.zs {
   background: #e8e8e8;
-  height:177.7vw;
-}
-.zs .tit .van-nav-bar{
-    background: #000;
-  }
-.zs .tit .van-nav-bar__text,.tit .van-nav-bar .van-icon,.tit .van-nav-bar__title{
-  color:#fff;
+  height: 177.7vw;
 }
 
-.wai{
-  width:90%;
-  height:22vw;
-  margin:0 auto;
+.zs .tit .van-nav-bar {
+  background: #000;
+}
+
+.zs .tit .van-nav-bar__text, .tit .van-nav-bar .van-icon, .tit .van-nav-bar__title {
+  color: #fff;
+}
+
+.wai {
+  width: 90%;
+  height: 22vw;
+  margin: 0 auto;
   margin-top: 70vw;
   background-color: #fff;
   border-radius: 0.8rem;
@@ -73,18 +75,19 @@
 }
 
 
-.zs .login_btn{
-  margin:20vw auto;
-  text-align:center;
+.zs .login_btn {
+  margin: 20vw auto;
+  text-align: center;
 }
-.zs .login_btn button{
-  border:0;
+
+.zs .login_btn button {
+  border: 0;
   outline: 0;
-  width:75vw;
-  height:13vw;
+  width: 75vw;
+  height: 13vw;
   border-radius: 30px;
-  background:rgb(102 205 170);
-  color:#fff;
+  background: rgb(102 205 170);
+  color: #fff;
 }
 </style>
 
@@ -92,88 +95,107 @@
 import qs from 'qs'
 import {mapMutations} from 'vuex';
 import {mapState} from 'vuex';
+
 export default {
-  computed:{
+  computed: {
     ...mapState([
-        'realName','phoneNumber','id','gender'
+      'realName', 'phoneNumber', 'id', 'gender'
     ])
   },
-  data(){
+  data() {
     return {
-      checked:false,
-      zshow:false,
-      gender: 1,
-      uploader:[],
+      checked: false,
+      zshow: false,
+      currGender: null,
+      currRealName: null,
+      currPhoneNumber: null,
+      uploader: [],
     }
   },
-  created() {
-    this.fetch()
+  mounted() {
+    this.currGender = this.gender
+    this.currRealName = this.realName
+    this.currPhoneNumber = this.phoneNumber
+    // this.fetch()
   },
-  methods:{
+  methods: {
+    bindPhone() {
+      if (this.currPhoneNumber) {
+        this.$router.push('/cp')
+      } else {
+        this.$router.push('/phonesucc')
+      }
+    },
+    // fetch() {
+    //   this.axios.get('/api/registeredUser/get')
+    //       .then(({data}) => {
+    //         // alert(JSON.stringify(data))
+    //         sessionStorage.setItem('id',data.id)
+    //         sessionStorage.setItem('iSlogin',true)
+    //         sessionStorage.setItem('avatar',data.avatar)
+    //         sessionStorage.setItem('realName',data.realName)
+    //         sessionStorage.setItem('gender',data.gender)
+    //         sessionStorage.setItem('phoneNumber',data.phoneNumber)
+    //       })
+    // },
     ...mapMutations({
-      'lo':'loginout'
+      'lo': 'loginout'
     }),
     ...mapMutations([
-			'logined'
-		]),
-    chooseGender(){
-      this.zshow=true;
+      'logined'
+    ]),
+    chooseGender() {
+      this.zshow = true;
     },
-    biannan(){
-      this.gender= 1;
-      this.zshow=false;
+    biannan() {
+      this.currGender = 1;
+      this.zshow = false;
     },
-    biannv(){
-      this.gender= 0;
-      this.zshow=false;
+    biannv() {
+      this.currGender = 0;
+      this.zshow = false;
     },
-    zSclick(){
+    zSclick() {
       this.$router.push('/me');
     },
-    tuilogin(){
+    tuilogin() {
       this.lo();
       this.$toast('退出登录成功');
       this.$router.push('/me');
     },
-    mehimg(){
+    mehimg() {
       console.log('ssss');
     },
-    fetch() {
-      this.axios.get('/api/registeredUser/get')
-        .then(({data}) => {
-          // alert(JSON.stringify(data))
-          sessionStorage.setItem('avatar',data.avatar)
-          sessionStorage.setItem('realName',data.realName)
-          sessionStorage.setItem('gender',data.gender)
-          sessionStorage.setItem('phoneNumber',data.phoneNumber)
-        })
-    },
+
   },
-  watch:{
-    gender(){
+  watch: {
+    currGender() {
       // 修改用户性别
-      this.axios.post('api/registeredUser/changeGender',qs.stringify({id:this.id,gender:this.gender})).then(res=>{
+      this.axios.post('api/registeredUser/changeGender', qs.stringify({
+        id: this.id,
+        gender: this.currGender
+      })).then(res => {
         console.log(res.data);
         // 存储到sess里面
-        this.logined({gender:this.gender});
-        sessionStorage.setItem('gender',this.gender);
+        this.logined({gender: this.currGender});
+        sessionStorage.setItem('gender', this.currGender);
       })
 
     },
     // 上传头像
-    uploader(){
+    uploader() {
       this.$toast.loading({
         message: '上传中请稍后',
         forbidClick: true,
-        duration:0
+        duration: 0
       });
 
       let file = new FormData();
-      file.append('file',this.uploader[0].file);
-      file.append('id',this.id);
+      file.append('file', this.uploader[0].file);
+      file.append('id', this.id);
       console.log(file);
 
-      this.axios.post('api/registeredUser/uploadAvatar',file).then(({data})=>{
+      this.axios.post('api/registeredUser/uploadAvatar', file).then(({data}) => {
         alert(JSON.stringify(data))
         this.$toast.clear();
         // 存储到sess里面
@@ -182,10 +204,9 @@ export default {
       })
 
 
-
     }
   },
-  
+
 }
 </script>
 

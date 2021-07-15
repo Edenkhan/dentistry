@@ -2,10 +2,10 @@
   <div>
     <a-form-model @submit.prevent="handleQuerySubmit" layout="inline" >
       <a-form-model-item label='到店时间：' class="date-start">
-        <a-date-picker v-model="appointRecordListForm.startCreatedDate" style="width: 120px"></a-date-picker>
+        <a-date-picker v-model="appointRecordListForm.startArrivedDate" style="width: 120px"></a-date-picker>
       </a-form-model-item>
       <a-form-model-item label='-' :colon="false">
-        <a-date-picker v-model="appointRecordListForm.endCreatedDate" style="width: 120px"></a-date-picker>
+        <a-date-picker v-model="appointRecordListForm.endArrivedDate" style="width: 120px"></a-date-picker>
       </a-form-model-item>
       <a-form-model-item label='用户名称'>
         <a-input v-model="appointRecordListForm.realName" style="width: 120px"/>
@@ -16,8 +16,8 @@
       <a-form-model-item label='店面名称'>
         <a-input v-model="appointRecordListForm.shopName" style="width: 120px"/>
       </a-form-model-item>
-      <a-form-model-item label='状态'>
-        <a-select v-model="appointRecordListForm.state" style="width: 80px" >
+      <a-form-model-item label='预约状态'>
+        <a-select v-model="appointRecordListForm.appointState" style="width: 80px" >
           <a-select-option value="">
             全部
           </a-select-option>
@@ -54,23 +54,26 @@
       :loading="loading"
       bordered
       @change="handleTableChange">
-      <template slot="createdDate" slot-scope="text,record">
-        {{record.createdDate | filterDate('YYYY-MM-DD')}} / {{record.timePeriod===0?'上午':'下午'}}
+      <template slot="appointDate" slot-scope="text,record">
+        {{record.appointDate | filterDate('YYYY-MM-DD')}} / {{record.timePeriod===0?'上午':'下午'}}
       </template>
-      <template slot="state" slot-scope="state">
-        <a-tag color="green" v-if="state===0">预约中</a-tag>
-        <a-tag color="red" v-if="state===1">已完成</a-tag>
+      <template slot="arrivedDate" slot-scope="text,record">
+        {{record.arrivedDate | filterDate('YYYY-MM-DD HH:mm:ss')}}
+      </template>
+      <template slot="appointState" slot-scope="appointState">
+        <a-tag color="green" v-if="appointState===0">预约中</a-tag>
+        <a-tag color="red" v-if="appointState===1">已完成</a-tag>
       </template>
       <template slot="operation" slot-scope="record">
         <a-popconfirm
           title="确定预约已完成？"
           ok-text="是"
           cancel-text="否"
-          @confirm="appointComplete(record.id,record.state===0?1:0)"
+          @confirm="appointComplete(record.id,record.appointState===0?1:0)"
         >
-          <a-button type="primary" v-if="record.state===0">完成</a-button>
+          <a-button type="primary" v-if="record.appointState===0">完成</a-button>
         </a-popconfirm>
-        <a-button type="primary" v-if="record.state===1" disabled>已完成</a-button>
+        <a-button type="primary" v-if="record.appointState===1" disabled>已完成</a-button>
       </template>
     </a-table>
   </div>
@@ -86,12 +89,13 @@ import moment from "moment"
 const columns = [
   {
     title: '预约时间',
-    dataIndex: 'createdDate',
-    scopedSlots: {customRender: 'createdDate'}
+    dataIndex: 'appointDate',
+    scopedSlots: {customRender: 'appointDate'}
   },
   {
     title: '到店时间',
-    dataIndex: 'arrived',
+    dataIndex: 'arrivedDate',
+    scopedSlots: {customRender: 'arrivedDate'}
   },
   {
     title: '订单总次数',
@@ -119,8 +123,8 @@ const columns = [
   },
   {
     title: '状态',
-    dataIndex: 'state',
-    scopedSlots: {customRender: 'state'},
+    dataIndex: 'appointState',
+    scopedSlots: {customRender: 'appointState'},
   },
   {
     title: '操作',
@@ -155,8 +159,8 @@ export default {
     this.fetch()
   },
   methods: {
-    appointComplete(id,state){
-      appointComplete({id:id,state:state})
+    appointComplete(id,appointState){
+      appointComplete({id:id,appointState:appointState})
         .then(() => {
           this.fetch()
           this.$message.success('预约已完成')
@@ -176,11 +180,11 @@ export default {
       this.fetch()
     },
     fetch() {
-      const {startCreatedDate,endCreatedDate} = this.appointRecordListForm
+      const {startArrivedDate,endArrivedDate} = this.appointRecordListForm
       this.appointRecordListForm = Object.assign({}, this.appointRecordListForm, {
         page: this.pagination.current,
-        startCreatedDate: startCreatedDate && moment(startCreatedDate).format('YYYY-MM-DD 00:00:00'),
-        endCreatedDate: endCreatedDate && moment(endCreatedDate).format('YYYY-MM-DD 23:59:59')
+        startArrivedDate: startArrivedDate && moment(startArrivedDate).format('YYYY-MM-DD 00:00:00'),
+        endArrivedDate: endArrivedDate && moment(endArrivedDate).format('YYYY-MM-DD 23:59:59')
       })
       this.loading = true
       listAppointRecord(this.appointRecordListForm).then(({data, rows}) => {

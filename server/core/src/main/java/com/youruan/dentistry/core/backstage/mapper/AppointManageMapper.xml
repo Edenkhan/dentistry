@@ -27,10 +27,10 @@
   <insert id="add" parameterType="com.youruan.dentistry.core.backstage.domain.AppointManage" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
     INSERT INTO AppointManage(createdDate, version, topLimit, appointNum, appointDate, timePeriod, enabled, shopId) VALUES(#{createdDate}, 0, #{topLimit}, #{appointNum}, #{appointDate}, #{timePeriod}, #{enabled}, #{shopId})
     </insert>
-  <insert id="batch" parameterType="com.youruan.dentistry.core.backstage.domain.AppointManage" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+  <insert id="addBatch" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
     INSERT INTO AppointManage(createdDate, version, topLimit, appointNum, appointDate, timePeriod, enabled, shopId)
     VALUES
-    <foreach collection="appointList" separator="," item="item">
+    <foreach collection="list" separator="," item="item">
       (#{item.createdDate}, 0, #{item.topLimit}, #{item.appointNum}, #{item.appointDate}, #{item.timePeriod}, #{item.enabled}, #{item.shopId})
     </foreach>
   </insert>
@@ -67,6 +67,8 @@
     <if test="startAppointDate != null">AND am.appointDate &gt;= #{startAppointDate}</if>
     <if test="endAppointDate != null">AND am.appointDate &lt;= #{endAppointDate}</if>
     <if test="shopId != null">AND am.shopId = #{shopId}</if>
+    <if test="timePeriod != null">AND am.timePeriod = #{timePeriod}</if>
+    <if test="appointDate != null">AND am.appointDate = #{appointDate}</if>
   </sql>
   <sql id="QUERY_WHERE">
     <where>

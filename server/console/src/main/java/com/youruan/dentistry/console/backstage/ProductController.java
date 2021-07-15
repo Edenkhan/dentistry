@@ -33,7 +33,7 @@ public class ProductController {
         Pagination<ExtendedProduct> pagination = productService.query(qo);
         return ResponseEntity.ok(ImmutableMap.builder()
                 .put("data", BeanMapUtils.pick(pagination.getData(),
-                        "id", "createdDate", "lastModifiedDate", "name", "type","userType", "price", "totalAppointNum","peopleNum","state"))
+                        "id", "createdDate", "lastModifiedDate", "name", "type","userType", "price", "totalAppointNum","peopleNum","state","sales"))
                 .put("rows", pagination.getRows())
                 .build());
     }

@@ -11,7 +11,7 @@
  Target Server Version : 50734
  File Encoding         : 65001
 
- Date: 13/07/2021 18:50:16
+ Date: 15/07/2021 18:22:24
 */
 
 SET NAMES utf8mb4;
@@ -33,41 +33,39 @@ CREATE TABLE `appointmanage`  (
   `enabled` bit(1) NULL DEFAULT NULL COMMENT '是否开启预约',
   `shopId` bigint(20) NULL DEFAULT NULL COMMENT '门店id',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 31 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 29 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of appointmanage
 -- ----------------------------
-INSERT INTO `appointmanage` VALUES (1, '2021-07-13 14:24:39', '2021-07-13 14:32:05', 1, 50, 1, '2021-07-13 00:00:00', 0, b'1', 1);
-INSERT INTO `appointmanage` VALUES (2, '2021-07-13 14:24:39', NULL, 0, 50, 0, '2021-07-14 00:00:00', 0, b'1', 1);
-INSERT INTO `appointmanage` VALUES (3, '2021-07-13 14:24:39', NULL, 0, 50, 0, '2021-07-15 00:00:00', 0, b'1', 1);
-INSERT INTO `appointmanage` VALUES (4, '2021-07-13 14:24:39', NULL, 0, 50, 0, '2021-07-16 00:00:00', 0, b'1', 1);
-INSERT INTO `appointmanage` VALUES (5, '2021-07-13 14:24:39', NULL, 0, 50, 0, '2021-07-17 00:00:00', 0, b'1', 1);
-INSERT INTO `appointmanage` VALUES (6, '2021-07-13 14:24:39', NULL, 0, 50, 0, '2021-07-18 00:00:00', 0, b'1', 1);
-INSERT INTO `appointmanage` VALUES (7, '2021-07-13 14:24:39', NULL, 0, 50, 0, '2021-07-19 00:00:00', 0, b'1', 1);
-INSERT INTO `appointmanage` VALUES (8, '2021-07-13 14:24:39', NULL, 0, 50, 0, '2021-07-13 00:00:00', 1, b'1', 1);
-INSERT INTO `appointmanage` VALUES (9, '2021-07-13 14:24:39', NULL, 0, 50, 0, '2021-07-14 00:00:00', 1, b'1', 1);
-INSERT INTO `appointmanage` VALUES (10, '2021-07-13 14:24:39', NULL, 0, 50, 0, '2021-07-15 00:00:00', 1, b'1', 1);
-INSERT INTO `appointmanage` VALUES (11, '2021-07-13 14:24:39', NULL, 0, 50, 0, '2021-07-16 00:00:00', 1, b'1', 1);
-INSERT INTO `appointmanage` VALUES (12, '2021-07-13 14:24:39', NULL, 0, 50, 0, '2021-07-17 00:00:00', 1, b'1', 1);
-INSERT INTO `appointmanage` VALUES (13, '2021-07-13 14:24:39', NULL, 0, 50, 0, '2021-07-18 00:00:00', 1, b'1', 1);
-INSERT INTO `appointmanage` VALUES (14, '2021-07-13 14:24:39', NULL, 0, 50, 0, '2021-07-19 00:00:00', 1, b'1', 1);
-INSERT INTO `appointmanage` VALUES (15, '2021-07-13 14:25:17', NULL, 0, 50, 0, '2021-07-19 00:00:01', 0, b'1', 1);
-INSERT INTO `appointmanage` VALUES (16, '2021-07-13 14:25:17', NULL, 0, 50, 0, '2021-07-19 00:00:01', 1, b'1', 1);
-INSERT INTO `appointmanage` VALUES (17, '2021-07-13 14:25:53', NULL, 0, 50, 0, '2021-07-13 00:00:01', 0, b'1', 2);
-INSERT INTO `appointmanage` VALUES (18, '2021-07-13 14:25:53', NULL, 0, 50, 0, '2021-07-14 00:00:01', 0, b'1', 2);
-INSERT INTO `appointmanage` VALUES (19, '2021-07-13 14:25:53', NULL, 0, 50, 0, '2021-07-15 00:00:01', 0, b'1', 2);
-INSERT INTO `appointmanage` VALUES (20, '2021-07-13 14:25:53', NULL, 0, 50, 0, '2021-07-16 00:00:01', 0, b'1', 2);
-INSERT INTO `appointmanage` VALUES (21, '2021-07-13 14:25:53', NULL, 0, 50, 0, '2021-07-17 00:00:01', 0, b'1', 2);
-INSERT INTO `appointmanage` VALUES (22, '2021-07-13 14:25:53', NULL, 0, 50, 0, '2021-07-18 00:00:01', 0, b'1', 2);
-INSERT INTO `appointmanage` VALUES (23, '2021-07-13 14:25:53', NULL, 0, 50, 0, '2021-07-19 00:00:01', 0, b'1', 2);
-INSERT INTO `appointmanage` VALUES (24, '2021-07-13 14:25:53', NULL, 0, 50, 0, '2021-07-13 00:00:01', 1, b'1', 2);
-INSERT INTO `appointmanage` VALUES (25, '2021-07-13 14:25:53', NULL, 0, 50, 0, '2021-07-14 00:00:01', 1, b'1', 2);
-INSERT INTO `appointmanage` VALUES (26, '2021-07-13 14:25:53', NULL, 0, 50, 0, '2021-07-15 00:00:01', 1, b'1', 2);
-INSERT INTO `appointmanage` VALUES (27, '2021-07-13 14:25:53', NULL, 0, 50, 0, '2021-07-16 00:00:01', 1, b'1', 2);
-INSERT INTO `appointmanage` VALUES (28, '2021-07-13 14:25:53', NULL, 0, 50, 0, '2021-07-17 00:00:01', 1, b'1', 2);
-INSERT INTO `appointmanage` VALUES (29, '2021-07-13 14:25:53', NULL, 0, 50, 0, '2021-07-18 00:00:01', 1, b'1', 2);
-INSERT INTO `appointmanage` VALUES (30, '2021-07-13 14:25:53', NULL, 0, 50, 0, '2021-07-19 00:00:01', 1, b'1', 2);
+INSERT INTO `appointmanage` VALUES (1, '2021-07-15 17:25:11', '2021-07-15 17:26:43', 2, 50, 0, '2021-07-15 00:00:00', 0, b'1', 1);
+INSERT INTO `appointmanage` VALUES (2, '2021-07-15 17:25:11', '2021-07-15 17:26:43', 1, 50, 1, '2021-07-16 00:00:00', 0, b'1', 1);
+INSERT INTO `appointmanage` VALUES (3, '2021-07-15 17:25:11', NULL, 0, 50, 0, '2021-07-17 00:00:00', 0, b'1', 1);
+INSERT INTO `appointmanage` VALUES (4, '2021-07-15 17:25:11', NULL, 0, 50, 0, '2021-07-18 00:00:00', 0, b'1', 1);
+INSERT INTO `appointmanage` VALUES (5, '2021-07-15 17:25:11', NULL, 0, 50, 0, '2021-07-19 00:00:00', 0, b'1', 1);
+INSERT INTO `appointmanage` VALUES (6, '2021-07-15 17:25:11', NULL, 0, 50, 0, '2021-07-20 00:00:00', 0, b'1', 1);
+INSERT INTO `appointmanage` VALUES (7, '2021-07-15 17:25:11', NULL, 0, 50, 0, '2021-07-21 00:00:00', 0, b'1', 1);
+INSERT INTO `appointmanage` VALUES (8, '2021-07-15 17:25:11', NULL, 0, 50, 0, '2021-07-15 00:00:00', 1, b'1', 1);
+INSERT INTO `appointmanage` VALUES (9, '2021-07-15 17:25:11', NULL, 0, 50, 0, '2021-07-16 00:00:00', 1, b'1', 1);
+INSERT INTO `appointmanage` VALUES (10, '2021-07-15 17:25:11', NULL, 0, 50, 0, '2021-07-17 00:00:00', 1, b'1', 1);
+INSERT INTO `appointmanage` VALUES (11, '2021-07-15 17:25:11', NULL, 0, 50, 0, '2021-07-18 00:00:00', 1, b'1', 1);
+INSERT INTO `appointmanage` VALUES (12, '2021-07-15 17:25:11', NULL, 0, 50, 0, '2021-07-19 00:00:00', 1, b'1', 1);
+INSERT INTO `appointmanage` VALUES (13, '2021-07-15 17:25:11', NULL, 0, 50, 0, '2021-07-20 00:00:00', 1, b'1', 1);
+INSERT INTO `appointmanage` VALUES (14, '2021-07-15 17:25:11', NULL, 0, 50, 0, '2021-07-21 00:00:00', 1, b'1', 1);
+INSERT INTO `appointmanage` VALUES (15, '2021-07-15 17:25:11', NULL, 0, 50, 0, '2021-07-15 00:00:00', 0, b'1', 2);
+INSERT INTO `appointmanage` VALUES (16, '2021-07-15 17:25:11', NULL, 0, 50, 0, '2021-07-16 00:00:00', 0, b'1', 2);
+INSERT INTO `appointmanage` VALUES (17, '2021-07-15 17:25:11', NULL, 0, 50, 0, '2021-07-17 00:00:00', 0, b'1', 2);
+INSERT INTO `appointmanage` VALUES (18, '2021-07-15 17:25:11', NULL, 0, 50, 0, '2021-07-18 00:00:00', 0, b'1', 2);
+INSERT INTO `appointmanage` VALUES (19, '2021-07-15 17:25:11', NULL, 0, 50, 0, '2021-07-19 00:00:00', 0, b'1', 2);
+INSERT INTO `appointmanage` VALUES (20, '2021-07-15 17:25:11', NULL, 0, 50, 0, '2021-07-20 00:00:00', 0, b'1', 2);
+INSERT INTO `appointmanage` VALUES (21, '2021-07-15 17:25:11', NULL, 0, 50, 0, '2021-07-21 00:00:00', 0, b'1', 2);
+INSERT INTO `appointmanage` VALUES (22, '2021-07-15 17:25:11', NULL, 0, 50, 0, '2021-07-15 00:00:00', 1, b'1', 2);
+INSERT INTO `appointmanage` VALUES (23, '2021-07-15 17:25:11', NULL, 0, 50, 0, '2021-07-16 00:00:00', 1, b'1', 2);
+INSERT INTO `appointmanage` VALUES (24, '2021-07-15 17:25:11', NULL, 0, 50, 0, '2021-07-17 00:00:00', 1, b'1', 2);
+INSERT INTO `appointmanage` VALUES (25, '2021-07-15 17:25:11', NULL, 0, 50, 0, '2021-07-18 00:00:00', 1, b'1', 2);
+INSERT INTO `appointmanage` VALUES (26, '2021-07-15 17:25:11', NULL, 0, 50, 0, '2021-07-19 00:00:00', 1, b'1', 2);
+INSERT INTO `appointmanage` VALUES (27, '2021-07-15 17:25:11', NULL, 0, 50, 0, '2021-07-20 00:00:00', 1, b'1', 2);
+INSERT INTO `appointmanage` VALUES (28, '2021-07-15 17:25:11', NULL, 0, 50, 0, '2021-07-21 00:00:00', 1, b'1', 2);
 
 -- ----------------------------
 -- Table structure for appointment
@@ -79,18 +77,21 @@ CREATE TABLE `appointment`  (
   `lastModifiedDate` datetime NULL DEFAULT NULL,
   `version` int(11) NULL DEFAULT NULL,
   `appointDate` datetime NULL DEFAULT NULL COMMENT '预约日期',
+  `arrivedDate` datetime NULL DEFAULT NULL COMMENT '到店日期',
   `timePeriod` tinyint(4) NULL DEFAULT NULL COMMENT '0-AM 1-PM',
-  `state` tinyint(4) NULL DEFAULT NULL COMMENT '0-初始状态 1-报告上传完成',
+  `appointState` tinyint(4) NULL DEFAULT NULL COMMENT '0-预约中 1-预约完成',
+  `reportStatus` tinyint(4) NULL DEFAULT NULL COMMENT '0-报告未上传 1-报告已上传',
   `orderId` bigint(20) NULL DEFAULT NULL COMMENT '订单id',
   `userId` bigint(20) NULL DEFAULT NULL COMMENT '用户id',
   `productId` bigint(20) NULL DEFAULT NULL COMMENT '产品id',
   `shopId` bigint(20) NULL DEFAULT NULL COMMENT '门店id',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of appointment
 -- ----------------------------
+INSERT INTO `appointment` VALUES (1, '2021-07-15 17:26:04', '2021-07-15 17:27:39', 3, '2021-07-16 00:00:00', NULL, 0, 1, 1, 1, 2, 3, 1);
 
 -- ----------------------------
 -- Table structure for dictionary
@@ -199,11 +200,12 @@ CREATE TABLE `orders`  (
   `shopId` bigint(20) NULL DEFAULT NULL COMMENT '门店id',
   `dicItemId` bigint(20) NULL DEFAULT NULL COMMENT '字典详情id',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of orders
 -- ----------------------------
+INSERT INTO `orders` VALUES (1, '2021-07-15 17:23:55', '2021-07-15 17:27:01', 3, '865282545028169728', 12.00, 1, 1, '2021-07-15 17:24:05', 1, 0, 2, 3, 1, NULL);
 
 -- ----------------------------
 -- Table structure for permission
@@ -276,9 +278,9 @@ CREATE TABLE `product`  (
 -- ----------------------------
 -- Records of product
 -- ----------------------------
-INSERT INTO `product` VALUES (1, '2021-06-29 17:49:49', '2021-07-06 14:40:11', 1, '产品1', 12.00, '产品1简介', '<p>产品1描述</p>', 0, 0, 1, 2, '/api/img/producticon/a7edc9a0-e8c4-465d-b386-256432726f7c.jpg', 1, 2);
-INSERT INTO `product` VALUES (2, '2021-06-29 18:21:24', '2021-07-12 13:47:51', 3, '产品2', 12.00, '产品2简介', '<p>产品2描述</p>', 0, 0, 1, 2, '/api/file/producticon/d6058f6d-407a-4d58-8749-21a6f358d0fb.jpg', 1, 3);
-INSERT INTO `product` VALUES (3, '2021-06-29 18:26:39', '2021-07-13 17:09:18', 11, '产品3', 12.00, '产品3简介', '<p>产品3描述</p>', 1, 1, 3, 1, '/api/file/producticon/59f2071b-9d3b-41c9-a368-acf2a10b5efd.jpg', 1, 5);
+INSERT INTO `product` VALUES (1, '2021-06-29 17:49:49', '2021-07-15 12:41:19', 2, '产品1', 12.00, '产品1简介', '<p>产品1描述</p>', 0, 0, 1, 2, '/api/file/producticon/4b0e4e13-0c88-4c83-adb7-8ffffc794edd.png', 1, 0);
+INSERT INTO `product` VALUES (2, '2021-06-29 18:21:24', '2021-07-15 13:56:16', 5, '产品2', 12.00, '产品2简介', '<p>产品2描述</p>', 1, 0, 1, 5, '/api/file/producticon/7735e66a-2527-4ba2-84b8-0e19557f27d7.png', 1, 1);
+INSERT INTO `product` VALUES (3, '2021-06-29 18:26:39', '2021-07-15 17:24:04', 17, '产品3', 12.00, '产品3简介', '<p>产品3描述</p>', 1, 1, 3, 1, '/api/file/producticon/d7ce5a5b-1aa4-407b-bc5b-29a5f46874a1.png', 1, 4);
 
 -- ----------------------------
 -- Table structure for productdetailpath
@@ -292,16 +294,16 @@ CREATE TABLE `productdetailpath`  (
   `detailPath` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '详情主图路径',
   `productId` bigint(20) NULL DEFAULT NULL COMMENT '产品id',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 28 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 35 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of productdetailpath
 -- ----------------------------
-INSERT INTO `productdetailpath` VALUES (13, '2021-07-06 14:40:11', NULL, 0, '/api/img/productdetail/59dd8f95-fab2-4265-897b-c4b87b20ccb6.jpg', 1);
-INSERT INTO `productdetailpath` VALUES (24, '2021-07-12 13:47:52', NULL, 0, '/api/file/productdetail/d64f8f8b-455a-4772-8b4e-9a4c5198966f.jpg', 2);
-INSERT INTO `productdetailpath` VALUES (25, '2021-07-12 13:47:52', NULL, 0, '/api/file/productdetail/42711759-7144-49a5-af24-6c7871a064bc.jpg', 2);
-INSERT INTO `productdetailpath` VALUES (26, '2021-07-12 15:05:41', NULL, 0, '/api/file/productdetail/21d76d18-df7a-4586-b8c4-0c59670e8d5b.jpg', 3);
-INSERT INTO `productdetailpath` VALUES (27, '2021-07-12 15:05:41', NULL, 0, '/api/file/productdetail/42f92372-bfd3-444b-9066-a3caac223b0f.jpg', 3);
+INSERT INTO `productdetailpath` VALUES (30, '2021-07-14 17:21:43', NULL, 0, '/api/file/productdetail/fc511cf6-7c43-4020-a3e7-4a5cd22ca2dc.png', 3);
+INSERT INTO `productdetailpath` VALUES (31, '2021-07-14 17:21:43', NULL, 0, '/api/file/productdetail/1f71b1f8-0b4b-4d9a-a7c1-780c061504e9.png', 3);
+INSERT INTO `productdetailpath` VALUES (32, '2021-07-15 12:41:19', NULL, 0, '/api/file/productdetail/c2919a99-d87d-442c-8f25-79a36852fd80.png', 1);
+INSERT INTO `productdetailpath` VALUES (33, '2021-07-15 13:45:10', NULL, 0, '/api/file/productdetail/681a0fd1-a8fe-4c39-b951-4bb579ada735.png', 2);
+INSERT INTO `productdetailpath` VALUES (34, '2021-07-15 13:45:10', NULL, 0, '/api/file/productdetail/1aff5ee9-84d8-45eb-96d2-9689ce726373.png', 2);
 
 -- ----------------------------
 -- Table structure for redeemcode
@@ -313,16 +315,22 @@ CREATE TABLE `redeemcode`  (
   `lastModifiedDate` datetime NULL DEFAULT NULL,
   `version` int(11) NULL DEFAULT NULL,
   `code` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '兑换码',
+  `bound` bit(1) NULL DEFAULT NULL COMMENT '是否已绑定',
   `used` bit(1) NULL DEFAULT NULL COMMENT '是否已使用',
   `userId` bigint(20) NULL DEFAULT NULL COMMENT '用户id',
   `productId` bigint(20) NULL DEFAULT NULL COMMENT '产品id',
   `shopId` bigint(20) NULL DEFAULT NULL COMMENT '门店id',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of redeemcode
 -- ----------------------------
+INSERT INTO `redeemcode` VALUES (1, '2021-07-14 13:46:43', NULL, 0, '5tuC0d', b'0', b'0', NULL, 3, 1);
+INSERT INTO `redeemcode` VALUES (2, '2021-07-14 13:46:43', NULL, 0, '9zvWHx', b'0', b'0', NULL, 3, 1);
+INSERT INTO `redeemcode` VALUES (3, '2021-07-14 13:46:43', NULL, 0, '1L4s7x', b'0', b'0', NULL, 3, 1);
+INSERT INTO `redeemcode` VALUES (4, '2021-07-14 13:46:43', NULL, 0, '76abqs', b'0', b'0', NULL, 3, 1);
+INSERT INTO `redeemcode` VALUES (5, '2021-07-14 13:46:43', NULL, 0, '5mN5wj', b'0', b'0', NULL, 3, 1);
 
 -- ----------------------------
 -- Table structure for registereduser
@@ -343,12 +351,13 @@ CREATE TABLE `registereduser`  (
   `avatar` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '头像地址',
   `state` tinyint(4) NULL DEFAULT NULL COMMENT '模板消息状态 0-拒绝 1-接收',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of registereduser
 -- ----------------------------
-INSERT INTO `registereduser` VALUES (1, '2021-07-13 16:11:46', '2021-07-13 18:48:02', 16, '阿汤', NULL, 1, '12234542121', b'0', 'o94oc5gI4p4hcPLDBNtflB_w1jKQ', '甘乐', 'https://thirdwx.qlogo.cn/mmopen/vi_32/TMAQqcP5mIFIniagwQ4gxECWiapxvEbibwEQiazIicXpCDiaSGib85NJORIX5vH1we8SufjPOTu9DGicphibrLVhBY8CnibQ/132', 1);
+INSERT INTO `registereduser` VALUES (1, '2021-07-15 17:21:14', '2021-07-15 18:19:36', 51, '甘乐', NULL, 1, '15228943505', NULL, 'o94oc5gI4p4hcPLDBNtflB_w1jKQ', '甘乐', 'https://thirdwx.qlogo.cn/mmopen/vi_32/TMAQqcP5mIFIniagwQ4gxECWiapxvEbibwEQiazIicXpCDiaSGib85NJORIX5vH1we8SufjPOTu9DGicphibrLVhBY8CnibQ/132', NULL);
+INSERT INTO `registereduser` VALUES (2, '2021-07-15 17:22:21', '2021-07-15 17:23:24', 5, 'aaa', NULL, 1, '12345687455', NULL, 'o94oc5t6JomH250NBsoevYEpfsRk', 'oqs', 'https://thirdwx.qlogo.cn/mmopen/vi_32/dVicHeJ08Objibv6FWXUMfLjKXpoWteOpAlAz2jNkIp3xbcTIiaGBoNeu1LdhuORZbGb7t3peT4xjZcj1LsZsgN9Q/132', NULL);
 
 -- ----------------------------
 -- Table structure for report
@@ -366,11 +375,12 @@ CREATE TABLE `report`  (
   `appointId` bigint(20) UNSIGNED NULL DEFAULT NULL COMMENT '预约id',
   `productId` bigint(20) NULL DEFAULT NULL COMMENT '产品id',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of report
 -- ----------------------------
+INSERT INTO `report` VALUES (1, '2021-07-15 17:27:39', '2021-07-15 17:27:51', 1, '865283486775246848', '/api/file/report/e0c5238b-2a62-4e50-b5e8-f389fa389e3c.pdf,/api/file/report/094de3ba-88f0-4892-9337-29d34806fd23.pdf,/api/file/report/4e533866-8990-4900-b714-3016d04ba8f2.pdf', b'1', 2, 1, 3);
 
 -- ----------------------------
 -- Table structure for role
@@ -432,8 +442,8 @@ CREATE TABLE `shop`  (
 -- ----------------------------
 -- Records of shop
 -- ----------------------------
-INSERT INTO `shop` VALUES (1, '2021-06-30 11:55:04', '2021-07-13 14:32:05', 12, '门店1', '地址1', '31564654654', 416, 1, b'1');
-INSERT INTO `shop` VALUES (2, '2021-07-02 11:57:35', '2021-07-12 16:17:22', 3, '门店2', '地址2', '65456465', 500, 0, b'1');
+INSERT INTO `shop` VALUES (1, '2021-06-30 11:55:04', '2021-07-15 17:26:04', 21, '门店1', '地址1', '31564654654', 416, 4, b'1');
+INSERT INTO `shop` VALUES (2, '2021-07-02 11:57:35', '2021-07-15 16:13:27', 7, '门店2', '地址2', '65456465', 500, 4, b'1');
 
 -- ----------------------------
 -- Table structure for smsmessage
@@ -453,7 +463,7 @@ CREATE TABLE `smsmessage`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `phoneNumber_index`(`phoneNumber`) USING BTREE,
   INDEX `state_index`(`state`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 107 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 113 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of smsmessage
@@ -564,6 +574,12 @@ INSERT INTO `smsmessage` VALUES (103, '2021-07-13 18:46:27', NULL, 0, '166666666
 INSERT INTO `smsmessage` VALUES (104, '2021-07-13 18:47:35', NULL, 0, '18888888888', 'SMS_60680199', '{\"code\":\"553146\"}', NULL, NULL, 0);
 INSERT INTO `smsmessage` VALUES (105, '2021-07-13 18:48:16', NULL, 0, '12234542121', 'SMS_60680199', '{\"code\":\"550613\"}', NULL, NULL, 0);
 INSERT INTO `smsmessage` VALUES (106, '2021-07-13 18:49:03', NULL, 0, '12234542121', 'SMS_60680199', '{\"code\":\"214396\"}', NULL, NULL, 0);
+INSERT INTO `smsmessage` VALUES (107, '2021-07-14 17:24:59', NULL, 0, '15228943505', 'SMS_60680199', '{\"code\":\"792623\"}', NULL, NULL, 0);
+INSERT INTO `smsmessage` VALUES (108, '2021-07-15 17:54:36', NULL, 0, '15228943505', 'SMS_60680199', '{\"code\":\"339968\"}', NULL, NULL, 0);
+INSERT INTO `smsmessage` VALUES (109, '2021-07-15 18:11:09', NULL, 0, '15228943505', 'SMS_60680199', '{\"code\":\"070215\"}', NULL, NULL, 0);
+INSERT INTO `smsmessage` VALUES (110, '2021-07-15 18:14:50', NULL, 0, '15228943505', 'SMS_60680199', '{\"code\":\"162172\"}', NULL, NULL, 0);
+INSERT INTO `smsmessage` VALUES (111, '2021-07-15 18:16:38', NULL, 0, '15228943505', 'SMS_60680199', '{\"code\":\"799335\"}', NULL, NULL, 0);
+INSERT INTO `smsmessage` VALUES (112, '2021-07-15 18:19:37', NULL, 0, '15228943505', 'SMS_60680199', '{\"code\":\"441589\"}', NULL, NULL, 0);
 
 -- ----------------------------
 -- Table structure for smsverification
@@ -588,7 +604,7 @@ CREATE TABLE `smsverification`  (
   INDEX `requestIp_index`(`requestIp`) USING BTREE,
   INDEX `state_index`(`state`) USING BTREE,
   INDEX `type_index`(`type`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 107 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 113 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of smsverification
@@ -693,12 +709,18 @@ INSERT INTO `smsverification` VALUES (97, '2021-07-13 18:16:27', '2021-07-13 18:
 INSERT INTO `smsverification` VALUES (98, '2021-07-13 18:16:58', '2021-07-13 18:32:35', 1, 98, '15228943505', '961640', '127.0.0.1', 0, '2021-07-13 18:21:58', 2, 0);
 INSERT INTO `smsverification` VALUES (99, '2021-07-13 18:32:35', '2021-07-13 18:37:02', 1, 99, '15228943505', '916833', '127.0.0.1', 0, '2021-07-13 18:37:35', 2, 0);
 INSERT INTO `smsverification` VALUES (100, '2021-07-13 18:37:02', '2021-07-13 18:44:54', 1, 100, '15228943505', '381313', '127.0.0.1', 0, '2021-07-13 18:42:02', 2, 0);
-INSERT INTO `smsverification` VALUES (101, '2021-07-13 18:44:54', NULL, 0, 101, '15228943505', '978126', '127.0.0.1', 0, '2021-07-13 18:49:54', 0, 0);
+INSERT INTO `smsverification` VALUES (101, '2021-07-13 18:44:54', '2021-07-14 17:24:58', 1, 101, '15228943505', '978126', '127.0.0.1', 0, '2021-07-13 18:49:54', 2, 0);
 INSERT INTO `smsverification` VALUES (102, '2021-07-13 18:45:38', '2021-07-13 18:46:27', 1, 102, '16666666666', '410724', '127.0.0.1', 0, '2021-07-13 18:50:38', 2, 0);
 INSERT INTO `smsverification` VALUES (103, '2021-07-13 18:46:27', NULL, 0, 103, '16666666666', '538935', '127.0.0.1', 0, '2021-07-13 18:51:27', 0, 0);
 INSERT INTO `smsverification` VALUES (104, '2021-07-13 18:47:35', NULL, 0, 104, '18888888888', '553146', '127.0.0.1', 0, '2021-07-13 18:52:35', 0, 0);
 INSERT INTO `smsverification` VALUES (105, '2021-07-13 18:48:16', '2021-07-13 18:49:03', 1, 105, '12234542121', '550613', '127.0.0.1', 0, '2021-07-13 18:53:16', 2, 0);
 INSERT INTO `smsverification` VALUES (106, '2021-07-13 18:49:03', NULL, 0, 106, '12234542121', '214396', '127.0.0.1', 0, '2021-07-13 18:54:03', 0, 0);
+INSERT INTO `smsverification` VALUES (107, '2021-07-14 17:24:59', '2021-07-15 17:54:35', 1, 107, '15228943505', '792623', '127.0.0.1', 0, '2021-07-14 17:29:59', 2, 0);
+INSERT INTO `smsverification` VALUES (108, '2021-07-15 17:54:36', '2021-07-15 18:11:09', 1, 108, '15228943505', '339968', '127.0.0.1', 0, '2021-07-15 17:59:36', 2, 0);
+INSERT INTO `smsverification` VALUES (109, '2021-07-15 18:11:09', '2021-07-15 18:14:49', 1, 109, '15228943505', '070215', '127.0.0.1', 0, '2021-07-15 18:16:09', 2, 0);
+INSERT INTO `smsverification` VALUES (110, '2021-07-15 18:14:50', '2021-07-15 18:16:37', 1, 110, '15228943505', '162172', '127.0.0.1', 0, '2021-07-15 18:19:50', 2, 0);
+INSERT INTO `smsverification` VALUES (111, '2021-07-15 18:16:38', '2021-07-15 18:19:37', 1, 111, '15228943505', '799335', '127.0.0.1', 0, '2021-07-15 18:21:38', 2, 0);
+INSERT INTO `smsverification` VALUES (112, '2021-07-15 18:19:37', NULL, 0, 112, '15228943505', '441589', '127.0.0.1', 0, '2021-07-15 18:24:37', 0, 0);
 
 -- ----------------------------
 -- Table structure for usersummary

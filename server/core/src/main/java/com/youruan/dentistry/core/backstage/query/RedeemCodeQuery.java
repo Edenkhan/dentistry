@@ -16,6 +16,9 @@ public class RedeemCodeQuery
     protected Date startCreatedDate;
     protected Date endCreatedDate;
 
+    protected Boolean bound;
+    protected Boolean used;
+
     public boolean hasIds() {
         return (this.ids.length!= 0);
     }

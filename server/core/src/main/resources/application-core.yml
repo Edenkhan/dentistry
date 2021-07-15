@@ -8,6 +8,8 @@ spring:
     multipart:
       max-file-size: 500MB
       max-request-size: 500MB
+  jackson:
+    time-zone: GMT+8
 
 dentistry:
   core:
@@ -28,7 +30,7 @@ dentistry:
     base:
       storage:
         disk:
-          base-directory: E:/files
+          base-directory: C:/files
           base-url: /api/file
 
 wechat:
@@ -42,3 +44,6 @@ wechat:
     mchid: 1598795591
     privateKey: H8yNsA87UxM9a5jcTbPGJ0KPUuOaHByY
     notifyUrl: ${wechat.domain}/api/frontdesk/orders/notify
+
+mybatis:
+  type-aliases-package: com.youruan.dentistry.core

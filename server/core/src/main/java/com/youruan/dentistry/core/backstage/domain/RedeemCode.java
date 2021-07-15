@@ -11,6 +11,14 @@ import lombok.Setter;
 @Getter
 public class RedeemCode extends BasicDomain {
     /**
+     * 兑换码
+     */
+    private String code;
+    /**
+     * 是否已绑定
+     */
+    private Boolean bound;
+    /**
      * 是否已使用
      */
     private Boolean used;

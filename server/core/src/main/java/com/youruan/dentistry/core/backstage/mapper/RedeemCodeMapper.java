@@ -37,4 +37,9 @@ public interface RedeemCodeMapper {
      * 根据查询条件，返回记录列表
      */
     public List<ExtendedRedeemCode> query(RedeemCodeQuery qo);
+
+    /**
+     * 批量添加兑换码
+     */
+    void batchAdd(List<RedeemCode> redeemCodeList);
 }

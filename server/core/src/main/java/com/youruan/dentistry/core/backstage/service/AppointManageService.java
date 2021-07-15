@@ -51,12 +51,10 @@ public interface AppointManageService {
      * 生成7天数据
      */
     void generate();
-
     /**
      * 处理数据
      */
     List<Object> handleData(List<ExtendedAppointManage> appointManages);
-
     /**
      * 根据门店id获取预约上限
      */
@@ -65,15 +63,16 @@ public interface AppointManageService {
      * 修改门店预约上限
      */
     void update(AppointManage appointManage, Integer topLimit);
-
     /**
      * 检查当前门店在数据库是否有7天的数据
      */
-    void checkDataSource(AppointManageQuery qo);
-
+    void checkDataSource(Long shopId);
     /**
-     * 更新已预约次数
+     * 增加已预约次数
      */
-    void updateAppointNum(AppointManage appointManage);
-
+    void increAppointNum(AppointManage appointManage);
+    /**
+     * 减少已预约次数
+     */
+    void decreAppointNum(AppointManage appointManage);
 }

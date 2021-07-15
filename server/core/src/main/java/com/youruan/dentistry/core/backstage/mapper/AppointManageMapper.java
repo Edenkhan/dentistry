@@ -5,7 +5,6 @@ import com.youruan.dentistry.core.backstage.domain.AppointManage;
 import com.youruan.dentistry.core.backstage.query.AppointManageQuery;
 import com.youruan.dentistry.core.backstage.vo.ExtendedAppointManage;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -42,7 +41,7 @@ public interface AppointManageMapper {
     /**
      * 批量添加
      */
-    void batch(@Param("appointList") List<AppointManage> appointList);
+    void addBatch(List<AppointManage> list);
 
     /**
      * 修改预约上限

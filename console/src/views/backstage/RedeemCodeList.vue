@@ -9,28 +9,28 @@
         <a-date-picker v-model="redeemCodeListForm.endCreatedDate" style="width: 120px"></a-date-picker>
       </a-form-model-item>
       <a-form-model-item label='绑定状态'>
-        <a-select v-model="redeemCodeListForm.bindState" style="width: 80px" >
+        <a-select v-model="redeemCodeListForm.bound" style="width: 80px" >
           <a-select-option value="">
             全部
           </a-select-option>
           <a-select-option :value="true">
-            启用
+            已绑定
           </a-select-option>
           <a-select-option :value="false">
-            停用
+            未绑定
           </a-select-option>
         </a-select>
       </a-form-model-item>
-      <a-form-model-item label='状态'>
-        <a-select v-model="redeemCodeListForm.state" style="width: 80px" >
+      <a-form-model-item label='使用状态'>
+        <a-select v-model="redeemCodeListForm.used" style="width: 80px" >
           <a-select-option value="">
             全部
           </a-select-option>
           <a-select-option :value="true">
-            启用
+            已使用
           </a-select-option>
           <a-select-option :value="false">
-            停用
+            未使用
           </a-select-option>
         </a-select>
       </a-form-model-item>
@@ -51,10 +51,17 @@
         v-model="visible"
         title="生成兑换码"
         @ok="handleOk">
-        <a-form-model :label-col="labelCol" :wrapper-col="wrapperCol">
-          <a-form-model-item label="产品列表">
-            <a-select style="width: 200px" v-model="redeemCodeForm.productId">
-              <a-select-option v-for="(item,index) in productList" :value="item.id" :key="index" >
+        <a-form-model :label-col="labelCol" :wrapper-col="wrapperCol" :model="redeemCodeForm">
+          <a-form-model-item label="产品">
+            <a-select style="width: 200px" v-model="redeemCodeForm.productId" @change="checkType">
+              <a-select-option v-for="(item,index) in productList" :value="item.id" :key="index"  >
+                {{item.name}}
+              </a-select-option>
+            </a-select>
+          </a-form-model-item>
+          <a-form-model-item label="门店">
+            <a-select style="width: 200px" v-model="redeemCodeForm.shopId" :disabled="disabled">
+              <a-select-option v-for="(item,index) in shopList" :value="item.id" :key="index" >
                 {{item.name}}
               </a-select-option>
             </a-select>
@@ -76,8 +83,13 @@
       <template slot="createdDate" slot-scope="createdDate">
         {{createdDate | filterDate('YYYY-MM-DD HH:mm:ss')}}
       </template>
-      <template slot="lastModifiedDate" slot-scope="lastModifiedDate">
-        {{lastModifiedDate | filterDate('YYYY-MM-DD HH:mm:ss')}}
+      <template slot="bound" slot-scope="bound">
+        <a-tag color="red" v-if="bound">已绑定</a-tag>
+        <a-tag color="green" v-else>未绑定</a-tag>
+      </template>
+      <template slot="used" slot-scope="used">
+        <a-tag color="red" v-if="used">已使用</a-tag>
+        <a-tag color="green" v-else>可用</a-tag>
       </template>
     </a-table>
   </div>
@@ -86,7 +98,9 @@
 <script>
 import {
   listRedeemCodes,
-  listProducts,
+  listRedeemProduct,
+  listRedeemShop,
+  addRedeemCode, listProducts,
 } from "../../api/backstage"
 import moment from "moment"
 
@@ -103,20 +117,24 @@ const columns = [
     dataIndex: 'code',
   },
   {
-    title: '是否兑换',
-    dataIndex: 'redeemed',
+    title: '是否绑定',
+    dataIndex: 'bound',
+    scopedSlots: {customRender: 'bound'}
   },
   {
     title: '是否可用',
     dataIndex: 'used',
+    scopedSlots: {customRender: 'used'}
   },
   {
     title: '产品名',
-    dataIndex: 'productName',
+    dataIndex: 'product.name',
+
+
   },
   {
     title: '门店名',
-    dataIndex: 'shopName',
+    dataIndex: 'shop.name',
   }
 ]
 
@@ -138,18 +156,29 @@ export default {
       visible: false,
       labelCol: { span: 5 },
       wrapperCol: { span: 10 },
-      redeemCodeForm: {},
+      redeemCodeForm: {
+        productId:null,
+        shopId:null,
+        codeNum:null
+      },
       redeemCodeListForm: {
         sortField: 'createdDate',
         sortOrder: 'descend',
       },
       productList: [],
+      shopList: [],
+      disabled: false,
     }
   },
   created() {
     this.fetch()
   },
   methods: {
+
+    checkType(id) {
+      this.disabled = this.productList.find(item=>item.id===id).type ===0;
+      this.redeemCodeForm.shopId = null;
+    },
     handleSubmit() {
       this.pagination = Object.assign({}, this.pagination, {
         current: 1
@@ -157,13 +186,24 @@ export default {
       this.fetch()
     },
     handleOk() {
+      addRedeemCode(this.redeemCodeForm)
+        .then(() => {
+          this.$message.success('添加成功')
+        })
       this.visible = false
       this.pagination.current = 1
       this.fetch()
     },
     showModal() {
-      listProducts().then(({data}) => {
-        console.log(data)
+      Object.assign(this.redeemCodeForm, {
+        productId: null,
+        shopId: null,
+        codeNum: null
+      });
+      listRedeemShop().then(({data}) => {
+        this.shopList = data
+      });
+      listRedeemProduct().then(({data}) => {
         this.productList = data
       })
       this.visible = true

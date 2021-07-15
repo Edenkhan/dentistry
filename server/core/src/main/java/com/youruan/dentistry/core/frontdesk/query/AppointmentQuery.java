@@ -16,6 +16,8 @@ public class AppointmentQuery
     protected Long[] ids;
     protected Date startCreatedDate;
     protected Date endCreatedDate;
+    protected Date startArrivedDate;
+    protected Date endArrivedDate;
     protected Long userId;
     protected Long orderId;
 
@@ -25,7 +27,8 @@ public class AppointmentQuery
     private String likePhoneNumber;
     private String shopName;
     private String likeShopName;
-    protected Integer state;
+    protected Integer appointState;
+    protected Integer reportStatus;
 
     public boolean hasIds() {
         return (this.ids.length!= 0);

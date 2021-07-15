@@ -117,7 +117,7 @@ const allMenus = [
   // 兑换码管理
   {
     title: '兑换码管理',
-    key: 'dictionary',
+    key: 'redeemcode',
     icon: 'setting',
     subMenus: [
       {

@@ -3,6 +3,7 @@ package com.youruan.dentistry.core.backstage.domain;
 import com.youruan.dentistry.core.base.domain.BasicDomain;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.ibatis.type.Alias;
 
 import java.math.BigDecimal;
 
@@ -11,6 +12,7 @@ import java.math.BigDecimal;
  */
 @Setter
 @Getter
+@Alias("product")
 public class Product extends BasicDomain {
     /**
      * 产品名称

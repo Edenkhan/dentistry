@@ -11,7 +11,7 @@ import java.util.Date;
 public class AppointRecordVo extends BasicDomain {
     private Integer timePeriod;
     private Date appointDate;
-    private Date arrived;
+    private Date arrivedDate;
     private Integer totalNum;
     private Integer appointNum;
     private Integer peopleNum;
@@ -19,5 +19,6 @@ public class AppointRecordVo extends BasicDomain {
     private String shopName;
     private String realName;
     private String phoneNumber;
-    private Integer state;
+    private Integer appointState;
+    private Integer reportStatus;
 }

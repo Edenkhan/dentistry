@@ -43,7 +43,7 @@ public class AppointRecordController {
     @RequiresPermission(value = "backstage.appointRecord.appointComplete", description = "预约完成")
     public ResponseEntity<?> appointComplete(AppointRecordEditForm form) {
         Appointment appointment = appointmentService.get(form.getId());
-        appointmentService.update(appointment,form.getState());
+        appointmentService.update(appointment,form.getAppointState());
         return ResponseEntity.ok().build();
     }
     

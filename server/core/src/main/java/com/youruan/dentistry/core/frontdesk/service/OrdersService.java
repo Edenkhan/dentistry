@@ -91,4 +91,8 @@ public interface OrdersService {
      */
     Pagination<UserBoughtVo> bought(OrdersQuery qo);
 
+    /**
+     * 预约完成，改变订单预约状态
+     */
+    void updateAppointStatus(Orders orders);
 }

@@ -26,6 +26,7 @@ import com.youruan.dentistry.portal.base.ErrorResponseEntity;
 import com.youruan.dentistry.portal.base.interceptor.RequiresAuthentication;
 import com.youruan.dentistry.portal.frontdesk.form.OrdersAddForm;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -146,6 +147,7 @@ public class OrdersController {
             String xml = StreamUtils.readStream(request.getInputStream());
             Map<String, String> resultMap = WXPayUtil.xmlToMap(xml);
             Orders orders = ordersService.getByOrderNo(resultMap.get("out_trade_no"));
+            Assert.notNull(orders,"该订单已清除");
             if(Orders.PAY_STATUS_UNPAID.equals(orders.getPayStatus())) {
                 ordersService.changePayStatusAndSales(orders);
             }

@@ -264,4 +264,11 @@ public class BasicOrdersService implements OrdersService {
         List<UserBoughtVo> datas = (rows == 0)?new ArrayList<>():ordersMapper.bought(qo);
         return new Pagination<>(rows, datas);
     }
+
+    @Override
+    public void updateAppointStatus(Orders orders) {
+        Assert.notNull(orders,"必须提供订单");
+        orders.setAppointStatus(Orders.APPOINT_STATUS_NOT);
+        this.update(orders);
+    }
 }

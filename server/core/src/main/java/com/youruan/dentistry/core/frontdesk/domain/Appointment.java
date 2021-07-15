@@ -10,6 +10,10 @@ import java.util.Date;
 @Setter
 public class Appointment extends BasicDomain {
     /**
+     * 到店时间
+     */
+    private Date arrivedDate;
+    /**
      * 预约日期
      */
     private Date appointDate;
@@ -28,15 +32,27 @@ public class Appointment extends BasicDomain {
     /**
      * 预约状态
      */
-    private Integer state;
+    private Integer appointState;
     /**
-     * 预约状态 【已预约】
+     * 预约状态 【预约中】
      */
-    public static final Integer STATE_APPOINTED = 0;
+    public static final Integer APPOINT_STATE_APPOINTED = 0;
     /**
-     * 预约状态 【报告上传已完成】
+     * 预约状态 【预约完成】
      */
-    public static final Integer STATE_FINISH = STATE_APPOINTED + 1;
+    public static final Integer APPOINT_STATE_FINISH = APPOINT_STATE_APPOINTED + 1;
+    /**
+     * 报告状态
+     */
+    private Integer reportStatus;
+    /**
+     * 报告状态 【未上传】
+     */
+    public static final Integer REPORT_STATUS_NOT = 0;
+    /**
+     * 报告状态 【已上传】
+     */
+    public static final Integer REPORT_STATUS_OK = REPORT_STATUS_NOT + 1;
     /**
      * 订单id
      */

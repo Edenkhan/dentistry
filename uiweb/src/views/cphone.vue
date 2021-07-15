@@ -111,6 +111,7 @@
 <script>
 import qs from 'qs'
 import {mapState} from 'vuex';
+import me from "./me";
 export default {
   computed:{
     ...mapState([
@@ -124,7 +125,11 @@ export default {
       time:1*60* 1000,
       myphone:'',
       verifySrc: '',
+      currPhoneNumber: null,
     };
+  },
+  created() {
+    this.currPhoneNumber = sessionStorage.getItem('phoneNumber')
   },
   methods:{
     // 换验证码图片
@@ -142,15 +147,21 @@ export default {
         this.$toast('图形验证码为空');
       }
 
-      // 图片验证码检验
-      this.axios.post('api/registeredUser/checkVerify',qs.stringify({verifyCode:this.qvalue2})).then(({data})=>{
-        // alert(data.passed)
-        if(data.passed){
-          this.$router.push({path:'/phonesucc',query:{id:1}});
-        }else{
-          this.$toast('验证码错误');
-        }
+      this.axios.post('api/registeredUser/checkOldPhone',qs.stringify({verifyCode:this.qvalue})).then(() => {
+        // 图片验证码检验
+        this.axios.post('api/registeredUser/checkVerify',qs.stringify({verifyCode:this.qvalue2})).then(({data})=>{
+          // alert(data.passed)
+          if(data.passed){
+            this.$router.push('/phonesucc')
+          }else{
+            this.$toast('验证码错误')
+          }
+        })
+      }).catch(({message}) => {
+        this.$toast(message)
       })
+
+
 
     },
     cpclick(){
@@ -162,7 +173,7 @@ export default {
     },
     pcheck(){
       // 发送验证码
-      this.axios.post('api/registeredUser/sendVerifyCode',qs.stringify({phoneNumber:this.phoneNumber})).then(res=>{
+      this.axios.post('api/registeredUser/sendVerifyCode',qs.stringify({phoneNumber:this.currPhoneNumber})).then(res=>{
           console.log(res.data);
       })
     }

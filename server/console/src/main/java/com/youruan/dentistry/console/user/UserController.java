@@ -105,7 +105,8 @@ public class UserController {
     public ResponseEntity<?> reportable(Long id) {
         AppointmentQuery qo = new AppointmentQuery();
         qo.setUserId(id);
-        qo.setState(Appointment.STATE_FINISH);
+        qo.setAppointState(Appointment.APPOINT_STATE_FINISH);
+        qo.setReportStatus(Appointment.REPORT_STATUS_NOT);
         Pagination<AppointRecordVo> pagination = appointmentService.record(qo);
         return ResponseEntity.ok(ImmutableMap.builder()
                 .put("data", pagination.getData())

@@ -76,8 +76,9 @@ public class BasicAppointManageService
      * 查询7天范围内，数据库存在多少条数据
      */
     private int getRows(AppointManageQuery qo) {
+        qo.setMaxPageSize();
         qo.setStartAppointDate(DateUtil.getStartTime(new Date()));
-        qo.setEndAppointDate(DateUtil.getLastTime(DateUtils.addDays(new Date(),6)));
+        qo.setEndAppointDate(DateUtil.getStartTime(DateUtils.addDays(new Date(),6)));
         return appointManageMapper.count(qo);
     }
 
@@ -87,17 +88,17 @@ public class BasicAppointManageService
     }
 
     @Override
-    public void create(List<AppointManage> appointList) {
-        Assert.isTrue(!CollectionUtils.isEmpty(appointList),"必须提供预约管理集合");
-        this.batch(appointList);
+    public void create(List<AppointManage> appointManageList) {
+        Assert.isTrue(!CollectionUtils.isEmpty(appointManageList),"必须提供预约管理集合");
+        this.batch(appointManageList);
     }
 
     /**
      * 批量添加
      */
-    private void batch(List<AppointManage> appointList) {
-        appointList.stream().forEach(item -> item.setCreatedDate(new Date()));
-        appointManageMapper.batch(appointList);
+    private void batch(List<AppointManage> appointManageList) {
+        appointManageList.stream().forEach(item -> item.setCreatedDate(new Date()));
+        appointManageMapper.addBatch(appointManageList);
     }
 
 
@@ -161,20 +162,20 @@ public class BasicAppointManageService
     public void generate() {
         List<ExtendedShop> shops = shopService.listAll();
         Assert.isTrue(!CollectionUtils.isEmpty(shops),"当前没有门店");
-        List<AppointManage> appointManages = new ArrayList<>();
+        List<AppointManage> appointManageList = new ArrayList<>();
         shops.forEach(item -> {
-            generate(appointManages, AppointManage.TIME_PERIOD_AM, item.getId(),0);
-            generate(appointManages, AppointManage.TIME_PERIOD_PM, item.getId(),0);
+            generate(appointManageList, AppointManage.TIME_PERIOD_AM, item.getId(),0);
+            generate(appointManageList, AppointManage.TIME_PERIOD_PM, item.getId(),0);
         });
 
-        appointManageMapper.batch(appointManages);
+        appointManageMapper.addBatch(appointManageList);
     }
 
     /**
      * 生成days天数据
      * @Param start 表示从第几天开始
      */
-    private void generate(List<AppointManage> appointManages, Integer timePeriod, Long shopId, Integer start) {
+    private void generate(List<AppointManage> appointManageList, Integer timePeriod, Long shopId, Integer start) {
         AppointManage appointManage;
         for (int i = start; i < 7; i++) {
             appointManage = new AppointManage();
@@ -185,18 +186,18 @@ public class BasicAppointManageService
             appointManage.setTimePeriod(timePeriod);
             appointManage.setEnabled(true);
             appointManage.setShopId(shopId);
-            appointManages.add(appointManage);
+            appointManageList.add(appointManage);
         }
     }
 
     @Override
-    public List<Object> handleData(List<ExtendedAppointManage> appointManages) {
+    public List<Object> handleData(List<ExtendedAppointManage> appointManageList) {
 //        List<AppointManageVo> voList = new ArrayList<>();
-//        List<ExtendedAppointManage> amList = appointManages.stream().filter(item -> item.getTimePeriod().equals(AppointManage.TIME_PERIOD_AM)).collect(Collectors.toList());
+//        List<ExtendedAppointManage> amList = appointManageList.stream().filter(item -> item.getTimePeriod().equals(AppointManage.TIME_PERIOD_AM)).collect(Collectors.toList());
 //        AppointManageVo vo1 = new AppointManageVo();
 //        vo1.setPeriod(AppointManage.TIME_PERIOD_AM);
 //        setup(vo1, amList);
-//        List<ExtendedAppointManage> pmList = appointManages.stream().filter(item -> item.getTimePeriod().equals(AppointManage.TIME_PERIOD_PM)).collect(Collectors.toList());
+//        List<ExtendedAppointManage> pmList = appointManageList.stream().filter(item -> item.getTimePeriod().equals(AppointManage.TIME_PERIOD_PM)).collect(Collectors.toList());
 //        AppointManageVo vo2 = new AppointManageVo();
 //        vo2.setPeriod(AppointManage.TIME_PERIOD_PM);
 //        setup(vo2, pmList);
@@ -204,8 +205,8 @@ public class BasicAppointManageService
 //        voList.add(vo2);
 
         List<Object> list = new ArrayList<>();
-        List<ExtendedAppointManage> amList = appointManages.stream().filter(item -> item.getTimePeriod().equals(AppointManage.TIME_PERIOD_AM)).collect(Collectors.toList());
-        List<ExtendedAppointManage> pmList = appointManages.stream().filter(item -> item.getTimePeriod().equals(AppointManage.TIME_PERIOD_PM)).collect(Collectors.toList());
+        List<ExtendedAppointManage> amList = appointManageList.stream().filter(item -> item.getTimePeriod().equals(AppointManage.TIME_PERIOD_AM)).collect(Collectors.toList());
+        List<ExtendedAppointManage> pmList = appointManageList.stream().filter(item -> item.getTimePeriod().equals(AppointManage.TIME_PERIOD_PM)).collect(Collectors.toList());
         list.add(amList);
         list.add(pmList);
 
@@ -259,22 +260,36 @@ public class BasicAppointManageService
     }
 
     @Override
-    public void checkDataSource(AppointManageQuery qo) {
-        Long shopId = qo.getShopId();
+    public void checkDataSource(Long shopId) {
         Assert.notNull(shopId,"必须提供门店id");
         // 获取数据条目数 以(天)为单位
-        int days = this.getRows(qo) / 2;
+        AppointManageQuery qo = new AppointManageQuery();
+        qo.setShopId(shopId);
+        int rows = this.getRows(qo);
+        int days = rows / 2;
         if(days >= 7) return;
         List<AppointManage> list = new ArrayList<>();
         generate(list,AppointManage.TIME_PERIOD_AM,shopId,days);
         generate(list,AppointManage.TIME_PERIOD_PM,shopId,days);
-        appointManageMapper.batch(list);
+        this.addBatch(list);
+    }
+
+    private void addBatch(List<AppointManage> list) {
+        appointManageMapper.addBatch(list);
     }
 
     @Override
-    public void updateAppointNum(AppointManage appointManage) {
+    public void increAppointNum(AppointManage appointManage) {
         Assert.notNull(appointManage,"必须提供预约管理数据");
         appointManage.setAppointNum(appointManage.getAppointNum() + 1);
+        this.update(appointManage);
+    }
+
+    @Override
+    public void decreAppointNum(AppointManage appointManage) {
+        Assert.notNull(appointManage,"必须提供预约管理数据");
+        Assert.isTrue(appointManage.getAppointNum()>0,"当前日期没有人预约");
+        appointManage.setAppointNum(appointManage.getAppointNum() - 1);
         this.update(appointManage);
     }
 

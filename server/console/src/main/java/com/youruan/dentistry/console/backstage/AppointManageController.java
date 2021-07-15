@@ -34,10 +34,9 @@ public class AppointManageController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/checkDataSource")
-    public ResponseEntity<?> checkDataSource(AppointManageListForm form) {
-        AppointManageQuery qo = form.buildQuery();
-        appointManageService.checkDataSource(qo);
+//    @PostMapping("/checkDataSource")
+    public ResponseEntity<?> checkDataSource(Long shopId) {
+        appointManageService.checkDataSource(shopId);
         return ResponseEntity.ok().build();
     }
 

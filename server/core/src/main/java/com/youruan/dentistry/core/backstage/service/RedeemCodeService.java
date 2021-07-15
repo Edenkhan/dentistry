@@ -1,10 +1,10 @@
 
 package com.youruan.dentistry.core.backstage.service;
 
-import com.youruan.dentistry.core.base.query.Pagination;
 import com.youruan.dentistry.core.backstage.domain.RedeemCode;
 import com.youruan.dentistry.core.backstage.query.RedeemCodeQuery;
 import com.youruan.dentistry.core.backstage.vo.ExtendedRedeemCode;
+import com.youruan.dentistry.core.base.query.Pagination;
 
 import java.util.List;
 
@@ -33,7 +33,8 @@ public interface RedeemCodeService {
     /**
      * 添加
      */
-    RedeemCode create(String name, String logo);
+    void create(Long productId, Long shopId, Integer codeNum);
+
     /**
      * 修改
      */
@@ -46,4 +47,5 @@ public interface RedeemCodeService {
      * 返回所有记录
      */
     List<ExtendedRedeemCode> listAll();
+
 }

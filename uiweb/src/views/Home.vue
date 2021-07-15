@@ -360,7 +360,7 @@ export default {
     }
   },
   mounted(){
-    console.log(this.iSlogin);
+    // console.log(this.iSlogin);
 
     // 显示内容加载中
     this.$toast.loading({

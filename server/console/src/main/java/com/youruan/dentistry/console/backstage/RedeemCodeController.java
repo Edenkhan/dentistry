@@ -5,6 +5,10 @@ import com.youruan.dentistry.console.base.interceptor.RequiresPermission;
 import com.youruan.dentistry.console.backstage.form.RedeemCodeAddForm;
 import com.youruan.dentistry.console.backstage.form.RedeemCodeEditForm;
 import com.youruan.dentistry.console.backstage.form.RedeemCodeListForm;
+import com.youruan.dentistry.core.backstage.service.ProductService;
+import com.youruan.dentistry.core.backstage.service.ShopService;
+import com.youruan.dentistry.core.backstage.vo.ExtendedProduct;
+import com.youruan.dentistry.core.backstage.vo.ExtendedShop;
 import com.youruan.dentistry.core.base.query.Pagination;
 import com.youruan.dentistry.core.base.utils.BeanMapUtils;
 import com.youruan.dentistry.core.backstage.domain.RedeemCode;
@@ -14,6 +18,8 @@ import com.youruan.dentistry.core.backstage.vo.ExtendedRedeemCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
  * 兑换码管理
  */
@@ -22,8 +28,13 @@ import org.springframework.web.bind.annotation.*;
 public class RedeemCodeController {
 
     private final RedeemCodeService redeemCodeService;
-    public RedeemCodeController(RedeemCodeService redeemCodeService) {
+    private final ProductService productService;
+    private final ShopService shopService;
+
+    public RedeemCodeController(RedeemCodeService redeemCodeService, ProductService productService, ShopService shopService) {
         this.redeemCodeService = redeemCodeService;
+        this.productService = productService;
+        this.shopService = shopService;
     }
 
     @GetMapping("/list")
@@ -32,8 +43,7 @@ public class RedeemCodeController {
         RedeemCodeQuery qo = form.buildQuery();
         Pagination<ExtendedRedeemCode> pagination = redeemCodeService.query(qo);
         return ResponseEntity.ok(ImmutableMap.builder()
-                .put("data", BeanMapUtils.pick(pagination.getData(),
-                        "id", "createdDate", "lastModifiedDate", "name", "logo"))
+                .put("data", pagination.getData())
                 .put("rows", pagination.getRows())
                 .build());
     }
@@ -48,13 +58,10 @@ public class RedeemCodeController {
     @PostMapping("/add")
     @RequiresPermission(value = "backstage.redeemCode.add", description = "兑换码-添加")
     public ResponseEntity<?> add(RedeemCodeAddForm form) {
-//        RedeemCode redeemCode = redeemCodeService.create(
-//                form.getName(),
-//                form.getLogo());
-//        return ResponseEntity.ok(ImmutableMap.builder()
-//                .put("id", redeemCode.getId())
-//                .build());
-        return null;
+        redeemCodeService.create(form.getProductId(),
+                form.getShopId(),
+                form.getCodeNum());
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/edit")
@@ -69,6 +76,20 @@ public class RedeemCodeController {
 //                .put("id", redeemCode.getId())
 //                .build());
         return null;
+    }
+
+    @GetMapping("/product")
+    @RequiresPermission(value = "backstage.redeemCode.product", description = "兑换码-查询所有产品")
+    public ResponseEntity<?> product() {
+        List<ExtendedProduct> productList = productService.listAll();
+        return ResponseEntity.ok(ImmutableMap.builder().put("data",productList).build());
+    }
+
+    @GetMapping("/shop")
+    @RequiresPermission(value = "backstage.redeemCode.shop", description = "兑换码-查询所有门店")
+    public ResponseEntity<?> shop() {
+        List<ExtendedShop> shopList = shopService.listAll();
+        return ResponseEntity.ok(ImmutableMap.builder().put("data",shopList).build());
     }
 
 }

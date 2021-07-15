@@ -144,7 +144,7 @@ const columns = [
   },
   {
     title: '已预约次数',
-    dataIndex: 'appointedNum',
+    dataIndex: 'appointNum',
   },
   {
     title: '状态',
@@ -252,7 +252,7 @@ export default {
             address: shop.address,
             phone: shop.phone,
             validNum: shop.validNum,
-            appointedNum: shop.appointedNum,
+            appointNum: shop.appointNum,
             enabled: shop.enabled,
           })
         })

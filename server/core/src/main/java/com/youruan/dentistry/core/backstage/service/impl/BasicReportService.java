@@ -18,6 +18,7 @@ import com.youruan.dentistry.core.base.utils.SnowflakeIdWorker;
 import com.youruan.dentistry.core.frontdesk.domain.Appointment;
 import com.youruan.dentistry.core.frontdesk.service.AppointmentService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -87,11 +88,16 @@ public class BasicReportService
     }
 
     @Override
+    @Transactional
     public Report create(Integer peopleNum, Long userId, Long appointId, Long productId, List<String> pathList) {
         this.checkAdd(peopleNum, userId, appointId, productId, pathList);
         Report report = new Report();
         this.assign(report, userId, appointId, productId, pathList);
-        return this.add(report);
+        report = this.add(report);
+        // 修改预约表 报告状态
+        Appointment appointment = appointmentService.get(appointId);
+        appointmentService.updateReportStatus(appointment);
+        return report;
     }
 
     /**
@@ -133,7 +139,7 @@ public class BasicReportService
         Assert.notNull(report, "必须提供报告");
         Assert.notNull(sync, "必须提供同步状态");
         Appointment appointment = appointmentService.get(report.getAppointId());
-        Assert.isTrue(Appointment.STATE_FINISH.equals(appointment.getState()),"预约未完成");
+        Assert.isTrue(Appointment.APPOINT_STATE_FINISH.equals(appointment.getAppointState()),"预约未完成");
     }
 
 

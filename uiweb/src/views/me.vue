@@ -223,7 +223,22 @@ export default {
       uname:'',
     }
   },
+  created() {
+    this.fetch()
+  },
   methods:{
+    fetch() {
+      this.axios.get('/api/registeredUser/get')
+          .then(({data}) => {
+            // alert(JSON.stringify(data))
+            sessionStorage.setItem('id',data.id)
+            sessionStorage.setItem('iSlogin',true)
+            sessionStorage.setItem('avatar',data.avatar)
+            sessionStorage.setItem('realName',data.realName)
+            sessionStorage.setItem('gender',data.gender)
+            sessionStorage.setItem('phoneNumber',data.phoneNumber)
+          })
+    },
     home(){
       this.$router.push('/');
       location.reload();
@@ -304,6 +319,7 @@ export default {
     }
   },
   mounted(){
+    // alert(this.gender)
     this.isLogin=this.iSlogin;
 
     if(this.realName!=''){
