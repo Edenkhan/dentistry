@@ -111,7 +111,6 @@
 <script>
 import qs from 'qs'
 import {mapState} from 'vuex';
-import me from "./me";
 export default {
   computed:{
     ...mapState([

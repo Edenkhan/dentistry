@@ -75,37 +75,37 @@ public class BasicRedeemCodeService
     }
 
     @Override
-    public void create(Long productId, Long shopId, Integer codeNum) {
-        this.checkAdd(productId, shopId, codeNum);
-        List<RedeemCode> redeemCodeList = this.createData(productId, shopId, codeNum);
-        this.batchAdd(redeemCodeList);
+    public void create(Long productId, Long shopId, Integer amount) {
+        this.checkAdd(productId, shopId, amount);
+        RedeemCode redeemCode = new RedeemCode();
+        this.assign(redeemCode,productId,shopId,amount);
+        this.add(redeemCode);
     }
 
     /**
      * 批量生成兑换码
      */
-    private List<RedeemCode> createData(Long productId, Long shopId, Integer codeNum) {
-        List<RedeemCode> redeemCodeList = new ArrayList<>();
-        RedeemCode redeemCode;
-        for (int i = 0; i < codeNum; i++) {
-            redeemCode = new RedeemCode();
-            this.assign(redeemCode, productId, shopId);
-            redeemCodeList.add(redeemCode);
-        }
-        return redeemCodeList;
-    }
+//    private List<RedeemCode> createData(Long productId, Long shopId, Integer amount) {
+//        List<RedeemCode> redeemCodeList = new ArrayList<>();
+//        RedeemCode redeemCode;
+//        for (int i = 0; i < amount; i++) {
+//            redeemCode = new RedeemCode();
+//            this.assign(redeemCode, productId, shopId);
+//            redeemCodeList.add(redeemCode);
+//        }
+//        return redeemCodeList;
+//    }
 
     /**
      * 批量添加兑换码
      */
-    private void batchAdd(List<RedeemCode> redeemCodeList) {
-        redeemCodeMapper.batchAdd(redeemCodeList);
-    }
+//    private void batchAdd(List<RedeemCode> redeemCodeList) {
+//        redeemCodeMapper.batchAdd(redeemCodeList);
+//    }
 
-    private void assign(RedeemCode redeemCode, Long productId, Long shopId) {
-        redeemCode.setCreatedDate(new Date());
-        System.out.println("随机字符串："+ RandomStringUtils.random(6));
+    private void assign(RedeemCode redeemCode, Long productId, Long shopId, Integer amount) {
         redeemCode.setCode(RandomStringUtils.random(6));
+        redeemCode.setAmount(amount);
         redeemCode.setBound(false);
         redeemCode.setUsed(false);
         redeemCode.setProductId(productId);
@@ -115,9 +115,9 @@ public class BasicRedeemCodeService
     /**
      * 添加兑换码校验
      */
-    private void checkAdd(Long productId, Long shopId, Integer codeNum) {
+    private void checkAdd(Long productId, Long shopId, Integer amount) {
         Assert.notNull(productId, "必须提供产品id");
-        Assert.notNull(codeNum, "必须提供生成数量");
+        Assert.notNull(amount, "必须提供生成数量");
         Product product = productService.get(productId);
         if (Product.PRODUCT_TYPE_OFFLINE.equals(product.getType())) {
             Assert.notNull(shopId, "必须提供门店id");

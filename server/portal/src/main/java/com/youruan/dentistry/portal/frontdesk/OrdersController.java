@@ -8,10 +8,7 @@ import com.youruan.dentistry.core.backstage.query.DictionaryQuery;
 import com.youruan.dentistry.core.backstage.service.DictionaryItemService;
 import com.youruan.dentistry.core.backstage.service.DictionaryService;
 import com.youruan.dentistry.core.backstage.service.ShopService;
-import com.youruan.dentistry.core.backstage.vo.DictionaryItemListVo;
-import com.youruan.dentistry.core.backstage.vo.ExtendedDictionary;
-import com.youruan.dentistry.core.backstage.vo.ExtendedShop;
-import com.youruan.dentistry.core.backstage.vo.OrderRecordVo;
+import com.youruan.dentistry.core.backstage.vo.*;
 import com.youruan.dentistry.core.base.query.Pagination;
 import com.youruan.dentistry.core.base.utils.BeanMapUtils;
 import com.youruan.dentistry.core.base.utils.IPUtils;
@@ -100,7 +97,7 @@ public class OrdersController {
         DictionaryItemQuery qo2 = new DictionaryItemQuery();
         qo2.setDictionaryId(dictionary.getId());
         qo2.setEnabled(true);
-        List<DictionaryItemListVo> voList = dictionaryItemService.listAll(qo2);
+        List<ExtendedDictionaryItem> voList = dictionaryItemService.listAll(qo2);
         return ResponseEntity.ok(BeanMapUtils.pick(voList,"id","name"));
     }
 

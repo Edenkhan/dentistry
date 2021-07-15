@@ -1,16 +1,16 @@
 package com.youruan.dentistry.console.backstage;
 
 import com.google.common.collect.ImmutableMap;
-import com.youruan.dentistry.console.base.interceptor.RequiresPermission;
 import com.youruan.dentistry.console.backstage.form.DictionaryItemAddForm;
 import com.youruan.dentistry.console.backstage.form.DictionaryItemEditForm;
 import com.youruan.dentistry.console.backstage.form.DictionaryItemListForm;
-import com.youruan.dentistry.core.base.query.Pagination;
-import com.youruan.dentistry.core.base.utils.BeanMapUtils;
+import com.youruan.dentistry.console.base.interceptor.RequiresPermission;
 import com.youruan.dentistry.core.backstage.domain.DictionaryItem;
 import com.youruan.dentistry.core.backstage.query.DictionaryItemQuery;
 import com.youruan.dentistry.core.backstage.service.DictionaryItemService;
-import com.youruan.dentistry.core.backstage.vo.DictionaryItemListVo;
+import com.youruan.dentistry.core.backstage.vo.ExtendedDictionaryItem;
+import com.youruan.dentistry.core.base.query.Pagination;
+import com.youruan.dentistry.core.base.utils.BeanMapUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,10 +32,9 @@ public class DictionaryItemController {
     @RequiresPermission(value = "backstage.dictionaryItem.list", description = "字典详情-列表")
     public ResponseEntity<?> list(DictionaryItemListForm form) {
         DictionaryItemQuery qo = form.buildQuery();
-        Pagination<DictionaryItemListVo> pagination = dictionaryItemService.query(qo);
+        Pagination<ExtendedDictionaryItem> pagination = dictionaryItemService.query(qo);
         return ResponseEntity.ok(ImmutableMap.builder()
-                .put("data", BeanMapUtils.pick(pagination.getData(),
-                        "id", "createdDate", "lastModifiedDate", "name", "enabled", "dictionaryName","mark"))
+                .put("data", pagination.getData())
                 .put("rows", pagination.getRows())
                 .build());
     }

@@ -5,7 +5,7 @@ import com.youruan.dentistry.core.backstage.domain.DictionaryItem;
 import com.youruan.dentistry.core.backstage.mapper.DictionaryItemMapper;
 import com.youruan.dentistry.core.backstage.query.DictionaryItemQuery;
 import com.youruan.dentistry.core.backstage.service.DictionaryItemService;
-import com.youruan.dentistry.core.backstage.vo.DictionaryItemListVo;
+import com.youruan.dentistry.core.backstage.vo.ExtendedDictionaryItem;
 import com.youruan.dentistry.core.base.exception.OptimismLockingException;
 import com.youruan.dentistry.core.base.query.Pagination;
 import org.springframework.stereotype.Service;
@@ -46,22 +46,23 @@ public class BasicDictionaryItemService
     }
 
     @Override
-    public List<DictionaryItemListVo> listAll(DictionaryItemQuery qo) {
+    public List<ExtendedDictionaryItem> listAll(DictionaryItemQuery qo) {
+        qo.setMaxPageSize();
         return dictionaryItemMapper.query(qo);
     }
 
     @Override
-    public DictionaryItemListVo queryOne(DictionaryItemQuery qo) {
+    public ExtendedDictionaryItem queryOne(DictionaryItemQuery qo) {
         qo.setPageSize(1);
-        List<DictionaryItemListVo> datas = dictionaryItemMapper.query(qo);
+        List<ExtendedDictionaryItem> datas = dictionaryItemMapper.query(qo);
         return (((datas == null) || datas.isEmpty()) ? null : datas.get(0));
     }
 
     @Override
-    public Pagination<DictionaryItemListVo> query(DictionaryItemQuery qo) {
+    public Pagination<ExtendedDictionaryItem> query(DictionaryItemQuery qo) {
         int rows = dictionaryItemMapper.count(qo);
-        List<DictionaryItemListVo> datas = ((rows == 0) ? new ArrayList<DictionaryItemListVo>() : dictionaryItemMapper.query(qo));
-        return new Pagination<DictionaryItemListVo>(rows, datas);
+        List<ExtendedDictionaryItem> datas = ((rows == 0) ? new ArrayList<>() : dictionaryItemMapper.query(qo));
+        return new Pagination<>(rows, datas);
     }
 
     @Override
@@ -131,14 +132,14 @@ public class BasicDictionaryItemService
     }
 
     @Override
-    public List<? extends DictionaryItemListVo> listAll(Long[] dictionaryItemIds) {
+    public List<? extends ExtendedDictionaryItem> listAll(Long[] dictionaryItemIds) {
         DictionaryItemQuery qo = new DictionaryItemQuery();
         qo.setIds(dictionaryItemIds);
         return listAll(qo);
     }
 
     @Override
-    public List<DictionaryItemListVo> listAll() {
+    public List<ExtendedDictionaryItem> listAll() {
         DictionaryItemQuery qo = new DictionaryItemQuery();
         qo.setMaxPageSize();
         return listAll(qo);

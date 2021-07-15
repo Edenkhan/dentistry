@@ -60,7 +60,7 @@ public class RedeemCodeController {
     public ResponseEntity<?> add(RedeemCodeAddForm form) {
         redeemCodeService.create(form.getProductId(),
                 form.getShopId(),
-                form.getCodeNum());
+                form.getAmount());
         return ResponseEntity.ok().build();
     }
 

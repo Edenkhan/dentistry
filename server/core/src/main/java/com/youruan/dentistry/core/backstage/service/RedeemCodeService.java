@@ -33,7 +33,7 @@ public interface RedeemCodeService {
     /**
      * 添加
      */
-    void create(Long productId, Long shopId, Integer codeNum);
+    void create(Long productId, Long shopId, Integer amount);
 
     /**
      * 修改

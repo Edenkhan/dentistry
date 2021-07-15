@@ -83,7 +83,7 @@ import {mapState} from 'vuex';
 export default {
   computed:{
     ...mapState([
-        'username','iphone','id','sex'
+        'username','phoneNumber','id','gender'
     ])
   },
   data(){
@@ -109,7 +109,7 @@ export default {
             this.axios.post('api/work/redeemCode/edit',qs.stringify({code:this.duiCode,userId:this.id})).then(res=>{
               console.log(res.data);
               this.$router.push({path:'/succ',query:{id:3}})
-            })   
+            })
           }
         })
 
@@ -128,10 +128,10 @@ export default {
   },
   mounted(){
     // 获取医生信息
-    this.axios.get('api/platform/orders/getDoctor').then(res=>{
-      // console.log(res.data);
-      for(let key of res.data){
-        this.columns.push(key.title);
+    this.axios.get('api/frontdesk/dictionaryItem/getDoctor').then(({data})=>{
+      // console.log(data);
+      for(let key of data){
+        this.columns.push(key.name);
       }
       // console.log(this.columns);
     })

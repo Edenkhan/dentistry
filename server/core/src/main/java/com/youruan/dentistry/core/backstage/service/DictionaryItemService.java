@@ -4,7 +4,7 @@ package com.youruan.dentistry.core.backstage.service;
 import com.youruan.dentistry.core.base.query.Pagination;
 import com.youruan.dentistry.core.backstage.domain.DictionaryItem;
 import com.youruan.dentistry.core.backstage.query.DictionaryItemQuery;
-import com.youruan.dentistry.core.backstage.vo.DictionaryItemListVo;
+import com.youruan.dentistry.core.backstage.vo.ExtendedDictionaryItem;
 
 import java.util.List;
 
@@ -17,15 +17,15 @@ public interface DictionaryItemService {
     /**
      * 根据条件，获取单条记录
      */
-    public DictionaryItemListVo queryOne(DictionaryItemQuery qo);
+    public ExtendedDictionaryItem queryOne(DictionaryItemQuery qo);
     /**
      * 返回所有记录
      */
-    public List<DictionaryItemListVo> listAll(DictionaryItemQuery qo);
+    public List<ExtendedDictionaryItem> listAll(DictionaryItemQuery qo);
     /**
      * 根据条件，查询列表
      */
-    public Pagination<DictionaryItemListVo> query(DictionaryItemQuery qo);
+    public Pagination<ExtendedDictionaryItem> query(DictionaryItemQuery qo);
     /**
      * 根据查询条件，返回记录条目
      */
@@ -41,9 +41,9 @@ public interface DictionaryItemService {
     /**
      * 根据id集合，查询对应列表
      */
-    List<? extends DictionaryItemListVo> listAll(Long[] dictionaryItemIds);
+    List<? extends ExtendedDictionaryItem> listAll(Long[] dictionaryItemIds);
     /**
      * 返回所有记录
      */
-    List<DictionaryItemListVo> listAll();
+    List<ExtendedDictionaryItem> listAll();
 }

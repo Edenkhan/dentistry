@@ -66,8 +66,8 @@
               </a-select-option>
             </a-select>
           </a-form-model-item>
-          <a-form-model-item label="生成数量">
-            <a-input v-model="redeemCodeForm.codeNum" />
+          <a-form-model-item label="可兑换次数">
+            <a-input v-model="redeemCodeForm.amount" />
           </a-form-model-item>
         </a-form-model>
       </a-modal>
@@ -159,7 +159,7 @@ export default {
       redeemCodeForm: {
         productId:null,
         shopId:null,
-        codeNum:null
+        amount:null
       },
       redeemCodeListForm: {
         sortField: 'createdDate',
@@ -198,7 +198,7 @@ export default {
       Object.assign(this.redeemCodeForm, {
         productId: null,
         shopId: null,
-        codeNum: null
+        amount: null
       });
       listRedeemShop().then(({data}) => {
         this.shopList = data

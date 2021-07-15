@@ -7,14 +7,14 @@
         <result property="lastModifiedDate" column="lastModifiedDate"/>
         <result property="version" column="version"/>
         <result property="code" column="code"/>
+        <result property="amount" column="amount"/>
         <result property="bound" column="bound"/>
         <result property="used" column="used"/>
-        <result property="userId" column="userId"/>
         <result property="productId" column="productId"/>
         <result property="shopId" column="shopId"/>
     </resultMap>
-    <sql id="BASE_COLUMNS">rc.id, rc.createdDate, rc.lastModifiedDate, rc.version, rc.code, rc.bound, rc.used, rc.userId, rc.productId, rc.shopId</sql>
-    <sql id="QUERY_COLUMNS">rc.id, rc.createdDate, rc.lastModifiedDate, rc.version, rc.code, rc.bound, rc.used, rc.userId, rc.productId, rc.shopId</sql>
+    <sql id="BASE_COLUMNS">rc.id, rc.createdDate, rc.lastModifiedDate, rc.version, rc.code, rc.amount, rc.bound, rc.used, rc.productId, rc.shopId</sql>
+    <sql id="QUERY_COLUMNS">rc.id, rc.createdDate, rc.lastModifiedDate, rc.version, rc.code, rc.amount, rc.bound, rc.used, rc.productId, rc.shopId</sql>
     <resultMap id="VO_RESULT" type="com.youruan.dentistry.core.backstage.vo.ExtendedRedeemCode" extends="BASE_RESULT">
         <association
                 property="product"
@@ -36,13 +36,14 @@
     </select>
     <delete id="delete" parameterType="java.lang.Long">DELETE FROM RedeemCode WHERE id = #{id}</delete>
     <insert id="add" parameterType="com.youruan.dentistry.core.backstage.domain.RedeemCode" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
-        INSERT INTO RedeemCode(id, createdDate, version, code, bound, used, userId, productId, shopId) VALUES(#{id }, #{createdDate}, 0, #{code}, #{bound}, #{used}, #{userId}, #{productId}, #{shopId})
+        INSERT INTO RedeemCode(id, createdDate, version, code, amount, bound, used, productId, shopId)
+        VALUES(#{id }, #{createdDate}, 0, #{code}, #{amount}, #{bound}, #{used}, #{productId}, #{shopId})
     </insert>
     <insert id="batchAdd" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
-        INSERT INTO RedeemCode(id, createdDate, version, code, bound, used, userId, productId, shopId)
+        INSERT INTO RedeemCode(id, createdDate, version, code, amount, bound, used, productId, shopId)
         VALUES
         <foreach collection="list" item="item" separator=",">
-            (#{item.id}, #{item.createdDate}, 0, #{item.code}, #{item.bound}, #{item.used}, #{item.userId}, #{item.productId}, #{item.shopId})
+            (#{item.id}, #{item.createdDate}, 0, #{item.code}, #{item.amount}, #{item.bound}, #{item.used}, #{item.productId}, #{item.shopId})
         </foreach>
     </insert>
     <update id="update" parameterType="com.youruan.dentistry.core.backstage.domain.RedeemCode">UPDATE RedeemCode
@@ -50,9 +51,9 @@
         lastModifiedDate = now(),
         version = version + 1,
         <if test="code != null">code = #{code}</if>
+        <if test="amount != null">amount = #{amount}</if>
         <if test="bound != null">bound = #{bound}</if>
         <if test="used != null">used = #{used}</if>
-        <if test="userId != null">userId = #{userId}</if>
         <if test="productId != null">productId = #{productId}</if>
         <if test="shopId != null">shopId = #{shopId}</if>
     </set>
@@ -84,7 +85,8 @@
     <sql id="QUERY_LIMIT">
         <if test="pageSize &gt; 0">LIMIT ${start}, ${pageSize}</if>
     </sql>
-    <select id="count" parameterType="com.youruan.dentistry.core.backstage.query.RedeemCodeQuery" resultType="java.lang.Integer">SELECT COUNT(*) FROM RedeemCode AS rc
+    <select id="count" parameterType="com.youruan.dentistry.core.backstage.query.RedeemCodeQuery" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM RedeemCode AS rc
         <include refid="QUERY_JOIN"/>
         <include refid="QUERY_WHERE"/>
     </select>

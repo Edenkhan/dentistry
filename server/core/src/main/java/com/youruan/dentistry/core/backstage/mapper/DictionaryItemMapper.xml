@@ -11,21 +11,17 @@
     <result property="enabled" column="enabled"/>
     <result property="dictionaryId" column="dictionaryId"/>
   </resultMap>
-  <resultMap id="VO_LIST_RESULT" type="com.youruan.dentistry.core.backstage.vo.DictionaryItemListVo">
-    <id property="id" column="id"/>
-    <result property="createdDate" column="createdDate"/>
-    <result property="lastModifiedDate" column="lastModifiedDate"/>
-    <result property="version" column="version"/>
-    <result property="dictionaryName" column="dictionaryName"/>
-    <result property="name" column="name"/>
-    <result property="mark" column="mark"/>
-    <result property="enabled" column="enabled"/>
-  </resultMap>
   <sql id="BASE_COLUMNS">dit.id, dit.createdDate, dit.lastModifiedDate, dit.version, dit.name, dit.enabled, dit.dictionaryId</sql>
   <sql id="QUERY_COLUMNS">dit.id, dit.createdDate, dit.lastModifiedDate, dit.version, dit.name, dit.enabled, dit.dictionaryId</sql>
-  <resultMap id="VO_RESULT" type="com.youruan.dentistry.core.backstage.vo.ExtendedDictionaryItem" extends="BASE_RESULT"/>
+  <resultMap id="VO_RESULT" type="com.youruan.dentistry.core.backstage.vo.ExtendedDictionaryItem" extends="BASE_RESULT">
+    <association
+            property="dictionary"
+            resultMap="com.youruan.dentistry.core.backstage.mapper.DictionaryMapper.BASE_RESULT"
+            columnPrefix="dic_"
+    />
+  </resultMap>
   <sql id="JOIN_COLUMNS">
-    ,dic.name AS dictionaryName,dic.mark
+    ,dic.name AS dic_name,dic.mark AS dic_mark
   </sql>
   <select id="get" resultMap="BASE_RESULT" parameterType="java.lang.Long">SELECT 
     <include refid="BASE_COLUMNS"/> FROM DictionaryItem dit WHERE id = #{id }
@@ -39,7 +35,7 @@
     <where>id = #{id} AND version = #{version}</where>
   </update>
   <sql id="QUERY_JOIN">
-    JOIN Dictionary dic ON dit.dictionaryId = dic.id
+    LEFT JOIN Dictionary dic ON dit.dictionaryId = dic.id
   </sql>
   <sql id="QUERY_WHERE_SQL">
     <if test="ids != null">AND dit.id IN
@@ -52,6 +48,7 @@
     <if test="likeDictionaryName != null">AND dic.name like CONCAT('%',#{likeDictionaryName},'%')</if>
     <if test="enabled != null">AND dit.enabled = #{enabled}</if>
     <if test="dictionaryId != null">AND dit.dictionaryId = #{dictionaryId}</if>
+    <if test="mark != null">AND dic.mark = #{mark}</if>
   </sql>
   <sql id="QUERY_WHERE">
     <where>
@@ -70,7 +67,7 @@
     <include refid="QUERY_JOIN"/>
     <include refid="QUERY_WHERE"/>
   </select>
-  <select id="query" parameterType="com.youruan.dentistry.core.backstage.query.DictionaryItemQuery" resultMap="VO_LIST_RESULT">SELECT
+  <select id="query" parameterType="com.youruan.dentistry.core.backstage.query.DictionaryItemQuery" resultMap="VO_RESULT">SELECT
     <include refid="QUERY_COLUMNS"/>
     <include refid="JOIN_COLUMNS"/> FROM DictionaryItem AS dit
     <include refid="QUERY_JOIN"/>

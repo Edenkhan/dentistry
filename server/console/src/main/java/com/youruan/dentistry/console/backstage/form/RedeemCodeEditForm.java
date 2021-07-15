@@ -9,5 +9,5 @@ public class RedeemCodeEditForm {
     private Long id;
     private String productId;
     private String shopId;
-    private Integer quantify;
+    private Integer amount;
 }

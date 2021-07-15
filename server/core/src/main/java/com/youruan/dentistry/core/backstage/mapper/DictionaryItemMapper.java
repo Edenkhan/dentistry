@@ -3,7 +3,7 @@ package com.youruan.dentistry.core.backstage.mapper;
 
 import com.youruan.dentistry.core.backstage.domain.DictionaryItem;
 import com.youruan.dentistry.core.backstage.query.DictionaryItemQuery;
-import com.youruan.dentistry.core.backstage.vo.DictionaryItemListVo;
+import com.youruan.dentistry.core.backstage.vo.ExtendedDictionaryItem;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
@@ -36,6 +36,6 @@ public interface DictionaryItemMapper {
     /**
      * 根据查询条件，返回记录列表
      */
-    public List<DictionaryItemListVo> query(DictionaryItemQuery qo);
+    public List<ExtendedDictionaryItem> query(DictionaryItemQuery qo);
 
 }

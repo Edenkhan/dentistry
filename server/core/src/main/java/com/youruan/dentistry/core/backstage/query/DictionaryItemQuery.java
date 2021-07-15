@@ -22,6 +22,7 @@ public class DictionaryItemQuery
     protected String likeName;
     protected Boolean enabled;
     protected Long dictionaryId;
+    private String mark;
 
     public boolean hasIds() {
         return (this.ids.length!= 0);

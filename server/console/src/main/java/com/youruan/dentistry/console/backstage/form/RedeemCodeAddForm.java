@@ -8,5 +8,5 @@ import lombok.Setter;
 public class RedeemCodeAddForm {
     private Long productId;
     private Long shopId;
-    private Integer codeNum;
+    private Integer amount;
 }

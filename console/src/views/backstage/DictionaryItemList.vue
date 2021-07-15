@@ -121,7 +121,7 @@ const columns = [
   },
   {
     title: '父字典名称',
-    dataIndex: 'dictionaryName',
+    dataIndex: 'dictionary.name',
   },
   {
     title: '详情名称',
@@ -129,7 +129,7 @@ const columns = [
   },
   {
     title: '字典标识',
-    dataIndex: 'mark',
+    dataIndex: 'dictionary.mark',
   },
   {
     title: '状态',
