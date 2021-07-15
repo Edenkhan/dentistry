@@ -1,6 +1,7 @@
 package com.youruan.dentistry.portal.frontdesk;
 
 import com.google.common.collect.ImmutableMap;
+import com.youruan.dentistry.core.backstage.domain.Dictionary;
 import com.youruan.dentistry.core.backstage.query.DictionaryItemQuery;
 import com.youruan.dentistry.core.backstage.service.DictionaryItemService;
 import com.youruan.dentistry.core.backstage.vo.ExtendedDictionaryItem;
@@ -24,7 +25,7 @@ public class DictionaryItemController {
     @GetMapping("/getDoctor")
     public ResponseEntity<?> getDoctor() {
         DictionaryItemQuery qo = new DictionaryItemQuery();
-        qo.setMark("DOCTOR");
+        qo.setMark(Dictionary.MARK_DOCTOR);
         List<ExtendedDictionaryItem> voList = dictionaryItemService.listAll(qo);
         return ResponseEntity.ok(ImmutableMap.builder().put("data",voList).build());
     }
