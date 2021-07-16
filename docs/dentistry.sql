@@ -11,7 +11,7 @@
  Target Server Version : 50731
  File Encoding         : 65001
 
- Date: 17/07/2021 00:22:32
+ Date: 17/07/2021 00:24:01
 */
 
 SET NAMES utf8mb4;
@@ -206,7 +206,6 @@ CREATE TABLE `orders`  (
   `userId` bigint(20) NULL DEFAULT NULL COMMENT '用户id',
   `productId` bigint(20) NULL DEFAULT NULL COMMENT '产品id',
   `shopId` bigint(20) NULL DEFAULT NULL COMMENT '门店id',
-  `orderId` bigint(20) NULL DEFAULT NULL COMMENT '订单id',
   `dicItemId` bigint(20) NULL DEFAULT NULL COMMENT '字典详情id',
   `isRedeemOrder` bit(1) NULL DEFAULT NULL COMMENT '是否为兑换码订单',
   PRIMARY KEY (`id`) USING BTREE
@@ -215,7 +214,7 @@ CREATE TABLE `orders`  (
 -- ----------------------------
 -- Records of orders
 -- ----------------------------
-INSERT INTO `orders` VALUES (1, '2021-07-17 00:18:22', '2021-07-17 00:20:01', 2, '865749232861052928', 12.00, 1, 1, '2021-07-17 00:18:22', 1, 0, 1, 3, 1, NULL, NULL, b'1');
+INSERT INTO `orders` VALUES (1, '2021-07-17 00:18:22', '2021-07-17 00:20:01', 2, '865749232861052928', 12.00, 1, 1, '2021-07-17 00:18:22', 1, 0, 1, 3, 1, NULL, b'1');
 
 -- ----------------------------
 -- Table structure for permission
