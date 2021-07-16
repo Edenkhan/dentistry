@@ -11,7 +11,7 @@
  Target Server Version : 50731
  File Encoding         : 65001
 
- Date: 16/07/2021 23:30:49
+ Date: 17/07/2021 00:22:32
 */
 
 SET NAMES utf8mb4;
@@ -33,14 +33,14 @@ CREATE TABLE `appointmanage`  (
   `enabled` bit(1) NULL DEFAULT NULL COMMENT '是否开启预约',
   `shopId` bigint(20) NULL DEFAULT NULL COMMENT '门店id',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 33 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 37 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of appointmanage
 -- ----------------------------
 INSERT INTO `appointmanage` VALUES (1, '2021-07-15 17:25:11', '2021-07-15 17:26:43', 2, 50, 0, '2021-07-15 00:00:00', 0, b'1', 1);
 INSERT INTO `appointmanage` VALUES (2, '2021-07-15 17:25:11', '2021-07-15 17:26:43', 1, 50, 1, '2021-07-16 00:00:00', 0, b'1', 1);
-INSERT INTO `appointmanage` VALUES (3, '2021-07-15 17:25:11', NULL, 0, 50, 0, '2021-07-17 00:00:00', 0, b'1', 1);
+INSERT INTO `appointmanage` VALUES (3, '2021-07-15 17:25:11', '2021-07-17 00:19:15', 1, 50, 1, '2021-07-17 00:00:00', 0, b'1', 1);
 INSERT INTO `appointmanage` VALUES (4, '2021-07-15 17:25:11', NULL, 0, 50, 0, '2021-07-18 00:00:00', 0, b'1', 1);
 INSERT INTO `appointmanage` VALUES (5, '2021-07-15 17:25:11', NULL, 0, 50, 0, '2021-07-19 00:00:00', 0, b'1', 1);
 INSERT INTO `appointmanage` VALUES (6, '2021-07-15 17:25:11', NULL, 0, 50, 0, '2021-07-20 00:00:00', 0, b'1', 1);
@@ -70,6 +70,10 @@ INSERT INTO `appointmanage` VALUES (29, '2021-07-16 09:22:35', NULL, 0, 50, 0, '
 INSERT INTO `appointmanage` VALUES (30, '2021-07-16 09:22:35', NULL, 0, 50, 0, '2021-07-22 00:00:00', 1, b'1', 1);
 INSERT INTO `appointmanage` VALUES (31, '2021-07-16 09:22:35', NULL, 0, 50, 0, '2021-07-22 00:00:00', 0, b'1', 2);
 INSERT INTO `appointmanage` VALUES (32, '2021-07-16 09:22:35', NULL, 0, 50, 0, '2021-07-22 00:00:00', 1, b'1', 2);
+INSERT INTO `appointmanage` VALUES (33, '2021-07-17 00:13:13', NULL, 0, 50, 0, '2021-07-23 00:00:00', 0, b'1', 1);
+INSERT INTO `appointmanage` VALUES (34, '2021-07-17 00:13:13', NULL, 0, 50, 0, '2021-07-23 00:00:00', 1, b'1', 1);
+INSERT INTO `appointmanage` VALUES (35, '2021-07-17 00:13:13', NULL, 0, 50, 0, '2021-07-23 00:00:00', 0, b'1', 2);
+INSERT INTO `appointmanage` VALUES (36, '2021-07-17 00:13:13', NULL, 0, 50, 0, '2021-07-23 00:00:00', 1, b'1', 2);
 
 -- ----------------------------
 -- Table structure for appointment
@@ -90,11 +94,12 @@ CREATE TABLE `appointment`  (
   `productId` bigint(20) NULL DEFAULT NULL COMMENT '产品id',
   `shopId` bigint(20) NULL DEFAULT NULL COMMENT '门店id',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of appointment
 -- ----------------------------
+INSERT INTO `appointment` VALUES (1, '2021-07-17 00:19:15', '2021-07-17 00:20:01', 1, '2021-07-17 00:00:00', NULL, 0, 1, 0, 1, 1, 3, 1);
 
 -- ----------------------------
 -- Table structure for dictionary
@@ -201,6 +206,7 @@ CREATE TABLE `orders`  (
   `userId` bigint(20) NULL DEFAULT NULL COMMENT '用户id',
   `productId` bigint(20) NULL DEFAULT NULL COMMENT '产品id',
   `shopId` bigint(20) NULL DEFAULT NULL COMMENT '门店id',
+  `orderId` bigint(20) NULL DEFAULT NULL COMMENT '订单id',
   `dicItemId` bigint(20) NULL DEFAULT NULL COMMENT '字典详情id',
   `isRedeemOrder` bit(1) NULL DEFAULT NULL COMMENT '是否为兑换码订单',
   PRIMARY KEY (`id`) USING BTREE
@@ -209,7 +215,7 @@ CREATE TABLE `orders`  (
 -- ----------------------------
 -- Records of orders
 -- ----------------------------
-INSERT INTO `orders` VALUES (1, '2021-07-16 23:28:35', NULL, 0, '865736704986710016', 12.00, 1, 0, '2021-07-16 23:28:35', 1, 0, 1, 3, 1, NULL, b'1');
+INSERT INTO `orders` VALUES (1, '2021-07-17 00:18:22', '2021-07-17 00:20:01', 2, '865749232861052928', 12.00, 1, 1, '2021-07-17 00:18:22', 1, 0, 1, 3, 1, NULL, NULL, b'1');
 
 -- ----------------------------
 -- Table structure for permission
@@ -324,20 +330,15 @@ CREATE TABLE `redeemcode`  (
   `userId` bigint(20) NULL DEFAULT NULL COMMENT '用户id',
   `productId` bigint(20) NULL DEFAULT NULL COMMENT '产品id',
   `shopId` bigint(20) NULL DEFAULT NULL COMMENT '门店id',
+  `orderId` bigint(20) NULL DEFAULT NULL COMMENT '订单id',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 9 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of redeemcode
 -- ----------------------------
-INSERT INTO `redeemcode` VALUES (1, '2021-07-16 18:05:32', '2021-07-16 22:21:22', 1, 'E8z8B0', b'1', b'0', 1, 1, NULL);
-INSERT INTO `redeemcode` VALUES (2, '2021-07-16 18:05:32', '2021-07-16 22:34:01', 1, '928G4W', b'1', b'0', 1, 1, NULL);
-INSERT INTO `redeemcode` VALUES (3, '2021-07-16 22:46:27', '2021-07-16 22:46:56', 1, '5616pt', b'1', b'0', 1, 3, 1);
-INSERT INTO `redeemcode` VALUES (4, '2021-07-16 22:46:27', '2021-07-16 22:54:43', 1, '5wZkg1', b'1', b'0', 1, 3, 1);
-INSERT INTO `redeemcode` VALUES (5, '2021-07-16 22:57:04', '2021-07-16 23:21:09', 1, '3X2x3Z', b'1', b'0', 1, 3, 1);
-INSERT INTO `redeemcode` VALUES (6, '2021-07-16 22:57:04', '2021-07-16 23:28:34', 1, '659Qv2', b'1', b'0', 1, 3, 1);
-INSERT INTO `redeemcode` VALUES (7, '2021-07-16 23:23:39', '2021-07-16 23:24:24', 1, 'sHcsd2', b'1', b'0', 1, 1, NULL);
-INSERT INTO `redeemcode` VALUES (8, '2021-07-16 23:23:39', NULL, 0, '7d9iW2', b'0', b'0', NULL, 1, NULL);
+INSERT INTO `redeemcode` VALUES (1, '2021-07-17 00:14:05', '2021-07-17 00:19:15', 2, 'k713Or', b'1', b'1', 1, 3, 1, 1);
+INSERT INTO `redeemcode` VALUES (2, '2021-07-17 00:14:05', NULL, 0, '0Xt93A', b'0', b'0', NULL, 3, 1, NULL);
 
 -- ----------------------------
 -- Table structure for registereduser
@@ -448,7 +449,7 @@ CREATE TABLE `shop`  (
 -- ----------------------------
 -- Records of shop
 -- ----------------------------
-INSERT INTO `shop` VALUES (1, '2021-06-30 11:55:04', '2021-07-15 17:26:04', 21, '门店1', '地址1', '31564654654', 416, 4, b'1');
+INSERT INTO `shop` VALUES (1, '2021-06-30 11:55:04', '2021-07-17 00:19:15', 22, '门店1', '地址1', '31564654654', 416, 5, b'1');
 INSERT INTO `shop` VALUES (2, '2021-07-02 11:57:35', '2021-07-15 16:13:27', 7, '门店2', '地址2', '65456465', 500, 4, b'1');
 
 -- ----------------------------
