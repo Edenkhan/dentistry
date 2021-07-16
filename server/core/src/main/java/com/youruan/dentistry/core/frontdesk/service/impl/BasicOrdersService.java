@@ -283,13 +283,13 @@ public class BasicOrdersService implements OrdersService {
     }
 
     @Override
-    public void redeemOrders(BigDecimal price, Long userId, Long productId, Long shopId, Long dicItemId) {
+    public Orders redeemOrders(BigDecimal price, Long userId, Long productId, Long shopId, Long dicItemId) {
         this.checkAdd(price, userId, productId);
         Product product = productService.get(productId);
         Assert.notNull(product,"必须提供商品");
         Orders orders = new Orders();
         this.assign(orders, price, product.getTotalAppointNum(), userId, productId, shopId, dicItemId, true);
-        this.add(orders);
+        return this.add(orders);
     }
 
 

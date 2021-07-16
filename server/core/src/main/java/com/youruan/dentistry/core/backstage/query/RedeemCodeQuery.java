@@ -19,6 +19,7 @@ public class RedeemCodeQuery
     protected Boolean bound;
     protected Boolean used;
     protected String code;
+    protected Long orderId;
 
     public boolean hasIds() {
         return (this.ids.length!= 0);

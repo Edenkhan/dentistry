@@ -53,4 +53,8 @@ public interface RedeemCodeService {
      */
     void bindUser(RedeemCode redeemCode, Long userId, String dicItemName);
 
+    /**
+     * 兑换完成
+     */
+    void redeemCompleted(ExtendedRedeemCode redeemCode);
 }

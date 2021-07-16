@@ -99,5 +99,5 @@ public interface OrdersService {
     /**
      * 兑换订单
      */
-    void redeemOrders(BigDecimal price, Long userId, Long productId, Long shopId, Long dicItemId);
+    Orders redeemOrders(BigDecimal price, Long userId, Long productId, Long shopId, Long dicItemId);
 }

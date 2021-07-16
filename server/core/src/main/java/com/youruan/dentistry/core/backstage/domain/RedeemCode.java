@@ -34,4 +34,8 @@ public class RedeemCode extends BasicDomain {
      * 门店id
      */
     private Long shopId;
+    /**
+     * 订单id
+     */
+    private Long orderId;
 }

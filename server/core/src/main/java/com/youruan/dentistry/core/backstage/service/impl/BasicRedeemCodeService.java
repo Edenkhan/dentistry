@@ -13,6 +13,7 @@ import com.youruan.dentistry.core.backstage.vo.ExtendedRedeemCode;
 import com.youruan.dentistry.core.base.exception.OptimismLockingException;
 import com.youruan.dentistry.core.base.query.Pagination;
 import com.youruan.dentistry.core.base.utils.RandomStringUtils;
+import com.youruan.dentistry.core.frontdesk.domain.Orders;
 import com.youruan.dentistry.core.frontdesk.service.OrdersService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -172,17 +173,18 @@ public class BasicRedeemCodeService
         Assert.notNull(userId, "必须提供用户id");
         Assert.isTrue(!redeemCode.getBound(), "该兑换码已兑换");
         redeemCode.setUserId(userId);
-        redeemCode.setBound(true);
-        this.update(redeemCode);
         // 添加订单
-        this.addOrders(redeemCode,dicItemName);
+        Orders orders = this.addOrders(redeemCode, dicItemName);
+        redeemCode.setOrderId(orders.getId());
+        redeemCode.setBound(true);
+        // 更新兑换码信息
+        this.update(redeemCode);
     }
-
 
     /**
      * 添加订单
      */
-    private void addOrders(RedeemCode redeemCode, String dicItemName) {
+    private Orders addOrders(RedeemCode redeemCode, String dicItemName) {
         Product product = productService.get(redeemCode.getProductId());
         Assert.notNull(product, "必须提供产品");
         Long dicItemId = null;
@@ -192,11 +194,19 @@ public class BasicRedeemCodeService
             dicItemId = dictionaryItem.getId();
         }
         // 兑换码生成订单
-        ordersService.redeemOrders(product.getPrice(),
+        return ordersService.redeemOrders(product.getPrice(),
                 redeemCode.getUserId(),
                 product.getId(),
                 redeemCode.getShopId(),
                 dicItemId);
+
+    }
+
+    @Override
+    public void redeemCompleted(ExtendedRedeemCode redeemCode) {
+        Assert.notNull(redeemCode,"必须提供兑换码");
+        redeemCode.setUsed(true);
+        this.update(redeemCode);
     }
 
 

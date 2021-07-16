@@ -4,10 +4,13 @@ package com.youruan.dentistry.core.frontdesk.service.impl;
 import com.youruan.dentistry.core.backstage.domain.AppointManage;
 import com.youruan.dentistry.core.backstage.domain.Shop;
 import com.youruan.dentistry.core.backstage.query.AppointManageQuery;
+import com.youruan.dentistry.core.backstage.query.RedeemCodeQuery;
 import com.youruan.dentistry.core.backstage.service.AppointManageService;
+import com.youruan.dentistry.core.backstage.service.RedeemCodeService;
 import com.youruan.dentistry.core.backstage.service.ShopService;
 import com.youruan.dentistry.core.backstage.vo.AppointRecordVo;
 import com.youruan.dentistry.core.backstage.vo.ExtendedAppointManage;
+import com.youruan.dentistry.core.backstage.vo.ExtendedRedeemCode;
 import com.youruan.dentistry.core.base.exception.OptimismLockingException;
 import com.youruan.dentistry.core.base.query.Pagination;
 import com.youruan.dentistry.core.base.utils.DateUtil;
@@ -31,16 +34,19 @@ import java.util.stream.Collectors;
 
 @Service
 public class BasicAppointmentService implements AppointmentService {
+
     private final AppointmentMapper appointmentMapper;
     private final OrdersService ordersService;
     private final AppointManageService appointManageService;
     private final ShopService shopService;
+    private final RedeemCodeService redeemCodeService;
 
-    public BasicAppointmentService(AppointmentMapper appointmentMapper, OrdersService ordersService, AppointManageService appointManageService, ShopService shopService) {
+    public BasicAppointmentService(AppointmentMapper appointmentMapper, OrdersService ordersService, AppointManageService appointManageService, ShopService shopService, RedeemCodeService redeemCodeService) {
         this.appointmentMapper = appointmentMapper;
         this.ordersService = ordersService;
         this.appointManageService = appointManageService;
         this.shopService = shopService;
+        this.redeemCodeService = redeemCodeService;
     }
 
     @Override
@@ -92,6 +98,13 @@ public class BasicAppointmentService implements AppointmentService {
         this.checkAdd(appointDate, timePeriod, orderId, userId);
         Appointment appointment = new Appointment();
         Orders orders = ordersService.get(orderId);
+        if(orders.getIsRedeemOrder()) {
+            // 如果是兑换码订单，将此兑换码设置为已使用
+            RedeemCodeQuery qo = new RedeemCodeQuery();
+            qo.setOrderId(orderId);
+            ExtendedRedeemCode redeemCode = redeemCodeService.queryOne(qo);
+            redeemCodeService.redeemCompleted(redeemCode);
+        }
         this.assign(appointment, appointDate, timePeriod, orderId, userId, orders.getProductId(), orders.getShopId());
         appointment = this.add(appointment);
         Assert.notNull(appointment, "预约失败");
