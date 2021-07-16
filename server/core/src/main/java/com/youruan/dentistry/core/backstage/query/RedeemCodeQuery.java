@@ -18,6 +18,7 @@ public class RedeemCodeQuery
 
     protected Boolean bound;
     protected Boolean used;
+    protected String code;
 
     public boolean hasIds() {
         return (this.ids.length!= 0);

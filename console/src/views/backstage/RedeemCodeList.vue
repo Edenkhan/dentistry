@@ -66,7 +66,7 @@
               </a-select-option>
             </a-select>
           </a-form-model-item>
-          <a-form-model-item label="可兑换次数">
+          <a-form-model-item label="生成数量">
             <a-input v-model="redeemCodeForm.amount" />
           </a-form-model-item>
         </a-form-model>
@@ -100,7 +100,7 @@ import {
   listRedeemCodes,
   listRedeemProduct,
   listRedeemShop,
-  addRedeemCode, listProducts,
+  addRedeemCode,
 } from "../../api/backstage"
 import moment from "moment"
 
@@ -129,13 +129,11 @@ const columns = [
   {
     title: '产品名',
     dataIndex: 'product.name',
-
-
   },
   {
     title: '门店名',
     dataIndex: 'shop.name',
-  }
+  },
 ]
 
 export default {
@@ -157,9 +155,10 @@ export default {
       labelCol: { span: 5 },
       wrapperCol: { span: 10 },
       redeemCodeForm: {
-        productId:null,
-        shopId:null,
-        amount:null
+        productId: null,
+        shopId: null,
+        dicItemId: null,
+        amount: null,
       },
       redeemCodeListForm: {
         sortField: 'createdDate',
@@ -167,6 +166,7 @@ export default {
       },
       productList: [],
       shopList: [],
+      doctorList: [],
       disabled: false,
     }
   },
@@ -176,7 +176,7 @@ export default {
   methods: {
 
     checkType(id) {
-      this.disabled = this.productList.find(item=>item.id===id).type ===0;
+      this.disabled = this.productList.find(item=>item.id===id).type === 0;
       this.redeemCodeForm.shopId = null;
     },
     handleSubmit() {
@@ -198,11 +198,12 @@ export default {
       Object.assign(this.redeemCodeForm, {
         productId: null,
         shopId: null,
-        amount: null
-      });
+        dicItemId: null,
+        amount: null,
+      })
       listRedeemShop().then(({data}) => {
         this.shopList = data
-      });
+      })
       listRedeemProduct().then(({data}) => {
         this.productList = data
       })

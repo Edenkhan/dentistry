@@ -164,6 +164,11 @@ export function listRedeemShop() {
   return get('/backstage/redeemCode/shop');
 }
 
+// 查询所有医生
+export function listRedeemDoctor() {
+  return get('/backstage/redeemCode/doctor');
+}
+
 // 添加兑换码
 export function addRedeemCode(params) {
   return post('/backstage/redeemCode/add?' + stringify(params));

@@ -69,11 +69,11 @@ public class ReportController {
                 .build());
     }
 
-    @PostMapping("/edit")
-    @RequiresPermission(value = "backstage.report.edit", description = "报告-编辑")
-    public ResponseEntity<?> edit(ReportEditForm form) {
+    @PostMapping("/sync")
+    @RequiresPermission(value = "backstage.report.sync", description = "报告-同步")
+    public ResponseEntity<?> sync(ReportEditForm form) {
         Report report = reportService.get(form.getId());
-        reportService.update(report,form.getSync());
+        reportService.sync(report);
         return ResponseEntity.ok().build();
     }
 

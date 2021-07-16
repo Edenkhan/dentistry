@@ -92,13 +92,14 @@ public class BasicAppointmentService implements AppointmentService {
         this.checkAdd(appointDate, timePeriod, orderId, userId);
         Appointment appointment = new Appointment();
         Orders orders = ordersService.get(orderId);
-        this.assign(appointment,appointDate,timePeriod, orderId,userId,orders.getProductId(),orders.getShopId());
+        this.assign(appointment, appointDate, timePeriod, orderId, userId, orders.getProductId(), orders.getShopId());
         appointment = this.add(appointment);
-        Assert.notNull(appointment,"预约失败");
+        Assert.notNull(appointment, "预约失败");
         // 更新订单预约次数
         ordersService.updateAppointNum(orders);
         // 更新预约管理 预约次数
         AppointManage appointManage = getAppointManage(appointDate, timePeriod, orders.getShopId());
+        // 增加当前预约日期 预约数量
         appointManageService.increAppointNum(appointManage);
         // 更新门店预约次数
         Shop shop = shopService.get(orders.getShopId());
@@ -117,15 +118,20 @@ public class BasicAppointmentService implements AppointmentService {
     }
 
     private void checkAdd(Date appointDate, Integer timePeriod, Long orderId, Long userId) {
-        Assert.notNull(appointDate,"必须提供预约日期");
-        Assert.notNull(timePeriod,"必须提供预约时间段");
-        Assert.notNull(orderId,"必须提供订单id");
-        Assert.notNull(userId,"必须提供用户id");
+        Assert.notNull(appointDate, "必须提供预约日期");
+        Assert.notNull(timePeriod, "必须提供预约时间段");
+        Assert.notNull(orderId, "必须提供订单id");
+        Assert.notNull(userId, "必须提供用户id");
         Orders orders = ordersService.get(orderId);
-        this.checkDate(timePeriod,DateUtil.getStartTime(appointDate));
+        // 校验日期
+        this.checkDate(timePeriod, DateUtil.getStartTime(appointDate), orders.getShopId());
+        // 校验用户预约状态
         this.checkUserAppoint(userId);
+        // 校验订单预约次数
         this.checkOrderAppointNum(orderId);
+        // 校验预约日期、预约状态
         this.checkAppointDateAndStatus(appointDate, timePeriod, orders.getShopId());
+        // 校验门店总预约数
         this.checkShopValid(ordersService.get(orderId).getShopId());
     }
 
@@ -137,7 +143,7 @@ public class BasicAppointmentService implements AppointmentService {
         aq.setUserId(userId);
         aq.setAppointState(Appointment.APPOINT_STATE_APPOINTED);
         int count = this.count(aq);
-        Assert.isTrue(count == 0,"该用户已经有过预约");
+        Assert.isTrue(count == 0, "该用户已经有过预约");
     }
 
     /**
@@ -145,8 +151,8 @@ public class BasicAppointmentService implements AppointmentService {
      */
     private void checkOrderAppointNum(Long orderId) {
         Orders orders = ordersService.get(orderId);
-        Assert.notNull(orders,"必须提供订单");
-        Assert.isTrue(orders.getAppointNum()<orders.getTotalNum(),"订单预约次数已用完");
+        Assert.notNull(orders, "必须提供订单");
+        Assert.isTrue(orders.getAppointNum() < orders.getTotalNum(), "订单预约次数已用完");
     }
 
     /**
@@ -154,14 +160,14 @@ public class BasicAppointmentService implements AppointmentService {
      */
     private void checkShopValid(Long shopId) {
         Shop shop = shopService.get(shopId);
-        Assert.notNull(shop,"必须提供门店");
+        Assert.notNull(shop, "必须提供门店");
         AppointManageQuery qo = new AppointManageQuery();
         qo.setShopId(shopId);
         qo.setMaxPageSize();
         List<ExtendedAppointManage> appointManageList = appointManageService.listAll(qo);
         Integer appointSum = appointManageList.stream().map(AppointManage::getAppointNum).reduce(0, Integer::sum);
-        System.out.println("总共已预约次数："+appointSum);
-        Assert.isTrue(appointSum < shop.getValidNum(),"门店总预约次数已满");
+        System.out.println("总共已预约次数：" + appointSum);
+        Assert.isTrue(appointSum < shop.getValidNum(), "门店总预约次数已满");
     }
 
     /**
@@ -169,9 +175,9 @@ public class BasicAppointmentService implements AppointmentService {
      */
     private void checkAppointDateAndStatus(Date appointDate, Integer timePeriod, Long shopId) {
         ExtendedAppointManage extendedAppointManage = getExtendedAppointManage(appointDate, timePeriod, shopId);
-        Assert.notNull(extendedAppointManage,"必须提供预约管理");
-        Assert.isTrue(extendedAppointManage.getEnabled(),"该预约日期暂未开放");
-        Assert.isTrue(extendedAppointManage.getAppointNum() < extendedAppointManage.getTopLimit(),"预约已满");
+        Assert.notNull(extendedAppointManage, "必须提供预约管理");
+        Assert.isTrue(extendedAppointManage.getEnabled(), "该预约日期暂未开放");
+        Assert.isTrue(extendedAppointManage.getAppointNum() < extendedAppointManage.getTopLimit(), "预约已满");
     }
 
     /**
@@ -200,24 +206,29 @@ public class BasicAppointmentService implements AppointmentService {
     }
 
     /**
-     * 检查是否大于当前时间 并且数据库中是否有这个日期
+     * 校验是否大于当前时间 并且数据库中是否有这个日期
      */
-    private void checkDate(Integer timePeriod, Date appointDate) {
+    private void checkDate(Integer timePeriod, Date appointDate, Long shopId) {
         AppointManageQuery qo = new AppointManageQuery();
         qo.setStartAppointDate(appointDate);
         qo.setTimePeriod(timePeriod);
         qo.setAppointDate(appointDate);
+        qo.setShopId(shopId);
         int count = appointManageService.count(qo);
-        Assert.isTrue(count > 0,"无法预约以前的日期，或数据库中没有这个日期");
+        Assert.isTrue(count > 0, "无法预约该门店以前的日期，或该门店数据库中没有这个日期");
     }
 
     @Override
     @Transactional
     public void update(ExtendedAppointment appointment, Integer timePeriod, Date appointDate) {
-        this.checkUpdate(appointment,timePeriod,appointDate);
+        this.checkUpdate(appointment, timePeriod, appointDate);
+        // 获取修改之前预约管理
         AppointManage appointManage = this.getAppointManage(appointment.getAppointDate(), appointment.getTimePeriod(), appointment.getShopId());
+        // 扣减之前预约日期 预约数量
         appointManageService.decreAppointNum(appointManage);
-        appointManage = this.getAppointManage(appointDate,timePeriod,appointment.getShopId());
+        // 获取当前预约管理
+        appointManage = this.getAppointManage(appointDate, timePeriod, appointment.getShopId());
+        // 增加当前预约日期 预约数量
         appointManageService.increAppointNum(appointManage);
         appointment.setTimePeriod(timePeriod);
         appointment.setAppointDate(appointDate);
@@ -225,12 +236,15 @@ public class BasicAppointmentService implements AppointmentService {
     }
 
     private void checkUpdate(ExtendedAppointment appointment, Integer timePeriod, Date appointDate) {
-        Assert.notNull(appointment,"没有预约信息");
-        Assert.notNull(timePeriod,"必须提供预约时间段");
-        Assert.notNull(appointDate,"必须提供预约日期");
-        Assert.isTrue(Appointment.APPOINT_STATE_APPOINTED.equals(appointment.getAppointState()),"该预约已完成");
-        this.checkDate(timePeriod,DateUtil.getStartTime(appointDate));
-        this.checkAppointDateAndStatus(appointDate,timePeriod,appointment.getShopId());
+        Assert.notNull(appointment, "没有预约信息");
+        Assert.notNull(timePeriod, "必须提供预约时间段");
+        Assert.notNull(appointDate, "必须提供预约日期");
+        Assert.isTrue(Appointment.APPOINT_STATE_APPOINTED.equals(appointment.getAppointState()), "该预约已完成");
+        // 校验日期
+        this.checkDate(timePeriod, DateUtil.getStartTime(appointDate), appointment.getShopId());
+        // 校验预约日期、预约状态
+        this.checkAppointDateAndStatus(appointDate, timePeriod, appointment.getShopId());
+        // 校验门店预约总数量
         this.checkShopValid(appointment.getShopId());
     }
 
@@ -239,7 +253,6 @@ public class BasicAppointmentService implements AppointmentService {
     public void delete(Long userId, Long productId, Long shopId, Long dicItemId) {
 
     }
-
 
 
     @Override
@@ -258,8 +271,8 @@ public class BasicAppointmentService implements AppointmentService {
 
     @Override
     public List<ExtendedAppointment> getByUser(Long userId, Long orderId) {
-        Assert.notNull(userId,"必须提供用户id");
-        Assert.notNull(orderId,"必须提供订单id");
+        Assert.notNull(userId, "必须提供用户id");
+        Assert.notNull(orderId, "必须提供订单id");
         AppointmentQuery qo = new AppointmentQuery();
         qo.setUserId(userId);
         qo.setOrderId(orderId);
@@ -285,26 +298,27 @@ public class BasicAppointmentService implements AppointmentService {
     }
 
     @Override
-    @Transactional
-    public void update(Appointment appointment, Integer appointState) {
-        Assert.notNull(appointment,"必须提供预约信息");
-        Assert.notNull(appointState,"必须提供预约状态");
-        appointment.setAppointState(appointState);
-        this.update(appointment);
-        Orders orders = ordersService.get(appointment.getOrderId());
-        ordersService.updateAppointStatus(orders);
-    }
-
-    @Override
     public AppointRecordVo getInfo(Long id) {
         return appointmentMapper.getInfo(id);
     }
 
     @Override
-    public void updateReportStatus(Appointment appointment) {
-        Assert.notNull(appointment,"必须提供预约信息");
+    public void reportCompleted(Appointment appointment) {
+        Assert.notNull(appointment, "必须提供预约信息");
+        Assert.isTrue(Appointment.REPORT_STATUS_NOT.equals(appointment.getReportStatus()), "当前报告状态不是未上传");
         appointment.setReportStatus(Appointment.REPORT_STATUS_OK);
         this.update(appointment);
+    }
+
+    @Override
+    @Transactional
+    public void appointCompleted(Appointment appointment) {
+        Assert.notNull(appointment, "必须提供预约信息");
+        Assert.isTrue(Appointment.APPOINT_STATE_APPOINTED.equals(appointment.getAppointState()), "当前不是在预约中状态");
+        appointment.setAppointState(Appointment.APPOINT_STATE_FINISH);
+        this.update(appointment);
+        Orders orders = ordersService.get(appointment.getOrderId());
+        ordersService.appointCompleted(orders);
     }
 
 

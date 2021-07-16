@@ -11,7 +11,7 @@
   </div>
 
   <div class="dh_input">
-    <van-field v-model="duiCode" placeholder="请输入兑换码"/>
+    <van-field v-model="redeemCode" placeholder="请输入兑换码"/>
     <p class='login_line'></p>
   </div>
 
@@ -89,26 +89,26 @@ export default {
   data(){
     return {
       ysshow:false,
-      duiCode:'',
+      redeemCode:'',
       columns: [],
     }
   },
   methods:{
     duih(){
-      if(this.duiCode.trim()==''){
+      if(this.redeemCode.trim()==''){
         this.$toast('请输入正确的兑换码!');
       }else{
         // 发送请求
-        this.axios.get('api/work/redeemCode/getProductType?'+`code=${this.duiCode}`).then(res=>{
-          console.log(res.data);
+        this.axios.get('api/frontdesk/redeemCode/getProductType?'+`code=${this.redeemCode}`).then(({data})=>{
+          // console.log(data);
           // 如果是远程弹起医生选择
-          if(res.data.product.type==0){
+          if(data.product.type==0){
             this.ysshow=true;
           }else{
             // 直接兑换成功
-            this.axios.post('api/work/redeemCode/edit',qs.stringify({code:this.duiCode,userId:this.id})).then(res=>{
+            this.axios.post('api/frontdesk/redeemCode/bindUser',qs.stringify({code:this.redeemCode})).then(res=>{
               console.log(res.data);
-              this.$router.push({path:'/succ',query:{id:3}})
+              this.$router.push({path:'/succ',query:{id:4}})
             })
           }
         })
@@ -119,8 +119,8 @@ export default {
       this.$router.push('/me');
     },
     onConfirm(value, index) {
-      // this.$toast(`当前值：${value}, 当前索引：${index}`);
-      this.axios.post('api/work/redeemCode/edit',qs.stringify({code:this.duiCode,userId:this.id,doctor:index+14})).then(res=>{
+      console.log(value,index)
+      this.axios.post('api/frontdesk/redeemCode/bindUser',qs.stringify({code:this.redeemCode,dicItemName:value})).then(res=>{
         console.log(res.data);
       })
       // this.$router.push({path:'/succ',query:{id:3}})
@@ -130,7 +130,7 @@ export default {
     // 获取医生信息
     this.axios.get('api/frontdesk/dictionaryItem/getDoctor').then(({data})=>{
       // console.log(data);
-      for(let key of data){
+      for(let key of data.data){
         this.columns.push(key.name);
       }
       // console.log(this.columns);

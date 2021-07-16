@@ -69,4 +69,9 @@ public interface ReportService {
      * 重新上传
      */
     void reset(Report report, List<String> pathList);
+
+    /**
+     * 同步报告
+     */
+    void sync(Report report);
 }

@@ -34,11 +34,6 @@ public interface RedeemCodeService {
      * 添加
      */
     void create(Long productId, Long shopId, Integer amount);
-
-    /**
-     * 修改
-     */
-    void update(RedeemCode dictionary, String name, String logo);
     /**
      * 根据id集合，查询对应列表
      */
@@ -47,5 +42,15 @@ public interface RedeemCodeService {
      * 返回所有记录
      */
     List<ExtendedRedeemCode> listAll();
+
+    /**
+     * 根据code获取记录
+     */
+    RedeemCode getByCode(String code);
+
+    /**
+     * 用户兑换
+     */
+    void bindUser(RedeemCode redeemCode, Long userId, String dicItemName);
 
 }

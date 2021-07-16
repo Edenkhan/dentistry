@@ -146,7 +146,7 @@ public class OrdersController {
             Orders orders = ordersService.getByOrderNo(resultMap.get("out_trade_no"));
             Assert.notNull(orders,"该订单已清除");
             if(Orders.PAY_STATUS_UNPAID.equals(orders.getPayStatus())) {
-                ordersService.changePayStatusAndSales(orders);
+                ordersService.payCompleted(orders);
             }
             return ResponseEntity.ok("订单已支付");
         } catch (Exception e) {

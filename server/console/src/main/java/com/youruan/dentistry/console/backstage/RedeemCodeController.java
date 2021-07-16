@@ -1,20 +1,20 @@
 package com.youruan.dentistry.console.backstage;
 
 import com.google.common.collect.ImmutableMap;
-import com.youruan.dentistry.console.base.interceptor.RequiresPermission;
 import com.youruan.dentistry.console.backstage.form.RedeemCodeAddForm;
 import com.youruan.dentistry.console.backstage.form.RedeemCodeEditForm;
 import com.youruan.dentistry.console.backstage.form.RedeemCodeListForm;
+import com.youruan.dentistry.console.base.interceptor.RequiresPermission;
+import com.youruan.dentistry.core.backstage.domain.RedeemCode;
+import com.youruan.dentistry.core.backstage.query.RedeemCodeQuery;
 import com.youruan.dentistry.core.backstage.service.ProductService;
+import com.youruan.dentistry.core.backstage.service.RedeemCodeService;
 import com.youruan.dentistry.core.backstage.service.ShopService;
 import com.youruan.dentistry.core.backstage.vo.ExtendedProduct;
+import com.youruan.dentistry.core.backstage.vo.ExtendedRedeemCode;
 import com.youruan.dentistry.core.backstage.vo.ExtendedShop;
 import com.youruan.dentistry.core.base.query.Pagination;
 import com.youruan.dentistry.core.base.utils.BeanMapUtils;
-import com.youruan.dentistry.core.backstage.domain.RedeemCode;
-import com.youruan.dentistry.core.backstage.query.RedeemCodeQuery;
-import com.youruan.dentistry.core.backstage.service.RedeemCodeService;
-import com.youruan.dentistry.core.backstage.vo.ExtendedRedeemCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -91,5 +91,14 @@ public class RedeemCodeController {
         List<ExtendedShop> shopList = shopService.listAll();
         return ResponseEntity.ok(ImmutableMap.builder().put("data",shopList).build());
     }
+
+//    @GetMapping("/doctor")
+//    @RequiresPermission(value = "backstage.redeemCode.doctor", description = "兑换码-查询所有医生")
+//    public ResponseEntity<?> doctor() {
+//        DictionaryItemQuery qo = new DictionaryItemQuery();
+//        qo.setMark(Dictionary.MARK_DOCTOR);
+//        List<ExtendedDictionaryItem> doctorList = dictionaryItemService.listAll(qo);
+//        return ResponseEntity.ok(ImmutableMap.builder().put("data",doctorList).build());
+//    }
 
 }

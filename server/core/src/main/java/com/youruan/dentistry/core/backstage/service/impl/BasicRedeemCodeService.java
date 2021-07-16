@@ -5,12 +5,16 @@ import com.youruan.dentistry.core.backstage.domain.Product;
 import com.youruan.dentistry.core.backstage.domain.RedeemCode;
 import com.youruan.dentistry.core.backstage.mapper.RedeemCodeMapper;
 import com.youruan.dentistry.core.backstage.query.RedeemCodeQuery;
+import com.youruan.dentistry.core.backstage.service.DictionaryItemService;
 import com.youruan.dentistry.core.backstage.service.ProductService;
 import com.youruan.dentistry.core.backstage.service.RedeemCodeService;
+import com.youruan.dentistry.core.backstage.vo.ExtendedDictionaryItem;
 import com.youruan.dentistry.core.backstage.vo.ExtendedRedeemCode;
 import com.youruan.dentistry.core.base.exception.OptimismLockingException;
 import com.youruan.dentistry.core.base.query.Pagination;
 import com.youruan.dentistry.core.base.utils.RandomStringUtils;
+import com.youruan.dentistry.core.frontdesk.service.OrdersService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -25,10 +29,14 @@ public class BasicRedeemCodeService
 
     private final RedeemCodeMapper redeemCodeMapper;
     private final ProductService productService;
+    private final OrdersService ordersService;
+    private final DictionaryItemService dictionaryItemService;
 
-    public BasicRedeemCodeService(RedeemCodeMapper redeemCodeMapper, ProductService productService) {
+    public BasicRedeemCodeService(RedeemCodeMapper redeemCodeMapper, ProductService productService, OrdersService ordersService, DictionaryItemService dictionaryItemService) {
         this.redeemCodeMapper = redeemCodeMapper;
         this.productService = productService;
+        this.ordersService = ordersService;
+        this.dictionaryItemService = dictionaryItemService;
     }
 
     @Override
@@ -77,35 +85,37 @@ public class BasicRedeemCodeService
     @Override
     public void create(Long productId, Long shopId, Integer amount) {
         this.checkAdd(productId, shopId, amount);
-        RedeemCode redeemCode = new RedeemCode();
-        this.assign(redeemCode,productId,shopId,amount);
-        this.add(redeemCode);
+        List<RedeemCode> redeemCodeList = this.createData(productId, shopId, amount);
+        this.batchAdd(redeemCodeList);
     }
 
     /**
      * 批量生成兑换码
      */
-//    private List<RedeemCode> createData(Long productId, Long shopId, Integer amount) {
-//        List<RedeemCode> redeemCodeList = new ArrayList<>();
-//        RedeemCode redeemCode;
-//        for (int i = 0; i < amount; i++) {
-//            redeemCode = new RedeemCode();
-//            this.assign(redeemCode, productId, shopId);
-//            redeemCodeList.add(redeemCode);
-//        }
-//        return redeemCodeList;
-//    }
+    private List<RedeemCode> createData(Long productId, Long shopId, Integer amount) {
+        List<RedeemCode> redeemCodeList = new ArrayList<>();
+        RedeemCode redeemCode;
+        for (int i = 0; i < amount; i++) {
+            redeemCode = new RedeemCode();
+            this.assign(redeemCode, productId, shopId);
+            redeemCodeList.add(redeemCode);
+        }
+        return redeemCodeList;
+    }
 
     /**
      * 批量添加兑换码
      */
-//    private void batchAdd(List<RedeemCode> redeemCodeList) {
-//        redeemCodeMapper.batchAdd(redeemCodeList);
-//    }
+    private void batchAdd(List<RedeemCode> redeemCodeList) {
+        redeemCodeMapper.batchAdd(redeemCodeList);
+    }
 
-    private void assign(RedeemCode redeemCode, Long productId, Long shopId, Integer amount) {
+    /**
+     * 封装数据
+     */
+    private void assign(RedeemCode redeemCode, Long productId, Long shopId) {
+        redeemCode.setCreatedDate(new Date());
         redeemCode.setCode(RandomStringUtils.random(6));
-        redeemCode.setAmount(amount);
         redeemCode.setBound(false);
         redeemCode.setUsed(false);
         redeemCode.setProductId(productId);
@@ -122,12 +132,6 @@ public class BasicRedeemCodeService
         if (Product.PRODUCT_TYPE_OFFLINE.equals(product.getType())) {
             Assert.notNull(shopId, "必须提供门店id");
         }
-    }
-
-    @Override
-    @Transactional
-    public void update(RedeemCode redeemCode, String name, String logo) {
-
     }
 
     /**
@@ -149,6 +153,50 @@ public class BasicRedeemCodeService
         RedeemCodeQuery qo = new RedeemCodeQuery();
         qo.setMaxPageSize();
         return listAll(qo);
+    }
+
+    @Override
+    public RedeemCode getByCode(String code) {
+        RedeemCodeQuery qo = new RedeemCodeQuery();
+        qo.setCode(code);
+        ExtendedRedeemCode vo = this.queryOne(qo);
+        RedeemCode redeemCode = new RedeemCode();
+        BeanUtils.copyProperties(vo, redeemCode);
+        return redeemCode;
+    }
+
+    @Override
+    @Transactional
+    public void bindUser(RedeemCode redeemCode, Long userId, String dicItemName) {
+        Assert.notNull(redeemCode, "必须提供兑换码");
+        Assert.notNull(userId, "必须提供用户id");
+        Assert.isTrue(!redeemCode.getBound(), "该兑换码已兑换");
+        redeemCode.setUserId(userId);
+        redeemCode.setBound(true);
+        this.update(redeemCode);
+        // 添加订单
+        this.addOrders(redeemCode,dicItemName);
+    }
+
+
+    /**
+     * 添加订单
+     */
+    private void addOrders(RedeemCode redeemCode, String dicItemName) {
+        Product product = productService.get(redeemCode.getProductId());
+        Assert.notNull(product, "必须提供产品");
+        Long dicItemId = null;
+        if(Product.PRODUCT_TYPE_ONLINE.equals(product.getType())) {
+            ExtendedDictionaryItem dictionaryItem = dictionaryItemService.getByName(dicItemName);
+            Assert.notNull(dictionaryItem,"必须提供字典详情");
+            dicItemId = dictionaryItem.getId();
+        }
+        // 兑换码生成订单
+        ordersService.redeemOrders(product.getPrice(),
+                redeemCode.getUserId(),
+                product.getId(),
+                redeemCode.getShopId(),
+                dicItemId);
     }
 
 

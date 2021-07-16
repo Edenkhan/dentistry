@@ -17,6 +17,7 @@
         <result property="productId" column="productId"/>
         <result property="shopId" column="shopId"/>
         <result property="dicItemId" column="dicItemId"/>
+        <result property="isRedeemOrder" column="isRedeemOrder"/>
     </resultMap>
     <resultMap id="RECORD_RESULT" type="com.youruan.dentistry.core.backstage.vo.OrderRecordVo">
         <id property="id" column="id"/>
@@ -54,8 +55,8 @@
         <result property="dicItemName" column="dicItemName"/>
         <result property="productState" column="productState"/>
     </resultMap>
-    <sql id="BASE_COLUMNS">o.id, o.createdDate, o.lastModifiedDate, o.version, o.orderNo, o.price, o.totalNum, o.appointNum, o.boughtTime, o.payStatus, o.appointStatus, o.userId, o.productId, o.shopId, o.dicItemId</sql>
-    <sql id="QUERY_COLUMNS">o.id, o.createdDate, o.lastModifiedDate, o.version, o.orderNo, o.price, o.totalNum, o.appointNum, o.boughtTime, o.payStatus, o.appointStatus, o.userId, o.productId, o.shopId, o.dicItemId</sql>
+    <sql id="BASE_COLUMNS">o.id, o.createdDate, o.lastModifiedDate, o.version, o.orderNo, o.price, o.totalNum, o.appointNum, o.boughtTime, o.payStatus, o.appointStatus, o.userId, o.productId, o.shopId, o.dicItemId, o.isRedeemOrder</sql>
+    <sql id="QUERY_COLUMNS">o.id, o.createdDate, o.lastModifiedDate, o.version, o.orderNo, o.price, o.totalNum, o.appointNum, o.boughtTime, o.payStatus, o.appointStatus, o.userId, o.productId, o.shopId, o.dicItemId, o.isRedeemOrder</sql>
     <resultMap id="VO_RESULT" type="com.youruan.dentistry.core.frontdesk.vo.ExtendedOrders" extends="BASE_RESULT"/>
     <sql id="RECORD_JOIN_COLUMNS">
         ,ru.realName,ru.phoneNumber
@@ -81,8 +82,8 @@
         </where>
     </delete>
     <insert id="add" parameterType="com.youruan.dentistry.core.frontdesk.domain.Orders" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
-        INSERT INTO Orders(id, createdDate, version, orderNo, price, totalNum, appointNum, payStatus, appointStatus, userId, productId, shopId, dicItemId)
-        VALUES(#{id }, #{createdDate}, 0, #{orderNo}, #{price}, #{totalNum}, #{appointNum}, #{payStatus}, #{appointStatus}, #{userId}, #{productId}, #{shopId}, #{dicItemId})
+        INSERT INTO Orders(id, createdDate, version, orderNo, price, totalNum, appointNum, boughtTime, payStatus, appointStatus, userId, productId, shopId, dicItemId, isRedeemOrder)
+        VALUES(#{id }, #{createdDate}, 0, #{orderNo}, #{price}, #{totalNum}, #{appointNum}, #{boughtTime}, #{payStatus}, #{appointStatus}, #{userId}, #{productId}, #{shopId}, #{dicItemId}, #{isRedeemOrder})
     </insert>
     <update id="update" parameterType="com.youruan.dentistry.core.frontdesk.domain.Orders">UPDATE Orders
         <set>
@@ -99,6 +100,7 @@
             <if test="productId != null">productId = #{productId},</if>
             <if test="shopId != null">shopId = #{shopId},</if>
             <if test="dicItemId != null">dicItemId = #{dicItemId}</if>
+            <if test="isRedeemOrder != null">isRedeemOrder = #{isRedeemOrder}</if>
         </set>
         <where>id = #{id} AND version = #{version}</where>
     </update>

@@ -94,9 +94,9 @@ public class BasicReportService
         Report report = new Report();
         this.assign(report, userId, appointId, productId, pathList);
         report = this.add(report);
-        // 修改预约表 报告状态
         Appointment appointment = appointmentService.get(appointId);
-        appointmentService.updateReportStatus(appointment);
+        // 报告上传完成
+        appointmentService.reportCompleted(appointment);
         return report;
     }
 
@@ -130,18 +130,8 @@ public class BasicReportService
 
     @Override
     public void update(Report report, Boolean sync) {
-        this.checkUpdate(report, sync);
-        report.setSync(sync);
-        this.update(report);
-    }
 
-    private void checkUpdate(Report report, Boolean sync) {
-        Assert.notNull(report, "必须提供报告");
-        Assert.notNull(sync, "必须提供同步状态");
-        Appointment appointment = appointmentService.get(report.getAppointId());
-        Assert.isTrue(Appointment.APPOINT_STATE_FINISH.equals(appointment.getAppointState()),"预约未完成");
     }
-
 
     @Override
     public List<? extends Report> listAll(Long[] reportIds) {
@@ -188,6 +178,24 @@ public class BasicReportService
         this.checkReset(report, pathList);
         report.setPath(String.join(",", pathList));
         this.update(report);
+    }
+
+    @Override
+    public void sync(Report report) {
+        this.checkSync(report);
+        report.setSync(true);
+        this.update(report);
+    }
+
+    /**
+     * 报告同步前校验
+     */
+    private void checkSync(Report report) {
+        Assert.notNull(report, "必须提供报告");
+        Assert.isTrue(!report.getSync(),"当前报告状态不是未同步");
+        Appointment appointment = appointmentService.get(report.getAppointId());
+        Assert.notNull(appointment,"必须提供预约信息");
+        Assert.isTrue(Appointment.APPOINT_STATE_FINISH.equals(appointment.getAppointState()),"预约未完成");
     }
 
     /**

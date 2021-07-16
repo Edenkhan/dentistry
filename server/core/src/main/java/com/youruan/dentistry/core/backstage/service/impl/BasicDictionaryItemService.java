@@ -72,9 +72,9 @@ public class BasicDictionaryItemService
 
     @Override
     public DictionaryItem create(String name, Boolean enabled, Long dictionaryId) {
-        this.checkAdd(name,enabled,dictionaryId);
+        this.checkAdd(name, enabled, dictionaryId);
         DictionaryItem dictionaryItem = new DictionaryItem();
-        this.assign(dictionaryItem,name,enabled,dictionaryId);
+        this.assign(dictionaryItem, name, enabled, dictionaryId);
         return this.add(dictionaryItem);
     }
 
@@ -88,14 +88,14 @@ public class BasicDictionaryItemService
         qo.setName(name);
         qo.setDictionaryId(dictionaryId);
         int count = dictionaryItemMapper.count(qo);
-        Assert.isTrue(count == 0,"字典详情名称重复");
+        Assert.isTrue(count == 0, "字典详情名称重复");
     }
 
     @Override
     @Transactional
     public void update(DictionaryItem dictionaryItem, String name, Boolean enabled, Long dictionaryId) {
         this.checkUpdate(dictionaryItem, name, enabled, dictionaryId);
-        this.assign(dictionaryItem,name,enabled,dictionaryId);
+        this.assign(dictionaryItem, name, enabled, dictionaryId);
         this.update(dictionaryItem);
     }
 
@@ -112,23 +112,23 @@ public class BasicDictionaryItemService
      * 修改字典详情校验
      */
     private void checkUpdate(DictionaryItem dictionaryItem, String name, Boolean enabled, Long dictionaryId) {
-        Assert.notNull(dictionaryItem,"必须提供字典");
+        Assert.notNull(dictionaryItem, "必须提供字典");
         this.checkParam(name, enabled, dictionaryId);
         DictionaryItemQuery qo = new DictionaryItemQuery();
         qo.setName(name);
         qo.setDictionaryId(dictionaryId);
         int count = this.count(qo);
         Assert.isTrue(dictionaryItem.getName().equalsIgnoreCase(name)
-                ||count == 0,"字典详情名称重复");
+                || count == 0, "字典详情名称重复");
     }
 
     /**
      * 公共校验
      */
     private void checkParam(String name, Boolean enabled, Long dictionaryId) {
-        Assert.notNull(name,"必须提供字典详情名称");
-        Assert.notNull(enabled,"必须提供状态");
-        Assert.notNull(dictionaryId,"必须提供父字典id");
+        Assert.notNull(name, "必须提供字典详情名称");
+        Assert.notNull(enabled, "必须提供状态");
+        Assert.notNull(dictionaryId, "必须提供父字典id");
     }
 
     @Override
@@ -143,6 +143,13 @@ public class BasicDictionaryItemService
         DictionaryItemQuery qo = new DictionaryItemQuery();
         qo.setMaxPageSize();
         return listAll(qo);
+    }
+
+    @Override
+    public ExtendedDictionaryItem getByName(String dicItemName) {
+        DictionaryItemQuery qo = new DictionaryItemQuery();
+        qo.setName(dicItemName);
+        return this.queryOne(qo);
     }
 
 }

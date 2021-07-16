@@ -46,4 +46,9 @@ public interface DictionaryItemService {
      * 返回所有记录
      */
     List<ExtendedDictionaryItem> listAll();
+
+    /**
+     * 根据名称获取字典详情
+     */
+    ExtendedDictionaryItem getByName(String dicItemName);
 }

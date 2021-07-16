@@ -84,24 +84,12 @@ public class BasicOrdersService implements OrdersService {
     @Override
     @Transactional
     public Orders create(BigDecimal price, Long userId, Long productId, Long shopId, Long dicItemId) {
-        this.checkAdd(price,userId,productId);
-        this.delete(userId,productId,shopId,dicItemId);
+        this.checkAdd(price, userId, productId);
+        this.delete(userId, productId, shopId, dicItemId);
         Product product = productService.get(productId);
         Orders orders = new Orders();
-        this.assign(orders, price,product.getTotalAppointNum(),0,userId,productId,shopId,dicItemId);
+        this.assign(orders, price, product.getTotalAppointNum(), userId, productId, shopId, dicItemId, false);
         return add(orders);
-    }
-
-    @Override
-    @Transactional
-    public void changePayStatusAndSales(Orders orders) {
-        Assert.notNull(orders,"必须提供订单");
-        orders.setBoughtTime(new Date());
-        orders.setPayStatus(Orders.PAY_STATUS_PAID);
-        this.update(orders);
-        // 增加产品销量
-        Product product = productService.get(orders.getProductId());
-        productService.updateSales(product);
     }
 
     @Override
@@ -119,7 +107,7 @@ public class BasicOrdersService implements OrdersService {
      * 添加订单校验
      */
     private void checkAdd(BigDecimal price, Long userId, Long productId) {
-        this.checkParam(price,userId,productId);
+        this.checkParam(price, userId, productId);
     }
 
     /**
@@ -147,17 +135,24 @@ public class BasicOrdersService implements OrdersService {
     /**
      * 封装数据
      */
-    private void assign(Orders orders, BigDecimal price,Integer totalNum, Integer appointNum, Long userId, Long productId, Long shopId, Long dicItemId) {
+    private void assign(Orders orders, BigDecimal price, Integer totalNum, Long userId, Long productId, Long shopId, Long dicItemId, Boolean isRedeemOrder) {
         orders.setOrderNo(SnowflakeIdWorker.getIdWorker());
         orders.setPayStatus(Orders.PAY_STATUS_UNPAID);
         orders.setAppointStatus(Orders.APPOINT_STATUS_NOT);
         orders.setPrice(price);
         orders.setTotalNum(totalNum);
-        orders.setAppointNum(appointNum);
+        orders.setAppointNum(0);
         orders.setUserId(userId);
         orders.setProductId(productId);
         orders.setShopId(shopId);
         orders.setDicItemId(dicItemId);
+        orders.setIsRedeemOrder(isRedeemOrder);
+        if(isRedeemOrder) {
+            // 兑换码订单 状态已支付
+            orders.setPayStatus(Orders.PAY_STATUS_PAID);
+            // 支付时间
+            orders.setBoughtTime(new Date());
+        }
     }
 
     @Override
@@ -176,23 +171,23 @@ public class BasicOrdersService implements OrdersService {
 
     @Override
     public String placeOrder(RegisteredUser user, Orders orders, String ip) {
-        Assert.notNull(user,"必须提供用户");
-        Assert.notNull(orders,"必须提供订单信息");
-        Assert.notNull(ip,"必须提供用户ip");
+        Assert.notNull(user, "必须提供用户");
+        Assert.notNull(orders, "必须提供订单信息");
+        Assert.notNull(ip, "必须提供用户ip");
         try {
             Map<String, String> paramMap = new HashMap<>();
-            paramMap.put("appid",wechatPayProperties.getAppId());
-            paramMap.put("mch_id",wechatPayProperties.getMchid());
+            paramMap.put("appid", wechatPayProperties.getAppId());
+            paramMap.put("mch_id", wechatPayProperties.getMchid());
             paramMap.put("nonce_str", WXPayUtil.generateNonceStr());
-            paramMap.put("sign", WXPayUtil.generateSignature(paramMap,wechatPayProperties.getPrivateKey()));
-            paramMap.put("body","大苏打");
-            paramMap.put("out_trade_no",orders.getOrderNo());
-            paramMap.put("total_fee","1");
-            paramMap.put("spbill_create_ip",ip);
-            paramMap.put("notify_url",wechatPayProperties.getNotifyUrl());
-            System.out.println("notify_url:::"+wechatPayProperties.getNotifyUrl());
-            paramMap.put("trade_type","JSAPI");
-            paramMap.put("openid",user.getOpenid());
+            paramMap.put("sign", WXPayUtil.generateSignature(paramMap, wechatPayProperties.getPrivateKey()));
+            paramMap.put("body", "大苏打");
+            paramMap.put("out_trade_no", orders.getOrderNo());
+            paramMap.put("total_fee", "1");
+            paramMap.put("spbill_create_ip", ip);
+            paramMap.put("notify_url", wechatPayProperties.getNotifyUrl());
+            System.out.println("notify_url:::" + wechatPayProperties.getNotifyUrl());
+            paramMap.put("trade_type", "JSAPI");
+            paramMap.put("openid", user.getOpenid());
             String xml = HttpClientUtils.doPostXml(WechatConstant.UNIFIED_ORDER_URL,
                     WXPayUtil.generateSignedXml(paramMap, wechatPayProperties.getPrivateKey()));
             Map<String, String> resultMap = WXPayUtil.xmlToMap(xml);
@@ -207,13 +202,13 @@ public class BasicOrdersService implements OrdersService {
     @Override
     public Map<String, String> payHandle(String prepayId) {
         try {
-            Map<String,String> resultMap = new HashMap<>();
-            resultMap.put("appId",wechatPayProperties.getAppId());
-            resultMap.put("timeStamp",String.valueOf(System.currentTimeMillis() / 1000));
-            resultMap.put("signType","MD5");
-            resultMap.put("nonceStr",WXPayUtil.generateNonceStr());
-            resultMap.put("package","prepay_id="+prepayId);
-            resultMap.put("paySign",WXPayUtil.generateSignature(resultMap,wechatPayProperties.getPrivateKey()));
+            Map<String, String> resultMap = new HashMap<>();
+            resultMap.put("appId", wechatPayProperties.getAppId());
+            resultMap.put("timeStamp", String.valueOf(System.currentTimeMillis() / 1000));
+            resultMap.put("signType", "MD5");
+            resultMap.put("nonceStr", WXPayUtil.generateNonceStr());
+            resultMap.put("package", "prepay_id=" + prepayId);
+            resultMap.put("paySign", WXPayUtil.generateSignature(resultMap, wechatPayProperties.getPrivateKey()));
             System.out.println(resultMap);
             return resultMap;
         } catch (Exception e) {
@@ -233,7 +228,7 @@ public class BasicOrdersService implements OrdersService {
     public ExtendedOrders handleData(Orders orders) {
         ExtendedOrders extendedOrders = new ExtendedOrders();
         Product product = productService.get(orders.getProductId());
-        BeanUtils.copyProperties(orders,extendedOrders);
+        BeanUtils.copyProperties(orders, extendedOrders);
         extendedOrders.setPeopleNum(product.getPeopleNum());
         extendedOrders.setProductName(product.getName());
         extendedOrders.setUserType(product.getUserType());
@@ -245,7 +240,8 @@ public class BasicOrdersService implements OrdersService {
 
     @Override
     public void updateAppointNum(Orders orders) {
-        Assert.notNull(orders,"必须提供订单");
+        Assert.notNull(orders, "必须提供订单");
+        Assert.isTrue(Orders.APPOINT_STATUS_NOT.equals(orders.getAppointStatus()),"当前订单状态不是待预约");
         orders.setAppointNum(orders.getAppointNum() + 1);
         orders.setAppointStatus(Orders.APPOINT_STATUS_OK);
         this.update(orders);
@@ -261,14 +257,40 @@ public class BasicOrdersService implements OrdersService {
     @Override
     public Pagination<UserBoughtVo> bought(OrdersQuery qo) {
         int rows = ordersMapper.countBought(qo);
-        List<UserBoughtVo> datas = (rows == 0)?new ArrayList<>():ordersMapper.bought(qo);
+        List<UserBoughtVo> datas = (rows == 0) ? new ArrayList<>() : ordersMapper.bought(qo);
         return new Pagination<>(rows, datas);
     }
 
     @Override
-    public void updateAppointStatus(Orders orders) {
-        Assert.notNull(orders,"必须提供订单");
+    public void appointCompleted(Orders orders) {
+        Assert.notNull(orders, "必须提供订单");
+        Assert.isTrue(Orders.APPOINT_STATUS_OK.equals(orders.getAppointStatus()),"当前订单状态不是已完成");
         orders.setAppointStatus(Orders.APPOINT_STATUS_NOT);
         this.update(orders);
     }
+
+    @Override
+    @Transactional
+    public void payCompleted(Orders orders) {
+        Assert.notNull(orders, "必须提供订单");
+        Assert.isTrue(Orders.PAY_STATUS_UNPAID.equals(orders.getPayStatus()),"当前订单状态不是未支付");
+        orders.setBoughtTime(new Date());
+        orders.setPayStatus(Orders.PAY_STATUS_PAID);
+        this.update(orders);
+        // 增加产品销量
+        Product product = productService.get(orders.getProductId());
+        productService.updateSales(product);
+    }
+
+    @Override
+    public void redeemOrders(BigDecimal price, Long userId, Long productId, Long shopId, Long dicItemId) {
+        this.checkAdd(price, userId, productId);
+        Product product = productService.get(productId);
+        Assert.notNull(product,"必须提供商品");
+        Orders orders = new Orders();
+        this.assign(orders, price, product.getTotalAppointNum(), userId, productId, shopId, dicItemId, true);
+        this.add(orders);
+    }
+
+
 }

@@ -23,5 +23,4 @@ public class ExtendedRedeemCode
      * 门店
      */
     private Shop shop;
-
 }

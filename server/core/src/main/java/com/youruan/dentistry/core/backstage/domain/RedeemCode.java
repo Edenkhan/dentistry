@@ -15,10 +15,6 @@ public class RedeemCode extends BasicDomain {
      */
     private String code;
     /**
-     * 可兑换次数
-     */
-    private Integer amount;
-    /**
      * 是否已绑定
      */
     private Boolean bound;
@@ -26,6 +22,10 @@ public class RedeemCode extends BasicDomain {
      * 是否已使用
      */
     private Boolean used;
+    /**
+     * 用户id
+     */
+    private Long userId;
     /**
      * 产品id
      */

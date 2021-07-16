@@ -38,10 +38,6 @@ public interface OrdersService {
      * 添加
      */
     Orders create(BigDecimal price, Long userId, Long productId, Long shopId, Long dicItemId);
-    /**
-     * 支付成功后，修改状态，以及添加购买时间 增加销量
-     */
-    void changePayStatusAndSales(Orders orders);
 
     /**
      * 删除
@@ -90,9 +86,18 @@ public interface OrdersService {
      * 查询用户已购买
      */
     Pagination<UserBoughtVo> bought(OrdersQuery qo);
-
     /**
      * 预约完成，改变订单预约状态
      */
-    void updateAppointStatus(Orders orders);
+    void appointCompleted(Orders orders);
+
+    /**
+     * 支付成功
+     */
+    void payCompleted(Orders orders);
+
+    /**
+     * 兑换订单
+     */
+    void redeemOrders(BigDecimal price, Long userId, Long productId, Long shopId, Long dicItemId);
 }

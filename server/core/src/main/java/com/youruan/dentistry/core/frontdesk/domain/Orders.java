@@ -72,4 +72,8 @@ public class Orders extends BasicDomain {
      * 字典详情id
      */
     private Long dicItemId;
+    /**
+     * 是否为兑换码订单
+     */
+    private Boolean isRedeemOrder;
 }
