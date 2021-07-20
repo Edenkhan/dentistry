@@ -3,11 +3,13 @@ package com.youruan.dentistry.core.backstage.service.impl;
 
 import com.youruan.dentistry.core.backstage.domain.Product;
 import com.youruan.dentistry.core.backstage.domain.RedeemCode;
+import com.youruan.dentistry.core.backstage.domain.Shop;
 import com.youruan.dentistry.core.backstage.mapper.RedeemCodeMapper;
 import com.youruan.dentistry.core.backstage.query.RedeemCodeQuery;
 import com.youruan.dentistry.core.backstage.service.DictionaryItemService;
 import com.youruan.dentistry.core.backstage.service.ProductService;
 import com.youruan.dentistry.core.backstage.service.RedeemCodeService;
+import com.youruan.dentistry.core.backstage.service.ShopService;
 import com.youruan.dentistry.core.backstage.vo.ExtendedDictionaryItem;
 import com.youruan.dentistry.core.backstage.vo.ExtendedRedeemCode;
 import com.youruan.dentistry.core.base.exception.OptimismLockingException;
@@ -32,12 +34,15 @@ public class BasicRedeemCodeService
     private final ProductService productService;
     private final OrdersService ordersService;
     private final DictionaryItemService dictionaryItemService;
+    private final ShopService shopService;
 
-    public BasicRedeemCodeService(RedeemCodeMapper redeemCodeMapper, ProductService productService, OrdersService ordersService, DictionaryItemService dictionaryItemService) {
+    public BasicRedeemCodeService(RedeemCodeMapper redeemCodeMapper, ProductService productService,
+                                  OrdersService ordersService, DictionaryItemService dictionaryItemService, ShopService shopService) {
         this.redeemCodeMapper = redeemCodeMapper;
         this.productService = productService;
         this.ordersService = ordersService;
         this.dictionaryItemService = dictionaryItemService;
+        this.shopService = shopService;
     }
 
     @Override
@@ -172,8 +177,12 @@ public class BasicRedeemCodeService
         Assert.notNull(redeemCode, "必须提供兑换码");
         Assert.notNull(userId, "必须提供用户id");
         Assert.isTrue(!redeemCode.getBound(), "该兑换码已兑换");
-        redeemCode.setUserId(userId);
+        // 查看門店是否啓用
+        Shop shop = shopService.get(redeemCode.getShopId());
+        Assert.notNull(shop,"必須提供門店");
+        Assert.isTrue(shop.getEnabled(),"當前門店已禁用，無法兌換");
         // 添加订单
+        redeemCode.setUserId(userId);
         Orders orders = this.addOrders(redeemCode, dicItemName);
         redeemCode.setOrderId(orders.getId());
         redeemCode.setBound(true);

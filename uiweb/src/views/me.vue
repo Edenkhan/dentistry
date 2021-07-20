@@ -274,7 +274,8 @@ export default {
       }
     },
     go_bao2(){
-      this.$router.push('/mr');
+      this.$router.push('/wd');
+      // this.$router.push('/mr');
     },
     go_bao(){
       if(!this.isLogin){
@@ -288,7 +289,8 @@ export default {
           this.$router.push('/login');
         }).catch(()=>{})
       }else{
-        this.$router.push('/mr');
+        this.$router.push('/wd');
+        // this.$router.push('/mr');
       }
     },
     go_ding2(){

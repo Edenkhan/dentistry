@@ -59,7 +59,7 @@
         </a-form-model>
         <a-form-model :label-col="labelCol" :wrapper-col="wrapperCol" v-if="modalTitle===this.modalTitles[2]">
           <a-form-model-item label="可预约次数">
-            <a-input v-model="shopForm.validNum"/>
+            <a-input type="number" v-model="shopForm.validNum"/>
           </a-form-model-item>
         </a-form-model>
       </a-modal>
@@ -110,6 +110,7 @@ import {
   addShop, editShop, getShop, listShops, addValid
 } from "../../api/backstage"
 import moment from "moment"
+import {regPhone} from "../../utils/regular"
 
 const columns = [
   {
@@ -197,6 +198,7 @@ export default {
     addShopSubmit() {
       addShop(this.shopForm).then(() => {
         this.$message.success("添加成功")
+        this.fetch()
       }).catch(({message}) => {
         this.$message.error(message)
       })
@@ -204,6 +206,7 @@ export default {
     editShopSubmit() {
       editShop(this.shopForm).then(() => {
         this.$message.success("修改成功")
+        this.fetch()
       }).catch(({message}) => {
         this.$message.error(message)
       })
@@ -211,11 +214,16 @@ export default {
     addValidSubmit() {
       addValid(this.shopForm).then(() => {
         this.$message.success("修改成功")
+        this.fetch()
       }).catch(({message}) => {
         this.$message.error(message)
       })
     },
     handleSubmit() {
+      if(this.shopForm.phone && !regPhone(this.shopForm.phone)) {
+        this.$message.error('手机号输入有误')
+        return
+      }
       this.visible = false
       if (this.modalTitle === this.modalTitles[0]) {
         this.addShopSubmit()
@@ -225,7 +233,6 @@ export default {
         this.addValidSubmit()
       }
       this.pagination.current = 1
-      this.fetch()
     },
     addShop() {
       this.shopForm = {}

@@ -6,6 +6,7 @@ import com.youruan.dentistry.core.backstage.query.AppointManageQuery;
 import com.youruan.dentistry.core.backstage.vo.ExtendedAppointManage;
 import com.youruan.dentistry.core.base.query.Pagination;
 
+import java.util.Date;
 import java.util.List;
 
 public interface AppointManageService {
@@ -75,4 +76,24 @@ public interface AppointManageService {
      * 减少已预约次数
      */
     void decreAppointNum(AppointManage appointManage);
+
+    /**
+     * 修改每天上午或下午的预约上限
+     */
+    void updateTopLimit(AppointManage appointManage, Integer amTopLimit, Integer pmTopLimit);
+
+    /**
+     * 获取客户端预约日期
+     */
+    List<ExtendedAppointManage> getAppointDateList(Long orderId);
+
+    /**
+     * 查看当前时段是否爆满 爆满返回true
+     */
+    Boolean checkFull(Long orderId, Date appointDate, Integer timePeriod);
+
+    /**
+     * 获取当前日期已启用的时段
+     */
+    List<Integer> getValidPeriod(Long orderId, Date appointDate);
 }

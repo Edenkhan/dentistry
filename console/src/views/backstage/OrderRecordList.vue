@@ -117,6 +117,10 @@ const columns = [
     dataIndex: 'shopName',
   },
   {
+    title: '医生名称',
+    dataIndex: 'dicItemName',
+  },
+  {
     title: '用户名称',
     dataIndex: 'realName',
   },

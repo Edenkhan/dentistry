@@ -1,14 +1,12 @@
 package com.youruan.dentistry.portal.frontdesk;
 
 import com.google.common.collect.ImmutableMap;
-import com.youruan.dentistry.core.backstage.query.AppointManageQuery;
 import com.youruan.dentistry.core.backstage.service.AppointManageService;
 import com.youruan.dentistry.core.backstage.vo.AppointRecordVo;
 import com.youruan.dentistry.core.backstage.vo.ExtendedAppointManage;
 import com.youruan.dentistry.core.base.query.Pagination;
-import com.youruan.dentistry.core.base.utils.DateUtil;
+import com.youruan.dentistry.core.base.utils.BeanMapUtils;
 import com.youruan.dentistry.core.frontdesk.domain.Appointment;
-import com.youruan.dentistry.core.frontdesk.domain.Orders;
 import com.youruan.dentistry.core.frontdesk.query.AppointmentQuery;
 import com.youruan.dentistry.core.frontdesk.service.AppointmentService;
 import com.youruan.dentistry.core.frontdesk.service.OrdersService;
@@ -24,7 +22,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -80,14 +77,22 @@ public class AppointmentController {
     @GetMapping("/getAppointDate")
     @RequiresAuthentication
     public ResponseEntity<?> getAppointDate(Long orderId) {
-        Orders orders = ordersService.get(orderId);
-        AppointManageQuery qo = new AppointManageQuery();
-        qo.setStartAppointDate(DateUtil.getStartTime(new Date()));
-        qo.setShopId(orders.getShopId());
-        List<ExtendedAppointManage> appointManageList = appointManageService.listAll(qo);
-        List<AppointDateVo> voList = appointmentService.handleData(appointManageList);
+        List<ExtendedAppointManage> extendedAppointManageList = appointManageService.getAppointDateList(orderId);
         return ResponseEntity.ok(ImmutableMap.builder()
-                .put("data", voList)
+                .put("data", BeanMapUtils.pick(extendedAppointManageList,"appointDate"))
                 .build());
     }
+
+    /**
+     * 获取正在预约中的预约信息
+     */
+    @GetMapping("/getAppointing")
+    @RequiresAuthentication
+    public ResponseEntity<?> getAppointing(Long orderId) {
+        ExtendedAppointment extendedAppointment = appointmentService.getAppointing(orderId);
+        AppointDateVo vo = appointmentService.handleData(extendedAppointment);
+        return ResponseEntity.ok(vo);
+    }
+
+
 }

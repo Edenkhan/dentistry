@@ -21,6 +21,7 @@ public class AppointManageQuery
     protected Date startAppointDate;
     protected Date endAppointDate;
     protected Date appointDate;
+    protected Boolean enabled;
 
     public boolean hasIds() {
         return (this.ids.length!= 0);

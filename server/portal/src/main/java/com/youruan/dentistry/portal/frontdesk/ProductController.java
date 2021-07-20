@@ -29,7 +29,7 @@ public class ProductController {
     @GetMapping("/list")
 //    @RequiresAuthentication
     public ResponseEntity<?> list() {
-        // todo
+        // TODO
         SessionUtils.login(1L);
         ProductQuery qo = new ProductQuery();
         qo.setState(Product.PRODUCT_STATE_SALE);

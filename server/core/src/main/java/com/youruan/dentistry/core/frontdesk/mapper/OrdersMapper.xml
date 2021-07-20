@@ -38,6 +38,7 @@
         <result property="payStatus" column="payStatus"/>
         <result property="totalNum" column="totalNum"/>
         <result property="appointNum" column="appointNum"/>
+        <result property="dicItemName" column="dicItemName"/>
     </resultMap>
     <resultMap id="BOUGHT_RESULT" type="com.youruan.dentistry.core.user.vo.UserBoughtVo">
         <id property="id" column="id"/>
@@ -62,6 +63,7 @@
         ,ru.realName,ru.phoneNumber
         ,p.name AS productName,p.type AS productType,p.userType,p.id AS productId
         ,s.name AS shopName,s.id AS shopId
+        ,dit.name AS dicItemName
     </sql>
     <sql id="BOUGHT_JOIN_COLUMNS">
         ,p.name AS productName,p.type AS productType,p.userType,p.state AS productState,p.peopleNum
@@ -99,8 +101,8 @@
             <if test="userId != null">userId = #{userId},</if>
             <if test="productId != null">productId = #{productId},</if>
             <if test="shopId != null">shopId = #{shopId},</if>
-            <if test="dicItemId != null">dicItemId = #{dicItemId}</if>
-            <if test="isRedeemOrder != null">isRedeemOrder = #{isRedeemOrder}</if>
+            <if test="dicItemId != null">dicItemId = #{dicItemId},</if>
+            <if test="isRedeemOrder != null">isRedeemOrder = #{isRedeemOrder},</if>
         </set>
         <where>id = #{id} AND version = #{version}</where>
     </update>
@@ -108,6 +110,7 @@
         LEFT JOIN registereduser ru ON o.userId = ru.id
         LEFT JOIN product p ON o.productId = p.id
         LEFT JOIN shop s ON o.shopId = s.id
+        LEFT JOIN dictionaryitem dit ON o.dicItemId = dit.id
     </sql>
     <sql id="BOUGHT_QUERY_JOIN">
         LEFT JOIN product p ON o.productId = p.id

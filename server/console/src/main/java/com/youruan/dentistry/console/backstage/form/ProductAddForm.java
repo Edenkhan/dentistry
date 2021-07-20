@@ -17,7 +17,6 @@ public class ProductAddForm {
     private Integer totalAppointNum;
     private Integer peopleNum;
     private String iconPath;
-    private List<String> detailPathList;
+    private List<String> pathList;
     private String description;
-    private Integer state;
 }

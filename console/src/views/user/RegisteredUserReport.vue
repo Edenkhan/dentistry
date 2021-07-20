@@ -70,7 +70,7 @@
           title="确认同步？"
           ok-text="是"
           cancel-text="否"
-          @confirm="changeSync(record.id,!record.sync)"
+          @confirm="syncCompleted(record.id)"
         >
           <a-button style="background: #faad14" v-if="!record.sync">同步</a-button>
         </a-popconfirm>
@@ -78,15 +78,6 @@
         <a-button style="background: #52c41a"><a :href="record.path.split(',')[0]" target="_blank">下载</a></a-button>
         <a-button style="background: aquamarine">查看</a-button>
         <a-button style="background: navajowhite" @click="showModal(record.id)">重新上传</a-button>
-        <a-upload
-          name="file"
-          :multiple="true"
-          action="/api/backstage/report/upload"
-          :headers="headers"
-          @change="handleChange"
-        >
-
-        </a-upload>
       </template>
     </a-table>
 
@@ -119,7 +110,7 @@
 <script>
 import {
   listReport,
-  editReport,
+  syncReport,
   getAppoint,
 } from "../../api/backstage"
 import moment from "moment"
@@ -179,7 +170,6 @@ export default {
         sortOrder: 'descend',
       },
       headers: {authorization: 'authorization-text'},
-      pathList: [],
       reportForm: {},
       appoint: {},
 
@@ -199,9 +189,7 @@ export default {
       return isPdf
     },
     handleOk() {
-      this.reportForm = Object.assign({},this.reportForm,{
-        pathList: this.pathList
-      })
+
       console.log(this.reportForm)
       resetReport(this.reportForm)
         .then(() => {
@@ -214,7 +202,6 @@ export default {
     },
     showModal(id) {
       this.appoint = {}
-      this.pathList = []
       this.reportForm = {}
       this.reportForm.id = id
       getAppoint({id: id})
@@ -225,14 +212,14 @@ export default {
     },
     handleChange(info) {
       if (info.file.status === 'done') {
-        this.pathList.push(info.file.response)
+        this.reportForm.path = info.file.response
         this.$message.success(`${info.file.name} file uploaded successfully`);
       } else if (info.file.status === 'error') {
         this.$message.error(`${info.file.name} file upload failed.`);
       }
     },
-    changeSync(id, sync) {
-      editReport({id: id, sync: sync})
+    syncCompleted(id) {
+      syncReport({id: id})
         .then(() => {
           this.$message.success('已同步')
           this.fetch()

@@ -18,6 +18,7 @@ public class ProductQuery
     protected String name;
     protected String likeName;
     private Integer type;
+    private Integer userType;
     private Integer state;
 
     public boolean hasIds() {

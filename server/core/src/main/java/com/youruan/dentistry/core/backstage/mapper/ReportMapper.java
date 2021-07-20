@@ -48,4 +48,9 @@ public interface ReportMapper {
      * 返回用户报告数据
      */
     List<ReportRecordVo> record(ReportQuery qo);
+
+    /**
+     * 批量添加报告
+     */
+    void batchAdd(List<Report> reportList);
 }

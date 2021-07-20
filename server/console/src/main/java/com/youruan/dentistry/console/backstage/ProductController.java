@@ -15,13 +15,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/backstage/product")
 public class ProductController {
 
     private final ProductService productService;
+
     public ProductController(ProductService productService) {
         this.productService = productService;
     }
@@ -33,7 +32,7 @@ public class ProductController {
         Pagination<ExtendedProduct> pagination = productService.query(qo);
         return ResponseEntity.ok(ImmutableMap.builder()
                 .put("data", BeanMapUtils.pick(pagination.getData(),
-                        "id", "createdDate", "lastModifiedDate", "name", "type","userType", "price", "totalAppointNum","peopleNum","state","sales"))
+                        "id", "createdDate", "lastModifiedDate", "name", "type", "userType", "price", "totalAppointNum", "peopleNum", "state", "sales"))
                 .put("rows", pagination.getRows())
                 .build());
     }
@@ -42,7 +41,8 @@ public class ProductController {
     @RequiresPermission(value = "backstage.product.get", description = "产品-获取")
     public ResponseEntity<?> get(@RequestParam("id") Long id) {
         Product product = productService.get(id);
-        return ResponseEntity.ok(BeanMapUtils.pick(product, "id", "name", "intro","type","userType","price","totalAppointNum","peopleNum","iconPath","description","state"));
+        ExtendedProduct extendedProduct = productService.handleData(product);
+        return ResponseEntity.ok(extendedProduct);
     }
 
     @PostMapping("/add")
@@ -57,9 +57,8 @@ public class ProductController {
                 form.getTotalAppointNum(),
                 form.getPeopleNum(),
                 form.getIconPath(),
-                form.getDetailPathList(),
-                form.getDescription(),
-                form.getState());
+                form.getPathList(),
+                form.getDescription());
         return ResponseEntity.ok(ImmutableMap.builder()
                 .put("id", product.getId())
                 .build());
@@ -79,26 +78,26 @@ public class ProductController {
                 form.getTotalAppointNum(),
                 form.getPeopleNum(),
                 form.getIconPath(),
-                form.getDetailPathList(),
-                form.getDescription(),
-                form.getState());
+                form.getPathList(),
+                form.getDescription());
         return ResponseEntity.ok(ImmutableMap.builder()
                 .put("id", product.getId())
                 .build());
     }
 
-    @PostMapping("/uploadIcon")
-    @RequiresPermission(value = "backstage.activity.uploadIcon",description = "产品列表主图-上传")
-    public ResponseEntity<?> uploadIcon(MultipartFile file) {
-        List<String> iconPath = productService.upload("producticon",file);
-        return ResponseEntity.ok(ImmutableMap.builder().put("iconPath",iconPath.get(0)).build());
+    @PostMapping("/upload")
+    @RequiresPermission(value = "backstage.activity.upload", description = "产品图片-上传")
+    public ResponseEntity<?> upload(MultipartFile file, String directory) {
+        String path = productService.upload(directory, file);
+        return ResponseEntity.ok(path);
     }
 
-    @PostMapping("/uploadDetail")
-    @RequiresPermission(value = "backstage.activity.uploadDetail",description = "产品详情主图-上传")
-    public ResponseEntity<?> uploadDetail(MultipartFile[] files) {
-        List<String> detailPathList = productService.upload("productdetail",files);
-        return ResponseEntity.ok(ImmutableMap.builder().put("detailPathList",detailPathList).build());
+    @GetMapping("/changeState")
+    @RequiresPermission(value = "backstage.activity.changeState", description = "产品-改变状态")
+    public ResponseEntity<?> changeState(ProductEditForm form) {
+        Product product = productService.get(form.getId());
+        productService.changeState(product);
+        return ResponseEntity.ok(product);
     }
 
 }

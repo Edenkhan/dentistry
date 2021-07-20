@@ -17,6 +17,7 @@ public class ProductListForm extends ListForm<ProductQuery> {
     private Date endCreatedDate;
     private String name;
     private Integer type;
+    private Integer userType;
     private Integer state;
 
     public ProductQuery buildQuery() {
@@ -26,6 +27,7 @@ public class ProductListForm extends ListForm<ProductQuery> {
         qo.setEndCreatedDate(endCreatedDate);
         qo.setLikeName(name);
         qo.setType(type);
+        qo.setUserType(userType);
         qo.setState(state);
         if ("createdDate".equals(getSortField())) {
             qo.setOrderByCreatedDate(getSortOrder().equalsIgnoreCase("descend")

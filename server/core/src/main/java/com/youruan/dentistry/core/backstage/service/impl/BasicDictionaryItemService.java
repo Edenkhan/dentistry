@@ -152,4 +152,11 @@ public class BasicDictionaryItemService
         return this.queryOne(qo);
     }
 
+    @Override
+    public void changeEnabled(DictionaryItem dictionaryItem) {
+        Assert.notNull(dictionaryItem,"必须提供字典详情");
+        dictionaryItem.setEnabled(!dictionaryItem.getEnabled());
+        this.update(dictionaryItem);
+    }
+
 }

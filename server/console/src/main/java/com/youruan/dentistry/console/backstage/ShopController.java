@@ -80,7 +80,7 @@ public class ShopController {
     @RequiresPermission(value = "backstage.shop.edit", description = "门店-修改")
     public ResponseEntity<?> valid(ShopEditForm form) {
         Shop shop = shopService.get(form.getId());
-        shopService.update(
+        shopService.updateValidNum(
                 shop,
                 form.getValidNum());
         return ResponseEntity.ok(ImmutableMap.builder()

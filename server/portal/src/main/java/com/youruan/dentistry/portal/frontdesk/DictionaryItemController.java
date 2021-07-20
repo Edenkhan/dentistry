@@ -26,6 +26,7 @@ public class DictionaryItemController {
     public ResponseEntity<?> getDoctor() {
         DictionaryItemQuery qo = new DictionaryItemQuery();
         qo.setMark(Dictionary.MARK_DOCTOR);
+        qo.setEnabled(true);
         List<ExtendedDictionaryItem> voList = dictionaryItemService.listAll(qo);
         return ResponseEntity.ok(ImmutableMap.builder().put("data",voList).build());
     }

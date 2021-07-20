@@ -89,13 +89,14 @@ public class AppointManageController {
                 .build());
     }
 
-    @PostMapping("/editAllTopLimit")
-    @RequiresPermission(value = "backstage.appointManage.editAllTopLimit", description = "预约管理-修改门店预约上限")
+    @PostMapping("/updateTopLimit")
+    @RequiresPermission(value = "backstage.appointManage.updateTopLimit", description = "预约管理-修改门店预约上限")
     public ResponseEntity<?> editAllTopLimit(AppointManageEditForm form) {
         AppointManage appointManage = appointManageService.get(form.getId());
-        appointManageService.update(
+        appointManageService.updateTopLimit(
                 appointManage,
-                form.getTopLimit());
+                form.getAmTopLimit(),
+                form.getPmTopLimit());
         return ResponseEntity.ok(ImmutableMap.builder()
                 .put("id", appointManage.getId())
                 .build());

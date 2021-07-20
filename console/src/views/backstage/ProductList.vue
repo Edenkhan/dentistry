@@ -11,7 +11,30 @@
         <a-input v-model="productListForm.name" style="width: 120px"/>
       </a-form-model-item>
       <a-form-model-item label='产品类型'>
-        <a-input v-model="productListForm.type" style="width: 120px"/>
+        <a-select v-model="productListForm.type" style="width: 80px" >
+          <a-select-option value="">
+            全部
+          </a-select-option>
+          <a-select-option :value="0">
+            线上
+          </a-select-option>
+          <a-select-option :value="1">
+            线下
+          </a-select-option>
+        </a-select>
+      </a-form-model-item>
+      <a-form-model-item label='用户类型'>
+        <a-select v-model="productListForm.userType" style="width: 80px" >
+          <a-select-option value="">
+            全部
+          </a-select-option>
+          <a-select-option :value="0">
+            个人
+          </a-select-option>
+          <a-select-option :value="1">
+            团队
+          </a-select-option>
+        </a-select>
       </a-form-model-item>
       <a-form-model-item label='产品状态'>
         <a-select v-model="productListForm.state" style="width: 80px" >
@@ -71,6 +94,17 @@
         <a-badge v-else-if="state===2" status="yellow" text="待发布"/>
       </template>
       <template slot="operation" slot-scope="record">
+        <a-popconfirm
+          title="确认改变状态？"
+          ok-text="是"
+          cancel-text="否"
+          @confirm="changeState(record.id)"
+        >
+          <a-button style="background: green" v-if="record.state===0" >上架</a-button>
+          <a-button style="background: red" v-if="record.state===1">下架</a-button>
+          <a-button style="background: green" v-if="record.state===2">上架</a-button>
+        </a-popconfirm>
+
         <router-link :to="`/backstage/product/edit?id=${record.id}`">
           <a-button type="primary">
             编辑
@@ -84,6 +118,7 @@
 <script>
 import {
   listProducts,
+  changeState,
 } from "../../api/backstage"
 import moment from "moment"
 
@@ -165,6 +200,15 @@ export default {
     this.fetch()
   },
   methods: {
+    changeState(id) {
+      changeState({id:id})
+        .then(() => {
+          this.fetch();
+          this.$message.success('改变状态成功')
+        }).catch(({message}) => {
+        this.$message.error(message)
+      })
+    },
     handleQuerySubmit() {
       this.pagination = Object.assign({}, this.pagination, {
         current: 1

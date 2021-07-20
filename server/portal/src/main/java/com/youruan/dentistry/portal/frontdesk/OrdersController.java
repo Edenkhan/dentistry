@@ -5,10 +5,14 @@ import com.youruan.dentistry.core.backstage.domain.Dictionary;
 import com.youruan.dentistry.core.backstage.domain.Product;
 import com.youruan.dentistry.core.backstage.query.DictionaryItemQuery;
 import com.youruan.dentistry.core.backstage.query.DictionaryQuery;
+import com.youruan.dentistry.core.backstage.query.ShopQuery;
 import com.youruan.dentistry.core.backstage.service.DictionaryItemService;
 import com.youruan.dentistry.core.backstage.service.DictionaryService;
 import com.youruan.dentistry.core.backstage.service.ShopService;
-import com.youruan.dentistry.core.backstage.vo.*;
+import com.youruan.dentistry.core.backstage.vo.ExtendedDictionary;
+import com.youruan.dentistry.core.backstage.vo.ExtendedDictionaryItem;
+import com.youruan.dentistry.core.backstage.vo.ExtendedShop;
+import com.youruan.dentistry.core.backstage.vo.OrderRecordVo;
 import com.youruan.dentistry.core.base.query.Pagination;
 import com.youruan.dentistry.core.base.utils.BeanMapUtils;
 import com.youruan.dentistry.core.base.utils.IPUtils;
@@ -19,7 +23,6 @@ import com.youruan.dentistry.core.frontdesk.query.OrdersQuery;
 import com.youruan.dentistry.core.frontdesk.service.OrdersService;
 import com.youruan.dentistry.core.frontdesk.vo.ExtendedOrders;
 import com.youruan.dentistry.core.user.domain.RegisteredUser;
-import com.youruan.dentistry.portal.base.ErrorResponseEntity;
 import com.youruan.dentistry.portal.base.interceptor.RequiresAuthentication;
 import com.youruan.dentistry.portal.frontdesk.form.OrdersAddForm;
 import org.springframework.http.ResponseEntity;
@@ -71,8 +74,9 @@ public class OrdersController {
         qo.setProductType(Product.PRODUCT_TYPE_OFFLINE);
         qo.setMaxPageSize();
         Pagination<OrderRecordVo> pagination = ordersService.record(qo);
+        List<OrderRecordVo> data = ordersService.handleData(pagination.getData());
         return ResponseEntity.ok(ImmutableMap.builder()
-                .put("data", pagination.getData())
+                .put("data", data)
                 .build());
     }
 
@@ -104,7 +108,9 @@ public class OrdersController {
     @GetMapping("/getShop")
     @RequiresAuthentication
     public ResponseEntity<?> getShop() {
-        List<ExtendedShop> shopList = shopService.listAll();
+        ShopQuery qo = new ShopQuery();
+        qo.setEnabled(true);
+        List<ExtendedShop> shopList = shopService.listAll(qo);
         return ResponseEntity.ok(BeanMapUtils.pick(shopList,"id","name"));
     }
 
@@ -123,11 +129,10 @@ public class OrdersController {
 
     @PostMapping("/toPay")
     @RequiresAuthentication
-    public ResponseEntity<?> toPay(RegisteredUser user,Long orderId) {
+    public ResponseEntity<?> toPay(RegisteredUser user,Long orderId) throws Exception {
         String ip = IPUtils.getClientIp(request);
         Orders orders = ordersService.get(orderId);
-        String prepayId = ordersService.placeOrder(user, orders, ip);
-        Map<String, String> resultMap = ordersService.payHandle(prepayId);
+        Map<String, String> resultMap = ordersService.placeOrder(user, orders, ip);
         return ResponseEntity.ok(ImmutableMap.builder()
                 .put("id", orders.getId())
                 .put("result", resultMap)
@@ -135,23 +140,17 @@ public class OrdersController {
     }
 
     /**
-     * 微信支付回调地址 修改订单状态
+     * 微信支付回调地址 修改订单状态 增加产品销量
      */
     @PostMapping("/notify")
-    public ResponseEntity<?> notify_(HttpServletRequest request) {
-        System.out.println("***************** notify *****************");
-        try {
-            String xml = StreamUtils.readStream(request.getInputStream());
-            Map<String, String> resultMap = WXPayUtil.xmlToMap(xml);
-            Orders orders = ordersService.getByOrderNo(resultMap.get("out_trade_no"));
-            Assert.notNull(orders,"该订单已清除");
-            if(Orders.PAY_STATUS_UNPAID.equals(orders.getPayStatus())) {
-                ordersService.payCompleted(orders);
-            }
-            return ResponseEntity.ok("订单已支付");
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ErrorResponseEntity.badRequest("回调错误");
+    public ResponseEntity<?> notify_(HttpServletRequest request) throws Exception {
+        String xml = StreamUtils.readStream(request.getInputStream());
+        Map<String, String> resultMap = WXPayUtil.xmlToMap(xml);
+        Orders orders = ordersService.getByOrderNo(resultMap.get("out_trade_no"));
+        Assert.notNull(orders,"该订单已清除");
+        if(Orders.PAY_STATUS_UNPAID.equals(orders.getPayStatus())) {
+            ordersService.payCompleted(orders);
         }
+        return ResponseEntity.ok("订单已支付");
     }
 }

@@ -42,6 +42,13 @@
     INSERT INTO Report(id, createdDate, version, reportNo, `path`, sync, userId, appointId, productId)
     VALUES(#{id }, #{createdDate}, 0, #{reportNo}, #{path}, #{sync}, #{userId}, #{appointId}, #{productId})
     </insert>
+  <insert id="batchAdd" parameterType="java.util.List">
+    INSERT INTO Report(id, createdDate, version, reportNo, `path`, sync, userId, appointId, productId)
+    VALUES
+           <foreach collection="list" separator="," item="item">
+             (#{item.id }, #{item.createdDate}, 0, #{item.reportNo}, #{item.path}, #{item.sync}, #{item.userId}, #{item.appointId}, #{item.productId})
+           </foreach>
+  </insert>
   <update id="update" parameterType="com.youruan.dentistry.core.backstage.domain.Report">UPDATE Report
     <set>
         lastModifiedDate = now(),

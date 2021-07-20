@@ -50,10 +50,11 @@ public interface ShopService {
     /**
      * 修改可预约次数
      */
-    void update(Shop shop, Integer validNum);
+    void updateValidNum(Shop shop, Integer validNum);
 
     /**
-     * 更新门店预约次数
+     * 增加门店预约次数
      */
-    void updateAppointNum(Shop shop);
+    void increAppointNum(Shop shop);
+
 }

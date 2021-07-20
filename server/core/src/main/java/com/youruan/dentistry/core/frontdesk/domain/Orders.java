@@ -49,7 +49,7 @@ public class Orders extends BasicDomain {
      */
     private Integer appointStatus;
     /**
-     * 预约状态【待预约】
+     * 预约状态【未预约】
      */
     public static final Integer APPOINT_STATUS_NOT = 0;
     /**

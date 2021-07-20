@@ -19,7 +19,7 @@
       </div>
       <!-- 全部开始 -->
         <ul class="home_list">
-          <li v-for='(i,index) of meprev' :key='index'>
+          <li v-for='(i,index) of meprev' :key='index' >
             <table></table>
             <p class="ti">
               <span v-if="i.productType===0">【线上远程】</span>
@@ -35,7 +35,7 @@
             <p class="las">
               <span>剩余可预约：{{i.totalNum - i.appointNum}}次</span>
               <span v-if="i.appointStatus === 1" @click='nowyy(i.id,i.productId,1)'>修改预约</span>
-              <span v-else-if="i.totalNum-i.appointNum===0">次数用完</span>
+<!--                <span v-else-if="i.totalNum-i.appointNum===0">次数用完</span>-->
               <span v-else @click='nowyy(i.id,i.productId)'>立即预约</span>
             </p>
           </li>

@@ -39,6 +39,10 @@ export function getDictionaryItem(params) {
   return get('/backstage/dictionaryItem/get?' + stringify(params));
 }
 
+export function changeDicItemStatus(params) {
+  return post('/backstage/dictionaryItem/changeStatus?' + stringify(params));
+}
+
 //产品
 export function listProducts(params) {
   return get('/backstage/product/list?' + stringify(params));
@@ -58,6 +62,10 @@ export function getProduct(params) {
 
 export function uploadDetails(params) {
   return post('/backstage/product/uploadDetail', params);
+}
+
+export function changeState(params) {
+  return get('/backstage/product/changeState?' + stringify(params));
 }
 
 //门店
@@ -102,8 +110,8 @@ export function getOneByShopId(params) {
   return get('/backstage/appointManage/getOneByShopId?' + stringify(params));
 }
 
-export function editAllTopLimit(params) {
-  return post('/backstage/appointManage/editAllTopLimit', stringify(params));
+export function updateTopLimit(params) {
+  return post('/backstage/appointManage/updateTopLimit', stringify(params));
 }
 
 export function checkDataSource(params) {
@@ -120,8 +128,8 @@ export function listAppointRecord(params) {
   return get('/backstage/appointRecord/list?' + stringify(params));
 }
 
-export function appointComplete(params) {
-  return post('/backstage/appointRecord/appointComplete?' + stringify(params));
+export function appointCompleted(params) {
+  return post('/backstage/appointRecord/appointCompleted?' + stringify(params));
 }
 
 // 报告列表
@@ -130,8 +138,8 @@ export function listReport(params) {
 }
 
 // 同步报告
-export function editReport(params) {
-  return post('/backstage/report/edit?' + stringify(params));
+export function syncReport(params) {
+  return post('/backstage/report/sync?' + stringify(params));
 }
 
 // 查询报告对应的预约信息

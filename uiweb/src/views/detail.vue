@@ -22,7 +22,7 @@
     <ul class="home_list" v-if='tclist.length>0'>
       <li>
         <table></table>
-        <p class='c_price'>{{ tclist[0].pr }}<span>/3次</span><span>已售{{ tclist[0].num }}</span></p>
+        <p class='c_price'>{{ tclist[0].pr }}<span>/{{tclist[0].frequency}}次</span><span>已售{{ tclist[0].num }}</span></p>
 
         <p class='an'>
           <span>【{{ tclist[0].ti }}】</span>
@@ -464,14 +464,15 @@ export default {
         dicItemId: this.dicItem ? this.dicItem.id : null,
         shopId: this.shop ? this.shop.id : null,
       })).then(({data}) => {
-        console.log(data);
+        // console.log('********')
+        // console.log(data.id);
         if (this.notfar == 0) {
           this.notfar = 1;
         }
         // 在sess里面存储订单id 和门店id
         this.logined({orderId: data.id});
         sessionStorage.setItem('orderId', data.id);
-        sessionStorage.setItem('shopId', this.shop.id)
+        sessionStorage.setItem('shopId', this.shop ? this.shop.id : null)
         this.toPay(data.id)
       })
     },
@@ -535,6 +536,7 @@ export default {
         id: data.id,
         pr: '￥' + data.price + '.00',
         price: data.price,
+        frequency: data.totalAppointNum
       })
 
       // 判断线上还是线下

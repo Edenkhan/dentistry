@@ -72,4 +72,12 @@ public class DictionaryItemController {
                 .build());
     }
 
+
+    @PostMapping("/changeStatus")
+    @RequiresPermission(value = "backstage.dictionaryItem.changeStatus", description = "字典详情-修改状态")
+    public ResponseEntity<?> changeStatus(DictionaryItemEditForm form) {
+        DictionaryItem dictionaryItem = dictionaryItemService.get(form.getId());
+        dictionaryItemService.changeEnabled(dictionaryItem);
+        return ResponseEntity.ok().build();
+    }
 }

@@ -51,4 +51,9 @@ public interface DictionaryItemService {
      * 根据名称获取字典详情
      */
     ExtendedDictionaryItem getByName(String dicItemName);
+
+    /**
+     * 改变状态
+     */
+    void changeEnabled(DictionaryItem dictionaryItem);
 }

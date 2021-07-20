@@ -39,9 +39,9 @@ public class AppointRecordController {
                 .build());
     }
 
-    @PostMapping("/appointComplete")
-    @RequiresPermission(value = "backstage.appointRecord.appointComplete", description = "预约完成")
-    public ResponseEntity<?> appointComplete(AppointRecordEditForm form) {
+    @PostMapping("/appointCompleted")
+    @RequiresPermission(value = "backstage.appointRecord.appointCompleted", description = "预约完成")
+    public ResponseEntity<?> appointCompleted(AppointRecordEditForm form) {
         Appointment appointment = appointmentService.get(form.getId());
         appointmentService.appointCompleted(appointment);
         return ResponseEntity.ok().build();

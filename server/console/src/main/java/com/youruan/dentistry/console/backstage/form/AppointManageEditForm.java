@@ -7,7 +7,10 @@ import lombok.Setter;
 @Getter
 public class AppointManageEditForm {
     private Long id;
+    private Integer timePeriod;
     private Boolean enabled;
     private Integer topLimit;
     private Long shopId;
+    private Integer amTopLimit;
+    private Integer pmTopLimit;
 }

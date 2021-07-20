@@ -5,6 +5,7 @@ import com.youruan.dentistry.console.backstage.form.OrderRecordListForm;
 import com.youruan.dentistry.console.base.interceptor.RequiresPermission;
 import com.youruan.dentistry.core.backstage.vo.OrderRecordVo;
 import com.youruan.dentistry.core.base.query.Pagination;
+import com.youruan.dentistry.core.frontdesk.domain.Orders;
 import com.youruan.dentistry.core.frontdesk.query.OrdersQuery;
 import com.youruan.dentistry.core.frontdesk.service.OrdersService;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +30,7 @@ public class OrderRecordController {
     @RequiresPermission(value = "backstage.orderRecord.list", description = "订单记录-列表")
     public ResponseEntity<?> list(OrderRecordListForm form) {
         OrdersQuery qo = form.buildQuery();
+        qo.setPayStatus(Orders.PAY_STATUS_PAID);
         Pagination<OrderRecordVo> pagination = ordersService.record(qo);
         return ResponseEntity.ok(ImmutableMap.builder()
                 .put("data", pagination.getData())

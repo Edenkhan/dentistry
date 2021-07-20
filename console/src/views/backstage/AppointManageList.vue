@@ -10,8 +10,11 @@
         :title="modalTitle"
         @ok="handleSubmit">
         <a-form-model :label-col="labelCol" :wrapper-col="wrapperCol">
-          <a-form-model-item label="预约上限人数">
-            <a-input v-model="appointManageForm.topLimit" />
+          <a-form-model-item label="预约上限人数(上午)">
+            <a-input v-model="appointManageForm.amTopLimit" />
+          </a-form-model-item>
+          <a-form-model-item label="预约上限人数(下午)">
+            <a-input v-model="appointManageForm.pmTopLimit" />
           </a-form-model-item>
         </a-form-model>
       </a-modal>
@@ -145,7 +148,7 @@
 import {
   addAppointManage,
   editAppointManage,
-  editAllTopLimit,
+  updateTopLimit,
   listAppointManages,
   getOneByShopId,
   checkDataSource,
@@ -169,8 +172,8 @@ export default {
       loading: false,
       filters: {},
       visible: false,
-      labelCol: { span: 5 },
-      wrapperCol: { span: 10 },
+      labelCol: { span: 7 },
+      wrapperCol: { span: 12 },
       appointManageForm: {},
       modalTitle: '',
       appointManageListForm: {
@@ -196,23 +199,27 @@ export default {
           this.fetch()
         })
     },
-    editAllTopLimitSubmit() {
+    editTopLimitSubmit() {
       console.log(this.appointManageForm)
-      editAllTopLimit(this.appointManageForm).then(() => {
+      updateTopLimit(this.appointManageForm).then(() => {
         this.$message.success("修改成功")
+        this.pagination.current = 1
+        this.fetch()
       }).catch(({message}) => {
         this.$message.error(message)
       })
     },
     handleSubmit() {
       this.visible = false
-      this.editAllTopLimitSubmit(this.shopId)
-      this.pagination.current = 1
-      this.fetch()
+      this.editTopLimitSubmit()
     },
 
     changeTopLimit(){
       this.modalTitle = '预约上限'
+      this.appointManageForm = Object.assign(this.appointManageForm,{
+        amTopLimit: null,
+        pmTopLimit: null,
+      })
       this.visible = true
       this.getAppointManage(this.shopId)
     },
@@ -221,7 +228,6 @@ export default {
         .then(appointManage => {
           this.appointManageForm = Object.assign({},this.appointManageForm,{
             id: appointManage.id,
-            topLimit: appointManage.topLimit,
           })
         })
     },

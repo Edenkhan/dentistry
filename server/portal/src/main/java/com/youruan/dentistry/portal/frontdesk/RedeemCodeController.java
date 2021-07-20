@@ -8,6 +8,7 @@ import com.youruan.dentistry.core.user.domain.RegisteredUser;
 import com.youruan.dentistry.portal.base.interceptor.RequiresAuthentication;
 import com.youruan.dentistry.portal.frontdesk.form.RedeemCodeEditForm;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,6 +30,7 @@ public class RedeemCodeController {
         RedeemCodeQuery qo = new RedeemCodeQuery();
         qo.setCode(code);
         ExtendedRedeemCode vo = redeemCodeService.queryOne(qo);
+        Assert.notNull(vo,"没有此兑换码");
         return ResponseEntity.ok(vo);
     }
 

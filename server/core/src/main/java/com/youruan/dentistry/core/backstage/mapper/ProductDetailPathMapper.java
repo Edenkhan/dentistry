@@ -5,7 +5,6 @@ import com.youruan.dentistry.core.backstage.domain.ProductDetailPath;
 import com.youruan.dentistry.core.backstage.query.ProductDetailPathQuery;
 import com.youruan.dentistry.core.backstage.vo.ExtendedProductDetailPath;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -25,7 +24,7 @@ public interface ProductDetailPathMapper {
     /**
      * 添加
      */
-    public int add(@Param("productDetailPathList") List<ProductDetailPath> productDetailPathList);
+    public int add(List<ProductDetailPath> productDetailPathList);
     /**
      * 删除
      */

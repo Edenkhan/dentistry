@@ -62,6 +62,7 @@
         <if test="name != null">AND pro.name = #{name}</if>
         <if test="likeName != null">AND pro.name LIKE CONCAT('%',#{likeName},'%')</if>
         <if test="type != null">AND pro.type = #{type}</if>
+        <if test="userType != null">AND pro.userType = #{userType}</if>
         <if test="state != null">AND pro.state = #{state}</if>
     </sql>
     <sql id="QUERY_WHERE">

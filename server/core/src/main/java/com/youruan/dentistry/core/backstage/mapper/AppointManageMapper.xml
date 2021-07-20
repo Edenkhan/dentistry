@@ -51,9 +51,9 @@
     <set>
       lastModifiedDate = now(),
       version = version + 1,
-      <if test="topLimit != null">topLimit = #{topLimit},</if>
+      <if test="topLimit != null">topLimit = #{topLimit}</if>
     </set>
-    <where>shopId = #{shopId}</where>
+    <where>shopId = #{shopId} AND timePeriod = #{timePeriod}</where>
   </update>
   <sql id="QUERY_JOIN">
 
@@ -69,6 +69,7 @@
     <if test="shopId != null">AND am.shopId = #{shopId}</if>
     <if test="timePeriod != null">AND am.timePeriod = #{timePeriod}</if>
     <if test="appointDate != null">AND am.appointDate = #{appointDate}</if>
+    <if test="enabled != null">AND am.enabled = #{enabled}</if>
   </sql>
   <sql id="QUERY_WHERE">
     <where>

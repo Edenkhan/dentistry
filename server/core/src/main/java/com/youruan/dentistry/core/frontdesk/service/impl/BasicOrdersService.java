@@ -25,6 +25,7 @@ import org.springframework.util.Assert;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class BasicOrdersService implements OrdersService {
@@ -87,6 +88,7 @@ public class BasicOrdersService implements OrdersService {
         this.checkAdd(price, userId, productId);
         this.delete(userId, productId, shopId, dicItemId);
         Product product = productService.get(productId);
+        Assert.isTrue(Product.PRODUCT_STATE_SALE.equals(product.getState()),"该产品已下架");
         Orders orders = new Orders();
         this.assign(orders, price, product.getTotalAppointNum(), userId, productId, shopId, dicItemId, false);
         return add(orders);
@@ -107,7 +109,9 @@ public class BasicOrdersService implements OrdersService {
      * 添加订单校验
      */
     private void checkAdd(BigDecimal price, Long userId, Long productId) {
-        this.checkParam(price, userId, productId);
+        Assert.notNull(price, "必须提供订单价格");
+        Assert.notNull(userId, "必须提供用户id");
+        Assert.notNull(productId, "必须提供商品id");
     }
 
     /**
@@ -124,12 +128,6 @@ public class BasicOrdersService implements OrdersService {
 //        qo.setMark(mark);
 //        count = ordersMapper.count(qo);
 //        Assert.isTrue(orders.getMark().equalsIgnoreCase(mark)||count == 0,"字典标识重复");
-    }
-
-    private void checkParam(BigDecimal price, Long userId, Long productId) {
-        Assert.notNull(price, "必须提供订单价格");
-        Assert.notNull(userId, "必须提供用户id");
-        Assert.notNull(productId, "必须提供商品id");
     }
 
     /**
@@ -170,51 +168,40 @@ public class BasicOrdersService implements OrdersService {
     }
 
     @Override
-    public String placeOrder(RegisteredUser user, Orders orders, String ip) {
+    public Map<String, String> placeOrder(RegisteredUser user, Orders orders, String ip) throws Exception {
         Assert.notNull(user, "必须提供用户");
         Assert.notNull(orders, "必须提供订单信息");
         Assert.notNull(ip, "必须提供用户ip");
-        try {
-            Map<String, String> paramMap = new HashMap<>();
-            paramMap.put("appid", wechatPayProperties.getAppId());
-            paramMap.put("mch_id", wechatPayProperties.getMchid());
-            paramMap.put("nonce_str", WXPayUtil.generateNonceStr());
-            paramMap.put("sign", WXPayUtil.generateSignature(paramMap, wechatPayProperties.getPrivateKey()));
-            paramMap.put("body", "大苏打");
-            paramMap.put("out_trade_no", orders.getOrderNo());
-            paramMap.put("total_fee", "1");
-            paramMap.put("spbill_create_ip", ip);
-            paramMap.put("notify_url", wechatPayProperties.getNotifyUrl());
-            System.out.println("notify_url:::" + wechatPayProperties.getNotifyUrl());
-            paramMap.put("trade_type", "JSAPI");
-            paramMap.put("openid", user.getOpenid());
-            String xml = HttpClientUtils.doPostXml(WechatConstant.UNIFIED_ORDER_URL,
-                    WXPayUtil.generateSignedXml(paramMap, wechatPayProperties.getPrivateKey()));
-            Map<String, String> resultMap = WXPayUtil.xmlToMap(xml);
-            System.out.println("resultMap:" + resultMap);
-            return resultMap.get("prepay_id");
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+        Map<String, String> paramMap = new HashMap<>();
+        paramMap.put("appid", wechatPayProperties.getAppId());
+        paramMap.put("mch_id", wechatPayProperties.getMchid());
+        paramMap.put("nonce_str", WXPayUtil.generateNonceStr());
+        paramMap.put("sign", WXPayUtil.generateSignature(paramMap, wechatPayProperties.getPrivateKey()));
+        paramMap.put("body", "大苏打");
+        paramMap.put("out_trade_no", orders.getOrderNo());
+        paramMap.put("total_fee", "1");
+        paramMap.put("spbill_create_ip", ip);
+        paramMap.put("notify_url", wechatPayProperties.getNotifyUrl());
+        paramMap.put("trade_type", "JSAPI");
+        paramMap.put("openid", user.getOpenid());
+        String xml = HttpClientUtils.doPostXml(WechatConstant.UNIFIED_ORDER_URL,
+                WXPayUtil.generateSignedXml(paramMap, wechatPayProperties.getPrivateKey()));
+        Map<String, String> resultMap = WXPayUtil.xmlToMap(xml);
+        String prepayId = resultMap.get("prepay_id");
+        return this.payHandle(prepayId);
     }
 
     @Override
-    public Map<String, String> payHandle(String prepayId) {
-        try {
-            Map<String, String> resultMap = new HashMap<>();
-            resultMap.put("appId", wechatPayProperties.getAppId());
-            resultMap.put("timeStamp", String.valueOf(System.currentTimeMillis() / 1000));
-            resultMap.put("signType", "MD5");
-            resultMap.put("nonceStr", WXPayUtil.generateNonceStr());
-            resultMap.put("package", "prepay_id=" + prepayId);
-            resultMap.put("paySign", WXPayUtil.generateSignature(resultMap, wechatPayProperties.getPrivateKey()));
-            System.out.println(resultMap);
-            return resultMap;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+    public Map<String, String> payHandle(String prepayId) throws Exception {
+        Map<String, String> resultMap = new HashMap<>();
+        resultMap.put("appId", wechatPayProperties.getAppId());
+        resultMap.put("timeStamp", String.valueOf(System.currentTimeMillis() / 1000));
+        resultMap.put("signType", "MD5");
+        resultMap.put("nonceStr", WXPayUtil.generateNonceStr());
+        resultMap.put("package", "prepay_id=" + prepayId);
+        resultMap.put("paySign", WXPayUtil.generateSignature(resultMap, wechatPayProperties.getPrivateKey()));
+        System.out.println(resultMap);
+        return resultMap;
     }
 
     @Override
@@ -239,11 +226,9 @@ public class BasicOrdersService implements OrdersService {
     }
 
     @Override
-    public void updateAppointNum(Orders orders) {
+    public void increAppointNum(Orders orders) {
         Assert.notNull(orders, "必须提供订单");
-        Assert.isTrue(Orders.APPOINT_STATUS_NOT.equals(orders.getAppointStatus()),"当前订单状态不是待预约");
         orders.setAppointNum(orders.getAppointNum() + 1);
-        orders.setAppointStatus(Orders.APPOINT_STATUS_OK);
         this.update(orders);
     }
 
@@ -264,7 +249,7 @@ public class BasicOrdersService implements OrdersService {
     @Override
     public void appointCompleted(Orders orders) {
         Assert.notNull(orders, "必须提供订单");
-        Assert.isTrue(Orders.APPOINT_STATUS_OK.equals(orders.getAppointStatus()),"当前订单状态不是已完成");
+        Assert.isTrue(Orders.APPOINT_STATUS_OK.equals(orders.getAppointStatus()),"当前订单的预约状态不是已预约");
         orders.setAppointStatus(Orders.APPOINT_STATUS_NOT);
         this.update(orders);
     }
@@ -290,6 +275,21 @@ public class BasicOrdersService implements OrdersService {
         Orders orders = new Orders();
         this.assign(orders, price, product.getTotalAppointNum(), userId, productId, shopId, dicItemId, true);
         return this.add(orders);
+    }
+
+    @Override
+    public void appointProgress(Orders orders) {
+        Assert.notNull(orders,"必须提供订单");
+        Assert.isTrue(Orders.APPOINT_STATUS_NOT.equals(orders.getAppointStatus()),"当前订单状态不是未预约");
+        orders.setAppointStatus(Orders.APPOINT_STATUS_OK);
+        this.update(orders);
+    }
+
+    @Override
+    public List<OrderRecordVo> handleData(List<OrderRecordVo> data) {
+        return data.stream()
+                .filter(item -> item.getTotalNum()-item.getAppointNum()!=0
+                        || item.getAppointStatus().equals(Orders.APPOINT_STATUS_OK)).collect(Collectors.toList());
     }
 
 

@@ -36,7 +36,7 @@ public interface ReportService {
     /**
      * 添加
      */
-    Report create(Integer peopleNum, Long userId, Long appointId, Long productId, List<String> pathList);
+    void create(Integer peopleNum, Long userId, Long appointId, Long productId, List<String> pathList);
     /**
      * 修改
      */
@@ -68,7 +68,7 @@ public interface ReportService {
     /**
      * 重新上传
      */
-    void reset(Report report, List<String> pathList);
+    void reset(Report report, String path);
 
     /**
      * 同步报告

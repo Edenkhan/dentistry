@@ -53,14 +53,14 @@ public interface OrdersService {
     List<ExtendedOrders> listAll();
 
     /**
-     * 统一下单，返回预支付id
+     * 统一下单，返回JSAPI调起支付所需参数
      */
-    String placeOrder(RegisteredUser user, Orders orders, String ip);
+    Map<String, String> placeOrder(RegisteredUser user, Orders orders, String ip) throws Exception;
 
     /**
      * 返回JSAPI调起支付所需参数
      */
-    Map<String, String> payHandle(String prepayId);
+    Map<String, String> payHandle(String prepayId) throws Exception;
 
     /**
      * 查询by订单号
@@ -73,9 +73,10 @@ public interface OrdersService {
     ExtendedOrders handleData(Orders orders);
 
     /**
-     * 更新订单已预约次数
+     * 增加订单已预约次数
      */
-    void updateAppointNum(Orders orders);
+    void increAppointNum(Orders orders);
+
 
     /**
      * 查询订单记录
@@ -100,4 +101,14 @@ public interface OrdersService {
      * 兑换订单
      */
     Orders redeemOrders(BigDecimal price, Long userId, Long productId, Long shopId, Long dicItemId);
+
+    /**
+     * 订单 预约进行中
+     */
+    void appointProgress(Orders orders);
+
+    /**
+     * 过滤掉用完次数 并且已经完成预约的订单
+     */
+    List<OrderRecordVo> handleData(List<OrderRecordVo> data);
 }

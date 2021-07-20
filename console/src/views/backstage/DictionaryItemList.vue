@@ -85,6 +85,15 @@
         <a-tag color="#f5222d" v-if="!enabled">停用</a-tag>
       </template>
       <template slot="operation" slot-scope="record">
+        <a-popconfirm
+          title="确认改变状态？"
+          ok-text="是"
+          cancel-text="否"
+          @confirm="changeStatus(record.id)"
+        >
+          <a-button style="background: green" v-if="!record.enabled">启用</a-button>
+          <a-button style="background: red" v-if="record.enabled" >停用</a-button>
+        </a-popconfirm>
         <a-button type="primary" @click="editDictionaryItem(record.id)">
           编辑
         </a-button>
@@ -100,6 +109,7 @@ import {
   getDictionaryItem,
   listDictionaryItems,
   listAllDictionarys,
+  changeDicItemStatus,
 } from "../../api/backstage"
 import moment from "moment"
 import PhoneNumber from "../user/PhoneNumber"
@@ -176,6 +186,16 @@ export default {
     this.fetch()
   },
   methods: {
+    changeStatus(id) {
+      changeDicItemStatus({id:id})
+        .then(() => {
+          this.$message.success('改变状态成功')
+          this.pagination.current = 1
+          this.fetch()
+        }).catch(({message}) => {
+          this.$message.error(message)
+      })
+    },
     getDictionarys() {
       listAllDictionarys().
         then(({data}) => {

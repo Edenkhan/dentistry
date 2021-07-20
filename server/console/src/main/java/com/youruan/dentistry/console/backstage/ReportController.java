@@ -50,12 +50,13 @@ public class ReportController {
         Appointment appointment = appointmentService.get(form.getAppointId());
         Assert.notNull(appointment,"必须提供预约信息");
         Product product = productService.get(appointment.getProductId());
-        Report report = reportService.create(product.getPeopleNum(),
+        Assert.notNull(appointment,"必须提供产品");
+        reportService.create(product.getPeopleNum(),
                 form.getUserId(),
                 form.getAppointId(),
                 product.getId(),
                 form.getPathList());
-        return ResponseEntity.ok(report);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/list")
@@ -84,7 +85,7 @@ public class ReportController {
     @RequiresPermission(value = "backstage.report.reset", description = "报告-重新上传")
     public ResponseEntity<?> reset(ReportEditForm form) {
         Report report = reportService.get(form.getId());
-        reportService.reset(report,form.getPathList());
+        reportService.reset(report,form.getPath());
         return ResponseEntity.ok().build();
     }
 

@@ -46,6 +46,7 @@ public class BasicShopService
 
     @Override
     public List<ExtendedShop> listAll(ShopQuery qo) {
+        qo.setMaxPageSize();
         return shopMapper.query(qo);
     }
 
@@ -143,7 +144,7 @@ public class BasicShopService
     }
 
     @Override
-    public void update(Shop shop, Integer validNum) {
+    public void updateValidNum(Shop shop, Integer validNum) {
         Assert.notNull(shop,"必须提供门店");
         Assert.notNull(validNum,"必须提供次数");
         shop.setValidNum(shop.getValidNum() + validNum);
@@ -151,9 +152,10 @@ public class BasicShopService
     }
 
     @Override
-    public void updateAppointNum(Shop shop) {
+    public void increAppointNum(Shop shop) {
         Assert.notNull(shop,"必须提供门店");
         shop.setAppointNum(shop.getAppointNum() + 1);
         this.update(shop);
     }
+
 }

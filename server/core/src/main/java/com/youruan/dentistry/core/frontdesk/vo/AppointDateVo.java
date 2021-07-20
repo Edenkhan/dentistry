@@ -12,5 +12,5 @@ import java.util.Date;
 public class AppointDateVo {
     private Date appointDate;
     private Integer timePeriod;
-    private Boolean full;
+    private Boolean isFull;
 }

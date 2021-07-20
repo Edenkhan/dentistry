@@ -2,7 +2,6 @@ package com.youruan.dentistry.core.frontdesk.service;
 
 
 import com.youruan.dentistry.core.backstage.vo.AppointRecordVo;
-import com.youruan.dentistry.core.backstage.vo.ExtendedAppointManage;
 import com.youruan.dentistry.core.base.query.Pagination;
 import com.youruan.dentistry.core.frontdesk.domain.Appointment;
 import com.youruan.dentistry.core.frontdesk.query.AppointmentQuery;
@@ -64,7 +63,7 @@ public interface AppointmentService {
     /**
      * 获取可预约的情况
      */
-    List<AppointDateVo> handleData(List<ExtendedAppointManage> appointManageList);
+    AppointDateVo handleData(ExtendedAppointment extendedAppointment);
 
     /**
      * 查询预约记录
@@ -85,4 +84,9 @@ public interface AppointmentService {
      * 预约完成
      */
     void appointCompleted(Appointment appointment);
+
+    /**
+     * 获取正在预约中的预约信息
+     */
+    ExtendedAppointment getAppointing(Long orderId);
 }

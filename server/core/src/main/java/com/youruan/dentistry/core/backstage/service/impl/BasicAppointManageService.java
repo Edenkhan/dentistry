@@ -2,6 +2,7 @@
 package com.youruan.dentistry.core.backstage.service.impl;
 
 import com.youruan.dentistry.core.backstage.domain.AppointManage;
+import com.youruan.dentistry.core.backstage.domain.Shop;
 import com.youruan.dentistry.core.backstage.mapper.AppointManageMapper;
 import com.youruan.dentistry.core.backstage.query.AppointManageQuery;
 import com.youruan.dentistry.core.backstage.service.AppointManageService;
@@ -13,7 +14,10 @@ import com.youruan.dentistry.core.base.exception.OptimismLockingException;
 import com.youruan.dentistry.core.base.query.Pagination;
 import com.youruan.dentistry.core.base.utils.DateUtil;
 import com.youruan.dentistry.core.base.utils.DateUtils;
+import com.youruan.dentistry.core.frontdesk.domain.Orders;
+import com.youruan.dentistry.core.frontdesk.service.OrdersService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
@@ -28,10 +32,12 @@ public class BasicAppointManageService
 
     private final AppointManageMapper appointManageMapper;
     private final ShopService shopService;
+    private final OrdersService ordersService;
 
-    public BasicAppointManageService(AppointManageMapper appointManageMapper, ShopService shopService) {
+    public BasicAppointManageService(AppointManageMapper appointManageMapper, ShopService shopService, OrdersService ordersService) {
         this.appointManageMapper = appointManageMapper;
         this.shopService = shopService;
+        this.ordersService = ordersService;
     }
 
     @Override
@@ -55,6 +61,7 @@ public class BasicAppointManageService
 
     @Override
     public List<ExtendedAppointManage> listAll(AppointManageQuery qo) {
+        qo.setMaxPageSize();
         return appointManageMapper.query(qo);
     }
 
@@ -291,6 +298,73 @@ public class BasicAppointManageService
         Assert.isTrue(appointManage.getAppointNum()>0,"当前日期没有人预约");
         appointManage.setAppointNum(appointManage.getAppointNum() - 1);
         this.update(appointManage);
+    }
+
+    @Override
+    @Transactional
+    public void updateTopLimit(AppointManage appointManage, Integer amTopLimit, Integer pmTopLimit) {
+        this.checkUpdateTopLimit(appointManage,amTopLimit,pmTopLimit);
+        // 上午
+        appointManage.setTopLimit(amTopLimit);
+        appointManage.setTimePeriod(AppointManage.TIME_PERIOD_AM);
+        this.updateTopLimit(appointManage);
+        // 下午
+        appointManage.setTopLimit(pmTopLimit);
+        appointManage.setTimePeriod(AppointManage.TIME_PERIOD_PM);
+        this.updateTopLimit(appointManage);
+    }
+
+    @Override
+    public List<ExtendedAppointManage> getAppointDateList(Long orderId) {
+        Orders orders = ordersService.get(orderId);
+        Assert.notNull(orders,"必须提供订单");
+        Shop shop = shopService.get(orders.getShopId());
+        Assert.notNull(shop,"必须提供门店");
+        Assert.isTrue(shop.getEnabled(),"该门店已关闭预约");
+        AppointManageQuery qo = new AppointManageQuery();
+        qo.setStartAppointDate(DateUtil.getStartTime(new Date()));
+        qo.setShopId(shop.getId());
+        qo.setEnabled(true);
+        return this.listAll(qo);
+    }
+
+    @Override
+    public Boolean checkFull(Long orderId, Date appointDate, Integer timePeriod) {
+        Assert.notNull(orderId,"必须提供订单id");
+        Assert.notNull(appointDate,"必须提供预约日期");
+        Assert.notNull(timePeriod,"必须提供预约时间段");
+        Orders orders = ordersService.get(orderId);
+        Assert.notNull(orders,"必须提供订单");
+        AppointManageQuery qo = new AppointManageQuery();
+        qo.setAppointDate(DateUtil.getStartTime(appointDate));
+        qo.setTimePeriod(timePeriod);
+        qo.setShopId(orders.getShopId());
+        qo.setEnabled(true);
+        ExtendedAppointManage extendedAppointManage = this.queryOne(qo);
+        Assert.notNull(extendedAppointManage,"必须提供预约管理");
+        return extendedAppointManage.getTopLimit() - extendedAppointManage.getAppointNum() <= 0;
+    }
+
+    @Override
+    public List<Integer> getValidPeriod(Long orderId, Date appointDate) {
+        Assert.notNull(orderId,"必须提供订单id");
+        Assert.notNull(appointDate,"必须提供预约日期");
+        Orders orders = ordersService.get(orderId);
+        Assert.notNull(orders,"必须提供订单");
+        Assert.notNull(orders.getShopId(),"必须提供门店id");
+        AppointManageQuery qo = new AppointManageQuery();
+        qo.setEnabled(true);
+        qo.setShopId(orders.getShopId());
+        qo.setAppointDate(DateUtil.getStartTime(appointDate));
+        return this.listAll(qo).stream()
+                .map(ExtendedAppointManage::getTimePeriod)
+                .collect(Collectors.toList());
+    }
+
+    private void checkUpdateTopLimit(AppointManage appointManage, Integer amTopLimit, Integer pmTopLimit) {
+        Assert.notNull(appointManage,"必须提供预约管理");
+        Assert.isTrue(amTopLimit==null || amTopLimit>0,"预约上限(上午)必须大于0");
+        Assert.isTrue(pmTopLimit==null || pmTopLimit>0,"预约上限(下午)必须大于0");
     }
 
     /**

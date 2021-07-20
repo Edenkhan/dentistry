@@ -5,12 +5,15 @@ import com.youruan.dentistry.core.backstage.domain.AppointManage;
 import com.youruan.dentistry.core.backstage.domain.Shop;
 import com.youruan.dentistry.core.backstage.query.AppointManageQuery;
 import com.youruan.dentistry.core.backstage.query.RedeemCodeQuery;
+import com.youruan.dentistry.core.backstage.query.ReportQuery;
 import com.youruan.dentistry.core.backstage.service.AppointManageService;
 import com.youruan.dentistry.core.backstage.service.RedeemCodeService;
+import com.youruan.dentistry.core.backstage.service.ReportService;
 import com.youruan.dentistry.core.backstage.service.ShopService;
 import com.youruan.dentistry.core.backstage.vo.AppointRecordVo;
 import com.youruan.dentistry.core.backstage.vo.ExtendedAppointManage;
 import com.youruan.dentistry.core.backstage.vo.ExtendedRedeemCode;
+import com.youruan.dentistry.core.backstage.vo.ExtendedReport;
 import com.youruan.dentistry.core.base.exception.OptimismLockingException;
 import com.youruan.dentistry.core.base.query.Pagination;
 import com.youruan.dentistry.core.base.utils.DateUtil;
@@ -26,11 +29,11 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class BasicAppointmentService implements AppointmentService {
@@ -40,13 +43,15 @@ public class BasicAppointmentService implements AppointmentService {
     private final AppointManageService appointManageService;
     private final ShopService shopService;
     private final RedeemCodeService redeemCodeService;
+    private final ReportService reportService;
 
-    public BasicAppointmentService(AppointmentMapper appointmentMapper, OrdersService ordersService, AppointManageService appointManageService, ShopService shopService, RedeemCodeService redeemCodeService) {
+    public BasicAppointmentService(AppointmentMapper appointmentMapper, OrdersService ordersService, AppointManageService appointManageService, ShopService shopService, RedeemCodeService redeemCodeService, ReportService reportService) {
         this.appointmentMapper = appointmentMapper;
         this.ordersService = ordersService;
         this.appointManageService = appointManageService;
         this.shopService = shopService;
         this.redeemCodeService = redeemCodeService;
+        this.reportService = reportService;
     }
 
     @Override
@@ -108,15 +113,16 @@ public class BasicAppointmentService implements AppointmentService {
         this.assign(appointment, appointDate, timePeriod, orderId, userId, orders.getProductId(), orders.getShopId());
         appointment = this.add(appointment);
         Assert.notNull(appointment, "预约失败");
-        // 更新订单预约次数
-        ordersService.updateAppointNum(orders);
-        // 更新预约管理 预约次数
-        AppointManage appointManage = getAppointManage(appointDate, timePeriod, orders.getShopId());
+        // 增加订单预约次数
+        ordersService.increAppointNum(orders);
+        // 订单 预约进行中
+        ordersService.appointProgress(orders);
         // 增加当前预约日期 预约数量
+        AppointManage appointManage = this.getAppointManage(appointDate, timePeriod, orders.getShopId());
         appointManageService.increAppointNum(appointManage);
-        // 更新门店预约次数
+        // 增加门店预约次数
         Shop shop = shopService.get(orders.getShopId());
-        shopService.updateAppointNum(shop);
+        shopService.increAppointNum(shop);
         return appointment;
     }
 
@@ -293,14 +299,19 @@ public class BasicAppointmentService implements AppointmentService {
     }
 
     @Override
-    public List<AppointDateVo> handleData(List<ExtendedAppointManage> appointManageList) {
-        return appointManageList.stream().map(item -> {
-            AppointDateVo vo = new AppointDateVo();
-            vo.setAppointDate(item.getAppointDate());
-            vo.setTimePeriod(item.getTimePeriod());
-            vo.setFull(item.getAppointNum().equals(item.getTopLimit()));
-            return vo;
-        }).collect(Collectors.toList());
+    public AppointDateVo handleData(ExtendedAppointment extendedAppointment) {
+        AppointManageQuery amq = new AppointManageQuery();
+        amq.setShopId(extendedAppointment.getShopId());
+        amq.setAppointDate(extendedAppointment.getAppointDate());
+        amq.setTimePeriod(extendedAppointment.getTimePeriod());
+        amq.setEnabled(true);
+        ExtendedAppointManage extendedAppointManage = appointManageService.queryOne(amq);
+        Assert.notNull(extendedAppointManage,"必须提供预约管理");
+        AppointDateVo vo = new AppointDateVo();
+        vo.setAppointDate(extendedAppointment.getAppointDate());
+        vo.setTimePeriod(extendedAppointment.getTimePeriod());
+        vo.setIsFull(extendedAppointManage.getTopLimit() - extendedAppointManage.getAppointNum() <= 0);
+        return vo;
     }
 
     @Override
@@ -328,10 +339,36 @@ public class BasicAppointmentService implements AppointmentService {
     public void appointCompleted(Appointment appointment) {
         Assert.notNull(appointment, "必须提供预约信息");
         Assert.isTrue(Appointment.APPOINT_STATE_APPOINTED.equals(appointment.getAppointState()), "当前不是在预约中状态");
+        // 校验当前预约下的报告是否全部同步
+        this.checkReportSync(appointment.getId());
+        // 预约完成
         appointment.setAppointState(Appointment.APPOINT_STATE_FINISH);
+        appointment.setReportStatus(Appointment.REPORT_STATUS_OK);
         this.update(appointment);
+        // 订单修改为 未预约
         Orders orders = ordersService.get(appointment.getOrderId());
         ordersService.appointCompleted(orders);
+    }
+
+    @Override
+    public ExtendedAppointment getAppointing(Long orderId) {
+        AppointmentQuery qo = new AppointmentQuery();
+        qo.setOrderId(orderId);
+        qo.setAppointState(Appointment.APPOINT_STATE_APPOINTED);
+        int count = this.count(qo);
+        Assert.isTrue(count <= 1,"当前正在预约中的预约大于1");
+        return this.queryOne(qo);
+    }
+
+    /**
+     * 校验当前预约下的报告是否全部同步
+     */
+    private void checkReportSync(Long appointId) {
+        ReportQuery qo = new ReportQuery();
+        qo.setAppointId(appointId);
+        List<ExtendedReport> reportList = reportService.listAll(qo);
+        Assert.isTrue(!CollectionUtils.isEmpty(reportList),"当前没有上传报告");
+        reportList.forEach(item -> Assert.isTrue(item.getSync(),"当前有报告未同步，无法完成预约"));
     }
 
 

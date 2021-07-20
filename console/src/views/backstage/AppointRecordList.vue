@@ -69,7 +69,7 @@
           title="确定预约已完成？"
           ok-text="是"
           cancel-text="否"
-          @confirm="appointComplete(record.id,record.appointState===0?1:0)"
+          @confirm="appointCompleted(record.id)"
         >
           <a-button type="primary" v-if="record.appointState===0">完成</a-button>
         </a-popconfirm>
@@ -82,7 +82,7 @@
 <script>
 import {
   listAppointRecord,
-  appointComplete,
+  appointCompleted,
 } from "../../api/backstage"
 import moment from "moment"
 
@@ -159,12 +159,14 @@ export default {
     this.fetch()
   },
   methods: {
-    appointComplete(id,appointState){
-      appointComplete({id:id,appointState:appointState})
+    appointCompleted(id){
+      appointCompleted({id:id})
         .then(() => {
           this.fetch()
           this.$message.success('预约已完成')
-        })
+        }).catch(({message}) => {
+          this.$message.error(message)
+      })
     },
     handleQuerySubmit() {
       this.pagination = Object.assign({}, this.pagination, {
