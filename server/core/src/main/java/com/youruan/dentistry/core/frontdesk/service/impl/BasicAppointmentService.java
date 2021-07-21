@@ -259,12 +259,22 @@ public class BasicAppointmentService implements AppointmentService {
         Assert.notNull(timePeriod, "必须提供预约时间段");
         Assert.notNull(appointDate, "必须提供预约日期");
         Assert.isTrue(Appointment.APPOINT_STATE_APPOINTED.equals(appointment.getAppointState()), "该预约已完成");
+        // 校验预约日期是否有改动
+        this.checkChange(appointment, timePeriod, appointDate);
         // 校验日期
         this.checkDate(timePeriod, DateUtil.getStartTime(appointDate), appointment.getShopId());
         // 校验预约日期、预约状态
         this.checkAppointDateAndStatus(appointDate, timePeriod, appointment.getShopId());
         // 校验门店预约总数量
         this.checkShopValid(appointment.getShopId());
+    }
+
+    /**
+     * 校验预约日期是否有改动
+     */
+    private void checkChange(ExtendedAppointment appointment, Integer timePeriod, Date appointDate) {
+        Assert.isTrue(!timePeriod.equals(appointment.getTimePeriod())
+                && appointDate.compareTo(appointment.getAppointDate())!=0,"当前日期未作修改");
     }
 
 
@@ -345,7 +355,7 @@ public class BasicAppointmentService implements AppointmentService {
         appointment.setAppointState(Appointment.APPOINT_STATE_FINISH);
         appointment.setReportStatus(Appointment.REPORT_STATUS_OK);
         this.update(appointment);
-        // 订单修改为 未预约
+        // 訂單修改為 未預約 已完成
         Orders orders = ordersService.get(appointment.getOrderId());
         ordersService.appointCompleted(orders);
     }

@@ -24,4 +24,5 @@ public class OrderRecordVo extends BasicDomain {
     private Integer totalNum;
     private Integer appointNum;
     private String dicItemName;
+    private Boolean completed;
 }

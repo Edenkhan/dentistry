@@ -18,6 +18,7 @@
         <result property="shopId" column="shopId"/>
         <result property="dicItemId" column="dicItemId"/>
         <result property="isRedeemOrder" column="isRedeemOrder"/>
+        <result property="completed" column="completed"/>
     </resultMap>
     <resultMap id="RECORD_RESULT" type="com.youruan.dentistry.core.backstage.vo.OrderRecordVo">
         <id property="id" column="id"/>
@@ -39,6 +40,7 @@
         <result property="totalNum" column="totalNum"/>
         <result property="appointNum" column="appointNum"/>
         <result property="dicItemName" column="dicItemName"/>
+        <result property="completed" column="completed"/>
     </resultMap>
     <resultMap id="BOUGHT_RESULT" type="com.youruan.dentistry.core.user.vo.UserBoughtVo">
         <id property="id" column="id"/>
@@ -56,8 +58,8 @@
         <result property="dicItemName" column="dicItemName"/>
         <result property="productState" column="productState"/>
     </resultMap>
-    <sql id="BASE_COLUMNS">o.id, o.createdDate, o.lastModifiedDate, o.version, o.orderNo, o.price, o.totalNum, o.appointNum, o.boughtTime, o.payStatus, o.appointStatus, o.userId, o.productId, o.shopId, o.dicItemId, o.isRedeemOrder</sql>
-    <sql id="QUERY_COLUMNS">o.id, o.createdDate, o.lastModifiedDate, o.version, o.orderNo, o.price, o.totalNum, o.appointNum, o.boughtTime, o.payStatus, o.appointStatus, o.userId, o.productId, o.shopId, o.dicItemId, o.isRedeemOrder</sql>
+    <sql id="BASE_COLUMNS">o.id, o.createdDate, o.lastModifiedDate, o.version, o.orderNo, o.price, o.totalNum, o.appointNum, o.boughtTime, o.payStatus, o.appointStatus, o.userId, o.productId, o.shopId, o.dicItemId, o.isRedeemOrder, o.completed</sql>
+    <sql id="QUERY_COLUMNS">o.id, o.createdDate, o.lastModifiedDate, o.version, o.orderNo, o.price, o.totalNum, o.appointNum, o.boughtTime, o.payStatus, o.appointStatus, o.userId, o.productId, o.shopId, o.dicItemId, o.isRedeemOrder, o.completed</sql>
     <resultMap id="VO_RESULT" type="com.youruan.dentistry.core.frontdesk.vo.ExtendedOrders" extends="BASE_RESULT"/>
     <sql id="RECORD_JOIN_COLUMNS">
         ,ru.realName,ru.phoneNumber
@@ -103,6 +105,7 @@
             <if test="shopId != null">shopId = #{shopId},</if>
             <if test="dicItemId != null">dicItemId = #{dicItemId},</if>
             <if test="isRedeemOrder != null">isRedeemOrder = #{isRedeemOrder},</if>
+            <if test="completed != null">completed = #{completed},</if>
         </set>
         <where>id = #{id} AND version = #{version}</where>
     </update>

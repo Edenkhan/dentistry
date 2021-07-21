@@ -76,4 +76,8 @@ public class Orders extends BasicDomain {
      * 是否为兑换码订单
      */
     private Boolean isRedeemOrder;
+    /**
+     * 是否完成
+     */
+    private Boolean completed;
 }

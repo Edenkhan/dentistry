@@ -36,7 +36,7 @@ public class ProductController {
         qo.setOrderBySales(QueryCondition.ORDER_BY_KEYWORD_DESC);
         List<ExtendedProduct> productList = productService.listAll(qo);
         ImmutableMap<Object, Object> map = ImmutableMap.builder()
-                .put("data", BeanMapUtils.pick(productList, "id", "type", "price", "intro", "iconPath", "description", "sales"))
+                .put("data", BeanMapUtils.pick(productList, "id", "type","name", "price", "intro", "iconPath", "description", "sales"))
                 .build();
         return ResponseEntity.ok(map);
     }

@@ -144,6 +144,7 @@ public class BasicOrdersService implements OrdersService {
         orders.setProductId(productId);
         orders.setShopId(shopId);
         orders.setDicItemId(dicItemId);
+        orders.setCompleted(false);
         orders.setIsRedeemOrder(isRedeemOrder);
         if(isRedeemOrder) {
             // 兑换码订单 状态已支付
@@ -249,8 +250,12 @@ public class BasicOrdersService implements OrdersService {
     @Override
     public void appointCompleted(Orders orders) {
         Assert.notNull(orders, "必须提供订单");
+        Assert.isTrue(!orders.getCompleted(),"該訂單已完成");
         Assert.isTrue(Orders.APPOINT_STATUS_OK.equals(orders.getAppointStatus()),"当前订单的预约状态不是已预约");
         orders.setAppointStatus(Orders.APPOINT_STATUS_NOT);
+        if(orders.getTotalNum().equals(orders.getAppointNum())) {
+            orders.setCompleted(true);
+        }
         this.update(orders);
     }
 

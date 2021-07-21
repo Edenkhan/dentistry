@@ -98,8 +98,12 @@
 </template>
 <script>
 import {login} from "../../api/platform";
-
-function getBase64(file) {
+function getBase64Single(img, callback) {
+  const reader = new FileReader();
+  reader.addEventListener('load', () => callback(reader.result));
+  reader.readAsDataURL(img);
+}
+function getBase64Multiple(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
@@ -195,7 +199,7 @@ export default {
     async handlePreview(file) {
       // console.log(file)
       if (!file.url && !file.preview) {
-        file.preview = await getBase64(file.originFileObj);
+        file.preview = await getBase64Multiple(file.originFileObj);
       }
       this.previewImage = file.url || file.preview;
       this.previewVisible = true;
@@ -207,7 +211,7 @@ export default {
       this.fileList.forEach(item => {
         this.pathList.push(item.response)
       })
-      console.log(this.pathList)
+      // console.log(this.pathList)
       this.productForm = Object.assign(this.productForm,{
         pathList: this.pathList,
       })
@@ -230,17 +234,17 @@ export default {
       this.$router.push('/backstage/product/list')
     },
     handleChange(info) {
+      console.log(info.file)
       if (info.file.status === 'uploading') {
         this.loading = true
         return
       }
       if (info.file.status === 'done') {
         // Get this url from response in real world.
-        getBase64(info.file.originFileObj, imageUrl => {
+        getBase64Single(info.file.originFileObj, imageUrl => {
           this.loading = false
         })
         this.productForm.iconPath = info.file.response
-        // console.log(this.productForm)
       }
     },
 

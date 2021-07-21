@@ -509,7 +509,7 @@ export default {
 
   },
   mounted() {
-    this.productId = this.$route.query.count;
+    this.productId = this.$route.query.productId;
 
     // 获取订单信息
     this.axios.get('api/frontdesk/product/get?' + `id=${this.productId}`).then(({data}) => {

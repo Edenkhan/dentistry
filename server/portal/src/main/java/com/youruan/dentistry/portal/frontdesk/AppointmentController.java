@@ -9,7 +9,6 @@ import com.youruan.dentistry.core.base.utils.BeanMapUtils;
 import com.youruan.dentistry.core.frontdesk.domain.Appointment;
 import com.youruan.dentistry.core.frontdesk.query.AppointmentQuery;
 import com.youruan.dentistry.core.frontdesk.service.AppointmentService;
-import com.youruan.dentistry.core.frontdesk.service.OrdersService;
 import com.youruan.dentistry.core.frontdesk.vo.AppointDateVo;
 import com.youruan.dentistry.core.frontdesk.vo.ExtendedAppointment;
 import com.youruan.dentistry.core.user.domain.RegisteredUser;
@@ -29,12 +28,10 @@ import java.util.List;
 public class AppointmentController {
 
     private final AppointmentService appointmentService;
-    private final OrdersService ordersService;
     private final AppointManageService appointManageService;
 
-    public AppointmentController(AppointmentService appointmentService, OrdersService ordersService, AppointManageService appointManageService) {
+    public AppointmentController(AppointmentService appointmentService, AppointManageService appointManageService) {
         this.appointmentService = appointmentService;
-        this.ordersService = ordersService;
         this.appointManageService = appointManageService;
     }
 

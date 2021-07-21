@@ -236,6 +236,7 @@ export default {
     },
     addShop() {
       this.shopForm = {}
+      this.shopForm.enabled = true
       this.modalTitle = this.modalTitles[0]
       this.visible = true
     },

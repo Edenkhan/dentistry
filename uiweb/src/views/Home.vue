@@ -356,7 +356,7 @@ export default {
       location.reload();
     },
     jumpdetail(index){
-      this.$router.push({path:'/detail',query:{count:this.rxlist[index].id}});
+      this.$router.push({path:'/detail',query:{productId:this.rxlist[index].id}});
     }
   },
   mounted(){
@@ -383,7 +383,7 @@ export default {
         this.rxlist.push(
             {
               ti:ti,
-              title:key.intro,
+              title:key.name,
               content:key.description,
               num:key.sales,
               icon:key.iconPath,
