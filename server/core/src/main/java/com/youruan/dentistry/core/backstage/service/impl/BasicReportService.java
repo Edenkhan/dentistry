@@ -221,7 +221,6 @@ public class BasicReportService
         Integer peopleNum = productService.get(report.getProductId()).getPeopleNum();
         if(count < peopleNum) return;
         Appointment appointment = appointmentService.get(report.getAppointId());
-        Assert.notNull(appointment,"必须提供预约信息");
         appointmentService.appointCompleted(appointment);
     }
 
