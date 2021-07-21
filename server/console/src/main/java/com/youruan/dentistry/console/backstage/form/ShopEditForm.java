@@ -10,6 +10,6 @@ public class ShopEditForm {
     private String name;
     private String address;
     private String phone;
-    private Integer validNum;
+    private Integer frequency;
     private Boolean enabled;
 }

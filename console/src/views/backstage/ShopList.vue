@@ -58,8 +58,8 @@
           </a-form-model-item>
         </a-form-model>
         <a-form-model :label-col="labelCol" :wrapper-col="wrapperCol" v-if="modalTitle===this.modalTitles[2]">
-          <a-form-model-item label="可预约次数">
-            <a-input type="number" v-model="shopForm.validNum"/>
+          <a-form-model-item label="添加预约次数">
+            <a-input type="number" v-model="shopForm.frequency"/>
           </a-form-model-item>
         </a-form-model>
       </a-modal>
@@ -92,8 +92,8 @@
         <a-button type="primary" @click="editShop(record.id)">
           编辑
         </a-button>
-        <a-button type="primary" @click="addValid(record.id)">
-          添加可预约次数
+        <a-button type="primary" @click="addTotal(record.id)">
+          添加预约次数
         </a-button>
         <router-link :to="`/backstage/appointManage/list?id=${record.id}`">
           <a-button type="primary">
@@ -107,7 +107,7 @@
 
 <script>
 import {
-  addShop, editShop, getShop, listShops, addValid
+  addShop, editShop, getShop, listShops, addTotalNum
 } from "../../api/backstage"
 import moment from "moment"
 import {regPhone} from "../../utils/regular"
@@ -140,8 +140,8 @@ const columns = [
     dataIndex: 'phone',
   },
   {
-    title: '可预约次数',
-    dataIndex: 'validNum',
+    title: '总预约次数',
+    dataIndex: 'totalNum',
   },
   {
     title: '已预约次数',
@@ -182,7 +182,7 @@ export default {
       },
       shopForm: {},
       modalTitle: '',
-      modalTitles: ['添加门店', '修改门店', '添加可预约次数'],
+      modalTitles: ['添加门店', '修改门店', '添加总预约次数'],
     }
   },
   created() {
@@ -211,8 +211,8 @@ export default {
         this.$message.error(message)
       })
     },
-    addValidSubmit() {
-      addValid(this.shopForm).then(() => {
+    addTotalSubmit() {
+      addTotalNum(this.shopForm).then(() => {
         this.$message.success("修改成功")
         this.fetch()
       }).catch(({message}) => {
@@ -230,7 +230,7 @@ export default {
       } else if (this.modalTitle === this.modalTitles[1]) {
         this.editShopSubmit()
       } else if (this.modalTitle === this.modalTitles[2]) {
-        this.addValidSubmit()
+        this.addTotalSubmit()
       }
       this.pagination.current = 1
     },
@@ -245,7 +245,7 @@ export default {
       this.getShop(id)
       this.visible = true
     },
-    addValid(id) {
+    addTotal(id) {
       this.modalTitle = this.modalTitles[2]
       this.shopForm = {}
       this.shopForm.id = id
@@ -259,7 +259,7 @@ export default {
             name: shop.name,
             address: shop.address,
             phone: shop.phone,
-            validNum: shop.validNum,
+            totalNum: shop.totalNum,
             appointNum: shop.appointNum,
             enabled: shop.enabled,
           })

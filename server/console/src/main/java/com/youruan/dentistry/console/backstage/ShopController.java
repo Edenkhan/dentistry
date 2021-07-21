@@ -33,7 +33,7 @@ public class ShopController {
         Pagination<ExtendedShop> pagination = shopService.query(qo);
         return ResponseEntity.ok(ImmutableMap.builder()
                 .put("data", BeanMapUtils.pick(pagination.getData(),
-                        "id", "createdDate", "lastModifiedDate", "name","address","phone","validNum","appointNum","enabled"))
+                        "id", "createdDate", "lastModifiedDate", "name","address","phone","totalNum","appointNum","enabled"))
                 .put("rows", pagination.getRows())
                 .build());
     }
@@ -42,7 +42,7 @@ public class ShopController {
     @RequiresPermission(value = "backstage.shop.get", description = "门店-获取")
     public ResponseEntity<?> get(@RequestParam("id") Long id) {
         Shop shop = shopService.get(id);
-        return ResponseEntity.ok(BeanMapUtils.pick(shop, "id", "name", "address","phone","validNum","appointNum","enabled"));
+        return ResponseEntity.ok(BeanMapUtils.pick(shop, "id", "name", "address","phone","totalNum","appointNum","enabled"));
     }
 
     @PostMapping("/add")
@@ -74,15 +74,13 @@ public class ShopController {
     }
 
     /**
-     * 修改可预约次数
+     * 添加总预约次数
      */
-    @PostMapping("/valid")
-    @RequiresPermission(value = "backstage.shop.edit", description = "门店-修改")
-    public ResponseEntity<?> valid(ShopEditForm form) {
+    @PostMapping("/addTotalNum")
+    @RequiresPermission(value = "backstage.shop.addTotalNum", description = "门店-添加总预约次数")
+    public ResponseEntity<?> addTotalNum(ShopEditForm form) {
         Shop shop = shopService.get(form.getId());
-        shopService.updateValidNum(
-                shop,
-                form.getValidNum());
+        shopService.updateTotalNum(shop, form.getFrequency());
         return ResponseEntity.ok(ImmutableMap.builder()
                 .put("id", shop.getId())
                 .build());

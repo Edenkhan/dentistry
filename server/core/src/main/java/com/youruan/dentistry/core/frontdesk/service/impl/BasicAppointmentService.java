@@ -179,14 +179,7 @@ public class BasicAppointmentService implements AppointmentService {
      */
     private void checkShopValid(Long shopId) {
         Shop shop = shopService.get(shopId);
-        Assert.notNull(shop, "必须提供门店");
-        AppointManageQuery qo = new AppointManageQuery();
-        qo.setShopId(shopId);
-        qo.setMaxPageSize();
-        List<ExtendedAppointManage> appointManageList = appointManageService.listAll(qo);
-        Integer appointSum = appointManageList.stream().map(AppointManage::getAppointNum).reduce(0, Integer::sum);
-        System.out.println("总共已预约次数：" + appointSum);
-        Assert.isTrue(appointSum < shop.getValidNum(), "门店总预约次数已满");
+        Assert.isTrue(shop.getAppointNum() < shop.getTotalNum(), "门店总预约次数已满");
     }
 
     /**
@@ -274,7 +267,7 @@ public class BasicAppointmentService implements AppointmentService {
      */
     private void checkChange(ExtendedAppointment appointment, Integer timePeriod, Date appointDate) {
         Assert.isTrue(!timePeriod.equals(appointment.getTimePeriod())
-                && appointDate.compareTo(appointment.getAppointDate())!=0,"当前日期未作修改");
+                || appointDate.compareTo(appointment.getAppointDate())!=0,"当前日期未作修改");
     }
 
 

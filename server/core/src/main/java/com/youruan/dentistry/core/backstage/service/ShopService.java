@@ -48,9 +48,9 @@ public interface ShopService {
     List<ExtendedShop> listAll();
 
     /**
-     * 修改可预约次数
+     * 修改总预约次数
      */
-    void updateValidNum(Shop shop, Integer validNum);
+    void updateTotalNum(Shop shop, Integer frequency);
 
     /**
      * 增加门店预约次数

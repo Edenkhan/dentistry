@@ -34,7 +34,7 @@ dentistry:
           base-url: /api/file
 
 wechat:
-  domain: http://tanghuaxiong.ymys.usooft.com
+  domain: http://quasi.ymys.usooft.com
   token: GHOST
   appId: wxfcffb0d00f2da17b
   appSecret: 2fcf880c2503141e09bb0a55623f82f1

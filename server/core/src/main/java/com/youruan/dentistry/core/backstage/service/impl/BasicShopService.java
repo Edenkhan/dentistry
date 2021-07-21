@@ -133,7 +133,7 @@ public class BasicShopService
         shop.setName(name);
         shop.setAddress(address);
         shop.setPhone(phone);
-        shop.setValidNum(0);
+        shop.setTotalNum(0);
         shop.setAppointNum(0);
         shop.setEnabled(enabled);
     }
@@ -153,10 +153,10 @@ public class BasicShopService
     }
 
     @Override
-    public void updateValidNum(Shop shop, Integer validNum) {
+    public void updateTotalNum(Shop shop, Integer frequency) {
         Assert.notNull(shop,"必须提供门店");
-        Assert.notNull(validNum,"必须提供次数");
-        shop.setValidNum(shop.getValidNum() + validNum);
+        Assert.notNull(frequency,"必须提供次数");
+        shop.setTotalNum(shop.getTotalNum() + frequency);
         this.update(shop);
     }
 

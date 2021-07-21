@@ -85,8 +85,8 @@ export function getShop(params) {
   return get('/backstage/shop/get?' + stringify(params));
 }
 
-export function addValid(params) {
-  return post('/backstage/shop/valid', stringify(params));
+export function addTotalNum(params) {
+  return post('/backstage/shop/addTotalNum', stringify(params));
 }
 
 // 预约管理

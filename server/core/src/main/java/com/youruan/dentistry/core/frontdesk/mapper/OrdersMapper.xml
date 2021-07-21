@@ -86,8 +86,8 @@
         </where>
     </delete>
     <insert id="add" parameterType="com.youruan.dentistry.core.frontdesk.domain.Orders" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
-        INSERT INTO Orders(id, createdDate, version, orderNo, price, totalNum, appointNum, boughtTime, payStatus, appointStatus, userId, productId, shopId, dicItemId, isRedeemOrder)
-        VALUES(#{id }, #{createdDate}, 0, #{orderNo}, #{price}, #{totalNum}, #{appointNum}, #{boughtTime}, #{payStatus}, #{appointStatus}, #{userId}, #{productId}, #{shopId}, #{dicItemId}, #{isRedeemOrder})
+        INSERT INTO Orders(id, createdDate, version, orderNo, price, totalNum, appointNum, boughtTime, payStatus, appointStatus, userId, productId, shopId, dicItemId, isRedeemOrder, completed)
+        VALUES(#{id }, #{createdDate}, 0, #{orderNo}, #{price}, #{totalNum}, #{appointNum}, #{boughtTime}, #{payStatus}, #{appointStatus}, #{userId}, #{productId}, #{shopId}, #{dicItemId}, #{isRedeemOrder}, #{completed})
     </insert>
     <update id="update" parameterType="com.youruan.dentistry.core.frontdesk.domain.Orders">UPDATE Orders
         <set>

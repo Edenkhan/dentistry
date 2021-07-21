@@ -23,9 +23,9 @@ public class Shop extends BasicDomain {
      */
     private String phone;
     /**
-     * 可预约次数
+     * 总预约次数
      */
-    private Integer validNum;
+    private Integer totalNum;
     /**
      * 已预约次数
      */
