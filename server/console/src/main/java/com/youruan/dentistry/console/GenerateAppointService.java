@@ -22,6 +22,6 @@ public class GenerateAppointService implements CommandLineRunner {
         System.out.println("***********启动任务***********");
         shopService.listAll().stream()
                 .map(BasicDomain::getId)
-                .forEach(appointManageService::checkDataSource);
+                .forEach(appointManageService::generate7Days);
     }
 }

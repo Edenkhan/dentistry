@@ -36,7 +36,7 @@ public class AppointManageController {
 
 //    @PostMapping("/checkDataSource")
     public ResponseEntity<?> checkDataSource(Long shopId) {
-        appointManageService.checkDataSource(shopId);
+        appointManageService.generate7Days(shopId);
         return ResponseEntity.ok().build();
     }
 

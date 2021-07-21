@@ -67,7 +67,7 @@ public interface AppointManageService {
     /**
      * 检查当前门店在数据库是否有7天的数据
      */
-    void checkDataSource(Long shopId);
+    void generate7Days(Long shopId);
     /**
      * 增加已预约次数
      */

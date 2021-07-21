@@ -267,7 +267,7 @@ public class BasicAppointManageService
     }
 
     @Override
-    public void checkDataSource(Long shopId) {
+    public void generate7Days(Long shopId) {
         Assert.notNull(shopId,"必须提供门店id");
         // 获取数据条目数 以(天)为单位
         AppointManageQuery qo = new AppointManageQuery();
@@ -276,8 +276,8 @@ public class BasicAppointManageService
         int days = rows / 2;
         if(days >= 7) return;
         List<AppointManage> list = new ArrayList<>();
-        generate(list,AppointManage.TIME_PERIOD_AM,shopId,days);
-        generate(list,AppointManage.TIME_PERIOD_PM,shopId,days);
+        this.generate(list,AppointManage.TIME_PERIOD_AM,shopId,days);
+        this.generate(list,AppointManage.TIME_PERIOD_PM,shopId,days);
         this.addBatch(list);
     }
 

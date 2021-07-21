@@ -4,11 +4,14 @@ package com.youruan.dentistry.core.backstage.service.impl;
 import com.youruan.dentistry.core.backstage.domain.Shop;
 import com.youruan.dentistry.core.backstage.mapper.ShopMapper;
 import com.youruan.dentistry.core.backstage.query.ShopQuery;
+import com.youruan.dentistry.core.backstage.service.AppointManageService;
 import com.youruan.dentistry.core.backstage.service.ShopService;
 import com.youruan.dentistry.core.backstage.vo.ExtendedShop;
 import com.youruan.dentistry.core.base.exception.OptimismLockingException;
 import com.youruan.dentistry.core.base.query.Pagination;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import java.util.ArrayList;
@@ -20,9 +23,11 @@ public class BasicShopService
         implements ShopService {
 
     private final ShopMapper shopMapper;
+    private final AppointManageService appointManageService;
 
-    public BasicShopService(ShopMapper shopMapper) {
+    public BasicShopService(ShopMapper shopMapper, @Lazy AppointManageService appointManageService) {
         this.shopMapper = shopMapper;
+        this.appointManageService = appointManageService;
     }
 
     @Override
@@ -70,11 +75,15 @@ public class BasicShopService
     }
 
     @Override
+    @Transactional
     public Shop create(String name, String address, String phone, Boolean enabled) {
         this.checkAdd(name,address,phone,enabled);
         Shop shop = new Shop();
         this.assign(shop, name,address,phone,enabled);
-        return add(shop);
+        shop = this.add(shop);
+        // 為該門店生成7天預約管理數據
+        appointManageService.generate7Days(shop.getId());
+        return shop;
     }
 
     @Override
